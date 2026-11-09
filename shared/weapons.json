@@ -1,0 +1,392 @@
+[
+  {
+    "id": "raven-bow",
+    "name": "鸦羽弓",
+    "weapon": "bow",
+    "symbol": "⌁",
+    "mainStat": {
+      "kind": "attackFlat",
+      "base": 2,
+      "growth": 0.5
+    },
+    "subStat": {
+      "kind": "attackPercent",
+      "base": 5,
+      "growth": 1
+    },
+    "talent": {
+      "name": "远望",
+      "description": "命中距离不小于100时，伤害提高20%。",
+      "condition": "far",
+      "threshold": 100,
+      "damageBonusPercent": 20
+    },
+    "maxLevel": 20,
+    "levelUpCost": 300,
+    "rarity": 3
+  },
+  {
+    "id": "magic-guide",
+    "name": "魔导绪论",
+    "weapon": "catalyst",
+    "symbol": "✧",
+    "mainStat": {
+      "kind": "attackFlat",
+      "base": 2,
+      "growth": 0.5
+    },
+    "subStat": {
+      "kind": "hpPercent",
+      "base": 5,
+      "growth": 1
+    },
+    "talent": {
+      "name": "元素研习",
+      "description": "本次命中触发元素反应时，伤害提高30%。当前未实现元素反应，该天赋暂不触发。",
+      "condition": "reaction",
+      "threshold": 0,
+      "damageBonusPercent": 30
+    },
+    "maxLevel": 20,
+    "levelUpCost": 300,
+    "rarity": 3
+  },
+  {
+    "id": "cool-steel",
+    "name": "冷刃",
+    "weapon": "sword",
+    "symbol": "†",
+    "mainStat": {
+      "kind": "attackFlat",
+      "base": 3,
+      "growth": 0.5
+    },
+    "subStat": {
+      "kind": "attackSpeedPercent",
+      "base": 5,
+      "growth": 0.5
+    },
+    "talent": {
+      "name": "贴身锋芒",
+      "description": "命中距离不大于70时，伤害提高20%。",
+      "condition": "near",
+      "threshold": 70,
+      "damageBonusPercent": 20
+    },
+    "maxLevel": 20,
+    "levelUpCost": 300,
+    "rarity": 3
+  },
+  {
+    "id": "ferrous-shadow",
+    "name": "铁影阔剑",
+    "weapon": "claymore",
+    "symbol": "⚔",
+    "mainStat": {
+      "kind": "attackFlat",
+      "base": 4,
+      "growth": 0.7
+    },
+    "subStat": {
+      "kind": "hpFlat",
+      "base": 15,
+      "growth": 3
+    },
+    "talent": {
+      "name": "厚重",
+      "description": "所有命中伤害提高10%。",
+      "condition": "always",
+      "threshold": 0,
+      "damageBonusPercent": 10
+    },
+    "maxLevel": 20,
+    "levelUpCost": 300,
+    "rarity": 3
+  },
+  {
+    "id": "white-tassel",
+    "name": "白缨枪",
+    "weapon": "polearm",
+    "symbol": "↟",
+    "mainStat": {
+      "kind": "attackFlat",
+      "base": 3,
+      "growth": 0.6
+    },
+    "subStat": {
+      "kind": "attackRangeFlat",
+      "base": 10,
+      "growth": 1
+    },
+    "talent": {
+      "name": "长锋",
+      "description": "命中距离不小于85时，伤害提高15%。",
+      "condition": "far",
+      "threshold": 85,
+      "damageBonusPercent": 15
+    },
+    "maxLevel": 20,
+    "levelUpCost": 300,
+    "rarity": 3
+  },
+  {
+    "id": "skyward-blade",
+    "name": "天空之刃",
+    "weapon": "sword",
+    "symbol": "†",
+    "mainStat": {
+      "kind": "attackFlat",
+      "base": 5,
+      "growth": 0.7
+    },
+    "subStat": {
+      "kind": "attackSpeedPercent",
+      "base": 10,
+      "growth": 0.6
+    },
+    "talent": {
+      "name": "破空之锋",
+      "description": "命中距离不大于80时，伤害提高20%。",
+      "condition": "near",
+      "threshold": 80,
+      "damageBonusPercent": 20
+    },
+    "maxLevel": 20,
+    "levelUpCost": 300,
+    "rarity": 5
+  },
+  {
+    "id": "skyward-pride",
+    "name": "天空之傲",
+    "weapon": "claymore",
+    "symbol": "⚔",
+    "mainStat": {
+      "kind": "attackFlat",
+      "base": 6,
+      "growth": 0.8
+    },
+    "subStat": {
+      "kind": "attackPercent",
+      "base": 8,
+      "growth": 0.8
+    },
+    "talent": {
+      "name": "长空之力",
+      "description": "所有命中伤害提高15%。",
+      "condition": "always",
+      "threshold": 0,
+      "damageBonusPercent": 15
+    },
+    "maxLevel": 20,
+    "levelUpCost": 300,
+    "rarity": 5
+  },
+  {
+    "id": "skyward-spine",
+    "name": "天空之脊",
+    "weapon": "polearm",
+    "symbol": "↟",
+    "mainStat": {
+      "kind": "attackFlat",
+      "base": 5,
+      "growth": 0.7
+    },
+    "subStat": {
+      "kind": "attackRangeFlat",
+      "base": 15,
+      "growth": 1
+    },
+    "talent": {
+      "name": "贯空长锋",
+      "description": "命中距离不小于90时，伤害提高20%。",
+      "condition": "far",
+      "threshold": 90,
+      "damageBonusPercent": 20
+    },
+    "maxLevel": 20,
+    "levelUpCost": 300,
+    "rarity": 5
+  },
+  {
+    "id": "skyward-atlas",
+    "name": "天空之卷",
+    "weapon": "catalyst",
+    "symbol": "✧",
+    "mainStat": {
+      "kind": "attackFlat",
+      "base": 5,
+      "growth": 0.7
+    },
+    "subStat": {
+      "kind": "attackPercent",
+      "base": 10,
+      "growth": 0.8
+    },
+    "talent": {
+      "name": "浮游云卷",
+      "description": "所有命中伤害提高15%。",
+      "condition": "always",
+      "threshold": 0,
+      "damageBonusPercent": 15
+    },
+    "maxLevel": 20,
+    "levelUpCost": 300,
+    "rarity": 5
+  },
+  {
+    "id": "skyward-harp",
+    "name": "天空之翼",
+    "weapon": "bow",
+    "symbol": "⌁",
+    "mainStat": {
+      "kind": "attackFlat",
+      "base": 5,
+      "growth": 0.7
+    },
+    "subStat": {
+      "kind": "attackRangeFlat",
+      "base": 20,
+      "growth": 1.5
+    },
+    "talent": {
+      "name": "高天回响",
+      "description": "命中距离不小于120时，伤害提高25%。",
+      "condition": "far",
+      "threshold": 120,
+      "damageBonusPercent": 25
+    },
+    "maxLevel": 20,
+    "levelUpCost": 300,
+    "rarity": 5
+  },
+  {
+    "id": "favonius-sword",
+    "name": "西风剑",
+    "weapon": "sword",
+    "symbol": "†",
+    "mainStat": {
+      "kind": "attackFlat",
+      "base": 4,
+      "growth": 0.6
+    },
+    "subStat": {
+      "kind": "attackSpeedPercent",
+      "base": 8,
+      "growth": 0.6
+    },
+    "talent": {
+      "name": "顺风剑势",
+      "description": "命中距离不大于75时，伤害提高15%。",
+      "condition": "near",
+      "threshold": 75,
+      "damageBonusPercent": 15
+    },
+    "maxLevel": 20,
+    "levelUpCost": 300,
+    "rarity": 4
+  },
+  {
+    "id": "favonius-greatsword",
+    "name": "西风大剑",
+    "weapon": "claymore",
+    "symbol": "⚔",
+    "mainStat": {
+      "kind": "attackFlat",
+      "base": 5,
+      "growth": 0.7
+    },
+    "subStat": {
+      "kind": "hpFlat",
+      "base": 20,
+      "growth": 4
+    },
+    "talent": {
+      "name": "骑士重击",
+      "description": "命中距离不大于80时，伤害提高20%。",
+      "condition": "near",
+      "threshold": 80,
+      "damageBonusPercent": 20
+    },
+    "maxLevel": 20,
+    "levelUpCost": 300,
+    "rarity": 4
+  },
+  {
+    "id": "favonius-warbow",
+    "name": "西风猎弓",
+    "weapon": "bow",
+    "symbol": "⌁",
+    "mainStat": {
+      "kind": "attackFlat",
+      "base": 4,
+      "growth": 0.6
+    },
+    "subStat": {
+      "kind": "attackSpeedPercent",
+      "base": 8,
+      "growth": 0.6
+    },
+    "talent": {
+      "name": "顺风追猎",
+      "description": "命中距离不小于100时，伤害提高15%。",
+      "condition": "far",
+      "threshold": 100,
+      "damageBonusPercent": 15
+    },
+    "maxLevel": 20,
+    "levelUpCost": 300,
+    "rarity": 4
+  },
+  {
+    "id": "favonius-codex",
+    "name": "西风秘典",
+    "weapon": "catalyst",
+    "symbol": "✧",
+    "mainStat": {
+      "kind": "attackFlat",
+      "base": 4,
+      "growth": 0.6
+    },
+    "subStat": {
+      "kind": "hpPercent",
+      "base": 8,
+      "growth": 1
+    },
+    "talent": {
+      "name": "西风秘法",
+      "description": "所有命中伤害提高10%。",
+      "condition": "always",
+      "threshold": 0,
+      "damageBonusPercent": 10
+    },
+    "maxLevel": 20,
+    "levelUpCost": 300,
+    "rarity": 4
+  },
+  {
+    "id": "favonius-lance",
+    "name": "西风长枪",
+    "weapon": "polearm",
+    "symbol": "↟",
+    "mainStat": {
+      "kind": "attackFlat",
+      "base": 4,
+      "growth": 0.6
+    },
+    "subStat": {
+      "kind": "attackSpeedPercent",
+      "base": 8,
+      "growth": 0.6
+    },
+    "talent": {
+      "name": "逐风枪势",
+      "description": "命中距离不小于85时，伤害提高15%。",
+      "condition": "far",
+      "threshold": 85,
+      "damageBonusPercent": 15
+    },
+    "maxLevel": 20,
+    "levelUpCost": 300,
+    "rarity": 4
+  }
+]

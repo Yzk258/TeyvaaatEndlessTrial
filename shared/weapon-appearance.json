@@ -1,0 +1,62 @@
+{
+  "raven-bow": {
+    "name": "鸦羽弓",
+    "src": "/weapons/pixel/鸦羽弓.png"
+  },
+  "magic-guide": {
+    "name": "魔导绪论",
+    "src": "/weapons/pixel/魔导绪论.png"
+  },
+  "ferrous-shadow": {
+    "name": "铁影阔剑",
+    "src": "/weapons/pixel/铁影阔剑.png"
+  },
+  "white-tassel": {
+    "name": "白缨枪",
+    "src": "/weapons/pixel/白缨枪.png"
+  },
+  "cool-steel": {
+    "name": "冷刃",
+    "src": "/weapons/pixel/冷刃.png"
+  },
+  "skyward-blade": {
+    "name": "天空之刃",
+    "src": "/weapons/pixel/天空之刃.png"
+  },
+  "skyward-pride": {
+    "name": "天空之傲",
+    "src": "/weapons/pixel/天空之傲.png"
+  },
+  "skyward-spine": {
+    "name": "天空之脊",
+    "src": "/weapons/pixel/天空之脊.png"
+  },
+  "skyward-atlas": {
+    "name": "天空之卷",
+    "src": "/weapons/pixel/天空之卷.png"
+  },
+  "skyward-harp": {
+    "name": "天空之翼",
+    "src": "/weapons/pixel/天空之翼.png"
+  },
+  "favonius-sword": {
+    "name": "西风剑",
+    "src": "/weapons/pixel/西风剑.png"
+  },
+  "favonius-greatsword": {
+    "name": "西风大剑",
+    "src": "/weapons/pixel/西风大剑.png"
+  },
+  "favonius-warbow": {
+    "name": "西风猎弓",
+    "src": "/weapons/pixel/西风猎弓.png"
+  },
+  "favonius-codex": {
+    "name": "西风秘典",
+    "src": "/weapons/pixel/西风秘典.png"
+  },
+  "favonius-lance": {
+    "name": "西风长枪",
+    "src": "/weapons/pixel/西风长枪.png"
+  }
+}

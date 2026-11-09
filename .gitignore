@@ -1,0 +1,30 @@
+# Build outputs and tool caches
+node_modules/
+dist/
+target/
+.vite/
+.tooling/
+.bsp/
+.bloop/
+.metals/
+.scala-build/
+/backend/null/Coursier/
+__pycache__/
+*.pyc
+*.tsbuildinfo
+
+# Local configuration, credentials, and runtime data
+.env
+.env.*
+!.env.example
+!.env.*.example
+.local/
+key.txt
+*.log
+*.dump
+
+# Original reference material and filesystem metadata
+photos/
+.DS_Store
+Thumbs.db
+[Dd]esktop.ini

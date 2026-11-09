@@ -1,0 +1,1492 @@
+[
+  {
+    "id": "amber",
+    "name": "安柏",
+    "title": "侦察骑士",
+    "element": "pyro",
+    "weapon": "bow",
+    "attackStyle": "ranged",
+    "color": "#ef967b",
+    "symbol": "✦",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 100,
+    "hpGrowth": 5,
+    "attackRange": 300,
+    "attackIntervalTicks": 12,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 18,
+      "radius": 4,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "火色箭矢",
+      "style": "arrow",
+      "color": "#ef967b"
+    },
+    "rarity": 4
+  },
+  {
+    "id": "barbara",
+    "name": "芭芭拉",
+    "title": "闪耀偶像",
+    "element": "hydro",
+    "weapon": "catalyst",
+    "attackStyle": "ranged",
+    "color": "#8dc9e8",
+    "symbol": "♧",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 6,
+    "attackRange": 260,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 12,
+      "radius": 7,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "水色音符",
+      "style": "orb",
+      "color": "#8dc9e8"
+    },
+    "rarity": 4
+  },
+  {
+    "id": "lisa",
+    "name": "丽莎",
+    "title": "蔷薇魔女",
+    "element": "electro",
+    "weapon": "catalyst",
+    "attackStyle": "ranged",
+    "color": "#c4a3ec",
+    "symbol": "ϟ",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 90,
+    "hpGrowth": 4,
+    "attackRange": 280,
+    "attackIntervalTicks": 16,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "area",
+      "splashRadius": 45
+    },
+    "attackVisual": {
+      "name": "苍雷绽放",
+      "style": "burst",
+      "color": "#c4a3ec"
+    },
+    "rarity": 4
+  },
+  {
+    "id": "kaeya",
+    "name": "凯亚",
+    "title": "寒风剑士",
+    "element": "cryo",
+    "weapon": "sword",
+    "attackStyle": "melee",
+    "color": "#a4d9ed",
+    "symbol": "❄",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 5,
+    "attackRange": 85,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 110
+    },
+    "attackVisual": {
+      "name": "霜色剑弧",
+      "style": "slash",
+      "color": "#a4d9ed"
+    },
+    "rarity": 4
+  },
+  {
+    "id": "bennett",
+    "name": "班尼特",
+    "title": "命运试金石",
+    "element": "pyro",
+    "weapon": "sword",
+    "attackStyle": "melee",
+    "color": "#f0966b",
+    "symbol": "♨",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 115,
+    "hpGrowth": 5,
+    "attackRange": 85,
+    "attackIntervalTicks": 12,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 110
+    },
+    "attackVisual": {
+      "name": "热情剑击",
+      "style": "slash",
+      "color": "#f0966b"
+    },
+    "rarity": 4
+  },
+  {
+    "id": "diluc",
+    "name": "迪卢克",
+    "title": "晨曦的暗面",
+    "element": "pyro",
+    "weapon": "claymore",
+    "attackStyle": "melee",
+    "color": "#e04a3a",
+    "symbol": "⚔",
+    "baseAttack": 4,
+    "attackGrowth": 1,
+    "baseHp": 120,
+    "hpGrowth": 5,
+    "attackRange": 95,
+    "attackIntervalTicks": 16,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 150
+    },
+    "attackVisual": {
+      "name": "焚焰剑光",
+      "style": "slash",
+      "color": "#e04a3a"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "diona",
+    "name": "迪奥娜",
+    "title": "猫尾特调",
+    "element": "cryo",
+    "weapon": "bow",
+    "attackStyle": "ranged",
+    "color": "#8fd0e8",
+    "symbol": "♢",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 100,
+    "hpGrowth": 5,
+    "attackRange": 290,
+    "attackIntervalTicks": 13,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 16,
+      "radius": 4,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "冰晶箭羽",
+      "style": "arrow",
+      "color": "#8fd0e8"
+    },
+    "rarity": 4
+  },
+  {
+    "id": "hu-tao",
+    "name": "胡桃",
+    "title": "雪霁梅香",
+    "element": "pyro",
+    "weapon": "polearm",
+    "attackStyle": "melee",
+    "color": "#e5484d",
+    "symbol": "❁",
+    "baseAttack": 4,
+    "attackGrowth": 1,
+    "baseHp": 95,
+    "hpGrowth": 4,
+    "attackRange": 110,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 120
+    },
+    "attackVisual": {
+      "name": "炽焰枪影",
+      "style": "slash",
+      "color": "#e5484d"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "klee",
+    "name": "可莉",
+    "title": "火花骑士",
+    "element": "pyro",
+    "weapon": "catalyst",
+    "attackStyle": "ranged",
+    "color": "#f06a4a",
+    "symbol": "✸",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 95,
+    "hpGrowth": 4,
+    "attackRange": 270,
+    "attackIntervalTicks": 15,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "area",
+      "splashRadius": 50
+    },
+    "attackVisual": {
+      "name": "轰轰火花",
+      "style": "burst",
+      "color": "#f06a4a"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "keqing",
+    "name": "刻晴",
+    "title": "霆霓快雨",
+    "element": "electro",
+    "weapon": "sword",
+    "attackStyle": "melee",
+    "color": "#b78cf0",
+    "symbol": "⚡",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 105,
+    "hpGrowth": 5,
+    "attackRange": 90,
+    "attackIntervalTicks": 10,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 180
+    },
+    "attackVisual": {
+      "name": "霆霓剑芒",
+      "style": "slash",
+      "color": "#b78cf0"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "mona",
+    "name": "莫娜",
+    "title": "星天水镜",
+    "element": "hydro",
+    "weapon": "catalyst",
+    "attackStyle": "ranged",
+    "color": "#7a8ce8",
+    "symbol": "☾",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 95,
+    "hpGrowth": 4,
+    "attackRange": 280,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 12,
+      "radius": 7,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "星命水球",
+      "style": "orb",
+      "color": "#7a8ce8"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "ningguang",
+    "name": "凝光",
+    "title": "掩月天权",
+    "element": "geo",
+    "weapon": "catalyst",
+    "attackStyle": "ranged",
+    "color": "#e0b868",
+    "symbol": "♛",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 100,
+    "hpGrowth": 5,
+    "attackRange": 300,
+    "attackIntervalTicks": 13,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 15,
+      "radius": 5,
+      "pierce": 1
+    },
+    "attackVisual": {
+      "name": "天权岩玉",
+      "style": "orb",
+      "color": "#e0b868"
+    },
+    "rarity": 4
+  },
+  {
+    "id": "qiqi",
+    "name": "七七",
+    "title": "冰霜葬仪",
+    "element": "cryo",
+    "weapon": "sword",
+    "attackStyle": "melee",
+    "color": "#a8d8f0",
+    "symbol": "✚",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 120,
+    "hpGrowth": 6,
+    "attackRange": 85,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 100
+    },
+    "attackVisual": {
+      "name": "冰霜剑舞",
+      "style": "slash",
+      "color": "#a8d8f0"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "jean",
+    "name": "琴",
+    "title": "蒲公英骑士",
+    "element": "anemo",
+    "weapon": "sword",
+    "attackStyle": "melee",
+    "color": "#9fd8c8",
+    "symbol": "✿",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 125,
+    "hpGrowth": 6,
+    "attackRange": 90,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 130
+    },
+    "attackVisual": {
+      "name": "风语剑刃",
+      "style": "slash",
+      "color": "#9fd8c8"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "venti",
+    "name": "温迪",
+    "title": "风色诗人",
+    "element": "anemo",
+    "weapon": "bow",
+    "attackStyle": "ranged",
+    "color": "#7fd8a8",
+    "symbol": "♪",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 100,
+    "hpGrowth": 5,
+    "attackRange": 310,
+    "attackIntervalTicks": 15,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "area",
+      "splashRadius": 55
+    },
+    "attackVisual": {
+      "name": "风神之诗",
+      "style": "burst",
+      "color": "#7fd8a8"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "xiangling",
+    "name": "香菱",
+    "title": "万民百味",
+    "element": "pyro",
+    "weapon": "polearm",
+    "attackStyle": "melee",
+    "color": "#f08050",
+    "symbol": "☀",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 5,
+    "attackRange": 100,
+    "attackIntervalTicks": 12,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 120
+    },
+    "attackVisual": {
+      "name": "炽焰枪舞",
+      "style": "slash",
+      "color": "#f08050"
+    },
+    "rarity": 4
+  },
+  {
+    "id": "xingqiu",
+    "name": "行秋",
+    "title": "少年春衫薄",
+    "element": "hydro",
+    "weapon": "sword",
+    "attackStyle": "melee",
+    "color": "#6fb8e8",
+    "symbol": "♒",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 105,
+    "hpGrowth": 5,
+    "attackRange": 85,
+    "attackIntervalTicks": 12,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 110
+    },
+    "attackVisual": {
+      "name": "裁雨留虹",
+      "style": "slash",
+      "color": "#6fb8e8"
+    },
+    "rarity": 4
+  },
+  {
+    "id": "zhongli",
+    "name": "钟离",
+    "title": "尘世闲游",
+    "element": "geo",
+    "weapon": "polearm",
+    "attackStyle": "melee",
+    "color": "#d8b45a",
+    "symbol": "◈",
+    "baseAttack": 4,
+    "attackGrowth": 1,
+    "baseHp": 130,
+    "hpGrowth": 6,
+    "attackRange": 110,
+    "attackIntervalTicks": 16,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 140
+    },
+    "attackVisual": {
+      "name": "岩峦枪锋",
+      "style": "slash",
+      "color": "#d8b45a"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "escoffier",
+    "name": "爱可菲",
+    "title": "明绚千味",
+    "element": "cryo",
+    "weapon": "polearm",
+    "attackStyle": "melee",
+    "color": "#a4d9ed",
+    "symbol": "❄",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 5,
+    "attackRange": 100,
+    "attackIntervalTicks": 12,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 120
+    },
+    "attackVisual": {
+      "name": "冰枪击",
+      "style": "slash",
+      "color": "#a4d9ed"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "aino",
+    "name": "艾诺",
+    "title": "叮咔工坊",
+    "element": "hydro",
+    "weapon": "claymore",
+    "attackStyle": "melee",
+    "color": "#8dc9e8",
+    "symbol": "◈",
+    "baseAttack": 4,
+    "attackGrowth": 1,
+    "baseHp": 120,
+    "hpGrowth": 5,
+    "attackRange": 95,
+    "attackIntervalTicks": 16,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 150
+    },
+    "attackVisual": {
+      "name": "水重斩",
+      "style": "slash",
+      "color": "#8dc9e8"
+    },
+    "rarity": 4
+  },
+  {
+    "id": "odette",
+    "name": "奥黛塔",
+    "title": "翾风回雪",
+    "element": "cryo",
+    "weapon": "sword",
+    "attackStyle": "melee",
+    "color": "#a4d9ed",
+    "symbol": "❄",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 5,
+    "attackRange": 85,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 110
+    },
+    "attackVisual": {
+      "name": "冰剑斩",
+      "style": "slash",
+      "color": "#a4d9ed"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "yae-miko",
+    "name": "八重神子",
+    "title": "浮世笑百姿",
+    "element": "electro",
+    "weapon": "catalyst",
+    "attackStyle": "ranged",
+    "color": "#c4a3ec",
+    "symbol": "ϟ",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 6,
+    "attackRange": 260,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 12,
+      "radius": 7,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "雷元素弹",
+      "style": "orb",
+      "color": "#c4a3ec"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "nahida",
+    "name": "纳西妲",
+    "title": "白草净华",
+    "element": "dendro",
+    "weapon": "catalyst",
+    "attackStyle": "ranged",
+    "color": "#b9d17d",
+    "symbol": "❋",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 6,
+    "attackRange": 260,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 12,
+      "radius": 7,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "草元素弹",
+      "style": "orb",
+      "color": "#b9d17d"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "faruzan",
+    "name": "珐露珊",
+    "title": "机逐封秘",
+    "element": "anemo",
+    "weapon": "bow",
+    "attackStyle": "ranged",
+    "color": "#a7d7ba",
+    "symbol": "◇",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 100,
+    "hpGrowth": 5,
+    "attackRange": 300,
+    "attackIntervalTicks": 12,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 18,
+      "radius": 4,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "风箭矢",
+      "style": "arrow",
+      "color": "#a7d7ba"
+    },
+    "rarity": 4
+  },
+  {
+    "id": "mavuika",
+    "name": "玛薇卡",
+    "title": "焚夜以炎",
+    "element": "pyro",
+    "weapon": "claymore",
+    "attackStyle": "melee",
+    "color": "#ef967b",
+    "symbol": "✦",
+    "baseAttack": 4,
+    "attackGrowth": 1,
+    "baseHp": 120,
+    "hpGrowth": 5,
+    "attackRange": 95,
+    "attackIntervalTicks": 16,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 150
+    },
+    "attackVisual": {
+      "name": "火重斩",
+      "style": "slash",
+      "color": "#ef967b"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "kujou-sara",
+    "name": "九条裟罗",
+    "title": "黑羽鸣镝",
+    "element": "electro",
+    "weapon": "bow",
+    "attackStyle": "ranged",
+    "color": "#c4a3ec",
+    "symbol": "ϟ",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 100,
+    "hpGrowth": 5,
+    "attackRange": 300,
+    "attackIntervalTicks": 12,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 18,
+      "radius": 4,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "雷箭矢",
+      "style": "arrow",
+      "color": "#c4a3ec"
+    },
+    "rarity": 4
+  },
+  {
+    "id": "clorinde",
+    "name": "克洛琳德",
+    "title": "秉烛狝影",
+    "element": "electro",
+    "weapon": "sword",
+    "attackStyle": "melee",
+    "color": "#c4a3ec",
+    "symbol": "ϟ",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 5,
+    "attackRange": 85,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 110
+    },
+    "attackVisual": {
+      "name": "雷剑斩",
+      "style": "slash",
+      "color": "#c4a3ec"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "lauma",
+    "name": "菈乌玛",
+    "title": "永月的祀歌",
+    "element": "dendro",
+    "weapon": "catalyst",
+    "attackStyle": "ranged",
+    "color": "#b9d17d",
+    "symbol": "❋",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 6,
+    "attackRange": 260,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 12,
+      "radius": 7,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "草元素弹",
+      "style": "orb",
+      "color": "#b9d17d"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "raiden-shogun",
+    "name": "雷电将军",
+    "title": "一心净土",
+    "element": "electro",
+    "weapon": "polearm",
+    "attackStyle": "melee",
+    "color": "#c4a3ec",
+    "symbol": "ϟ",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 5,
+    "attackRange": 100,
+    "attackIntervalTicks": 12,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 120
+    },
+    "attackVisual": {
+      "name": "雷枪击",
+      "style": "slash",
+      "color": "#c4a3ec"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "yumemizuki-mizuki",
+    "name": "梦见月瑞希",
+    "title": "绮梦缱绻",
+    "element": "anemo",
+    "weapon": "catalyst",
+    "attackStyle": "ranged",
+    "color": "#a7d7ba",
+    "symbol": "◇",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 6,
+    "attackRange": 260,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 12,
+      "radius": 7,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "风元素弹",
+      "style": "orb",
+      "color": "#a7d7ba"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "sandrone",
+    "name": "桑多涅",
+    "title": "镜水析谬",
+    "element": "cryo",
+    "weapon": "claymore",
+    "attackStyle": "melee",
+    "color": "#a4d9ed",
+    "symbol": "❄",
+    "baseAttack": 4,
+    "attackGrowth": 1,
+    "baseHp": 120,
+    "hpGrowth": 5,
+    "attackRange": 95,
+    "attackIntervalTicks": 16,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 150
+    },
+    "attackVisual": {
+      "name": "冰重斩",
+      "style": "slash",
+      "color": "#a4d9ed"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "neuvillette",
+    "name": "那维莱特",
+    "title": "谕告的潮音",
+    "element": "hydro",
+    "weapon": "catalyst",
+    "attackStyle": "ranged",
+    "color": "#8dc9e8",
+    "symbol": "◈",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 6,
+    "attackRange": 260,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 12,
+      "radius": 7,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "水元素弹",
+      "style": "orb",
+      "color": "#8dc9e8"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "navia",
+    "name": "娜维娅",
+    "title": "明花蔓舵",
+    "element": "geo",
+    "weapon": "claymore",
+    "attackStyle": "melee",
+    "color": "#e9bd72",
+    "symbol": "◆",
+    "baseAttack": 4,
+    "attackGrowth": 1,
+    "baseHp": 120,
+    "hpGrowth": 5,
+    "attackRange": 95,
+    "attackIntervalTicks": 16,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 150
+    },
+    "attackVisual": {
+      "name": "岩重斩",
+      "style": "slash",
+      "color": "#e9bd72"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "nefer",
+    "name": "奈芙尔",
+    "title": "湮沙的秘闻",
+    "element": "dendro",
+    "weapon": "catalyst",
+    "attackStyle": "ranged",
+    "color": "#b9d17d",
+    "symbol": "❋",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 6,
+    "attackRange": 260,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 12,
+      "radius": 7,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "草元素弹",
+      "style": "orb",
+      "color": "#b9d17d"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "nicole",
+    "name": "尼可",
+    "title": "喧寂于心",
+    "element": "pyro",
+    "weapon": "catalyst",
+    "attackStyle": "ranged",
+    "color": "#ef967b",
+    "symbol": "✦",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 6,
+    "attackRange": 260,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 12,
+      "radius": 7,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "火元素弹",
+      "style": "orb",
+      "color": "#ef967b"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "nilou",
+    "name": "妮露",
+    "title": "莲光落舞筵",
+    "element": "hydro",
+    "weapon": "sword",
+    "attackStyle": "melee",
+    "color": "#8dc9e8",
+    "symbol": "◈",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 5,
+    "attackRange": 85,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 110
+    },
+    "attackVisual": {
+      "name": "水剑斩",
+      "style": "slash",
+      "color": "#8dc9e8"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "arlecchino",
+    "name": "阿蕾奇诺",
+    "title": "孤暝厄月",
+    "element": "pyro",
+    "weapon": "polearm",
+    "attackStyle": "melee",
+    "color": "#ef967b",
+    "symbol": "✦",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 5,
+    "attackRange": 100,
+    "attackIntervalTicks": 12,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 120
+    },
+    "attackVisual": {
+      "name": "火枪击",
+      "style": "slash",
+      "color": "#ef967b"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "chiori",
+    "name": "千织",
+    "title": "鸣雷的裁锦师",
+    "element": "geo",
+    "weapon": "sword",
+    "attackStyle": "melee",
+    "color": "#e9bd72",
+    "symbol": "◆",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 5,
+    "attackRange": 85,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 110
+    },
+    "attackVisual": {
+      "name": "岩剑斩",
+      "style": "slash",
+      "color": "#e9bd72"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "sucrose",
+    "name": "砂糖",
+    "title": "无害甜度",
+    "element": "anemo",
+    "weapon": "catalyst",
+    "attackStyle": "ranged",
+    "color": "#a7d7ba",
+    "symbol": "◇",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 6,
+    "attackRange": 260,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 12,
+      "radius": 7,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "风元素弹",
+      "style": "orb",
+      "color": "#a7d7ba"
+    },
+    "rarity": 4
+  },
+  {
+    "id": "columbina",
+    "name": "哥伦比娅",
+    "title": "空月归乡",
+    "element": "hydro",
+    "weapon": "catalyst",
+    "attackStyle": "ranged",
+    "color": "#8dc9e8",
+    "symbol": "◈",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 6,
+    "attackRange": 260,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 12,
+      "radius": 7,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "水元素弹",
+      "style": "orb",
+      "color": "#8dc9e8"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "kamisato-ayaka",
+    "name": "神里绫华",
+    "title": "白鹭霜华",
+    "element": "cryo",
+    "weapon": "sword",
+    "attackStyle": "melee",
+    "color": "#a4d9ed",
+    "symbol": "❄",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 5,
+    "attackRange": 85,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 110
+    },
+    "attackVisual": {
+      "name": "冰剑斩",
+      "style": "slash",
+      "color": "#a4d9ed"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "shenhe",
+    "name": "申鹤",
+    "title": "孤辰茕怀",
+    "element": "cryo",
+    "weapon": "polearm",
+    "attackStyle": "melee",
+    "color": "#a4d9ed",
+    "symbol": "❄",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 5,
+    "attackRange": 100,
+    "attackIntervalTicks": 12,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 120
+    },
+    "attackVisual": {
+      "name": "冰枪击",
+      "style": "slash",
+      "color": "#a4d9ed"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "furina",
+    "name": "芙宁娜",
+    "title": "不休独舞",
+    "element": "hydro",
+    "weapon": "sword",
+    "attackStyle": "melee",
+    "color": "#8dc9e8",
+    "symbol": "◈",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 5,
+    "attackRange": 85,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 110
+    },
+    "attackVisual": {
+      "name": "水剑斩",
+      "style": "slash",
+      "color": "#8dc9e8"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "skirk",
+    "name": "丝柯克",
+    "title": "虚渊暗星",
+    "element": "cryo",
+    "weapon": "sword",
+    "attackStyle": "melee",
+    "color": "#a4d9ed",
+    "symbol": "❄",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 5,
+    "attackRange": 85,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 110
+    },
+    "attackVisual": {
+      "name": "冰剑斩",
+      "style": "slash",
+      "color": "#a4d9ed"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "vesna",
+    "name": "薇斯纳",
+    "title": "雪宴之锋",
+    "element": "anemo",
+    "weapon": "sword",
+    "attackStyle": "melee",
+    "color": "#a7d7ba",
+    "symbol": "◇",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 5,
+    "attackRange": 85,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 110
+    },
+    "attackVisual": {
+      "name": "风剑斩",
+      "style": "slash",
+      "color": "#a7d7ba"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "citlali",
+    "name": "茜特菈莉",
+    "title": "白星黑曜",
+    "element": "cryo",
+    "weapon": "catalyst",
+    "attackStyle": "ranged",
+    "color": "#a4d9ed",
+    "symbol": "❄",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 6,
+    "attackRange": 260,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 12,
+      "radius": 7,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "冰元素弹",
+      "style": "orb",
+      "color": "#a4d9ed"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "xianyun",
+    "name": "闲云",
+    "title": "鸾音鹤信",
+    "element": "anemo",
+    "weapon": "catalyst",
+    "attackStyle": "ranged",
+    "color": "#a7d7ba",
+    "symbol": "◇",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 6,
+    "attackRange": 260,
+    "attackIntervalTicks": 14,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 12,
+      "radius": 7,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "风元素弹",
+      "style": "orb",
+      "color": "#a7d7ba"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "xiao",
+    "name": "魈",
+    "title": "护法夜叉",
+    "element": "anemo",
+    "weapon": "polearm",
+    "attackStyle": "melee",
+    "color": "#a7d7ba",
+    "symbol": "◇",
+    "baseAttack": 3,
+    "attackGrowth": 1,
+    "baseHp": 110,
+    "hpGrowth": 5,
+    "attackRange": 100,
+    "attackIntervalTicks": 12,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "meleeArc",
+      "angleDegrees": 120
+    },
+    "attackVisual": {
+      "name": "风枪击",
+      "style": "slash",
+      "color": "#a7d7ba"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "yoimiya",
+    "name": "宵宫",
+    "title": "琉焰华舞",
+    "element": "pyro",
+    "weapon": "bow",
+    "attackStyle": "ranged",
+    "color": "#ef967b",
+    "symbol": "✦",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 100,
+    "hpGrowth": 5,
+    "attackRange": 300,
+    "attackIntervalTicks": 12,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 18,
+      "radius": 4,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "火箭矢",
+      "style": "arrow",
+      "color": "#ef967b"
+    },
+    "rarity": 5
+  },
+  {
+    "id": "yelan",
+    "name": "夜兰",
+    "title": "兰生幽谷",
+    "element": "hydro",
+    "weapon": "bow",
+    "attackStyle": "ranged",
+    "color": "#8dc9e8",
+    "symbol": "◈",
+    "baseAttack": 2,
+    "attackGrowth": 1,
+    "baseHp": 100,
+    "hpGrowth": 5,
+    "attackRange": 300,
+    "attackIntervalTicks": 12,
+    "maxLevel": 20,
+    "levelUpCost": 500,
+    "inStandardBanner": true,
+    "attackPattern": {
+      "kind": "projectile",
+      "speed": 18,
+      "radius": 4,
+      "pierce": 0
+    },
+    "attackVisual": {
+      "name": "水箭矢",
+      "style": "arrow",
+      "color": "#8dc9e8"
+    },
+    "rarity": 5
+  }
+]

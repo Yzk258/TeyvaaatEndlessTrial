@@ -1,0 +1,23 @@
+{
+  "cost": 160,
+  "character": {
+    "fiveBaseRate": 0.006,
+    "fourBaseRate": 0.051,
+    "fiveHardPity": 90,
+    "fourHardPity": 10,
+    "fiveSoftStart": 74,
+    "fiveSoftStep": 0.06,
+    "fourSoftStart": 9,
+    "fourSoftStep": 0.51
+  },
+  "weapon": {
+    "fiveBaseRate": 0.007,
+    "fourBaseRate": 0.06,
+    "fiveHardPity": 80,
+    "fourHardPity": 10,
+    "fiveSoftStart": 63,
+    "fiveSoftStep": 0.07,
+    "fourSoftStart": 8,
+    "fourSoftStep": 0.6
+  }
+}

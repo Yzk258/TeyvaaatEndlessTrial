@@ -1,0 +1,15 @@
+# 像素地图素材记录
+
+使用内置 image_gen（非 CLI）生成。项目引用的素材已复制到 frontend/public/terrain，原图保留在 Codex generated_images 中。没有使用程序绘制的 SVG 物件替代本次生成素材；SVG 负责裁切显示图集和排布。
+
+- objects-v2.png：透明物件图集，树、岩石、岩石群、草丛。
+- ground-v2.png：草地、沙地、水、碎石地面纹理图集。
+- docs/assets/terrain-battle-pixel-v2.png：实际 BattleScene 组件按角色比例渲染的预览。
+
+## 物件图集最终提示词
+
+Use case: stylized-concept. Production sprite atlas for a top-down 2D pixel-art survival RPG, classic finely crafted 16-bit handheld game art. Square 1024x1024 atlas, exactly FOUR isolated sprites in a strict 2 by 2 equal-cell arrangement, each centered in its own 512x512 quadrant, generous fully transparent padding, no dividers, no labels. Top-left: one lush deciduous oak tree, rounded irregular canopy with many individually shaded leaf clusters, visible branching brown trunk and roots. Top-right: one low weathered gray boulder, chipped planes, tiny moss patches and cracks. Bottom-left: tightly grouped three smaller weathered rocks with moss and tiny plants between, irregular silhouette. Bottom-right: a dense patch of tall meadow grasses and a few delicate tiny white wildflowers, multiple individual blade clusters, irregular edge. Match one cohesive restrained natural green/sage/slate/brown palette, sunlight from upper left, overhead three-quarter RPG camera, not isometric. Every sprite rendered as REAL hard-edged pixel art with deliberate square pixel clusters, approx 64x64 logical pixel art per quadrant scaled nearest neighbor; rich internal shading and texture, no smooth outlines, no vector shapes, no blur, no gradients, no scenery background, no ground rectangles. All sprites must remain completely within their quadrant with at least 48px transparent margin. Tree occupies most of its cell, other objects also large enough to crop. Actual transparent background.
+
+## 地面图集最终提示词
+
+Production texture atlas for a richly detailed 16-bit top-down pixel art RPG. One square image exactly divided into 2x2 EQUAL quadrants, no gaps, no borders, no text. Each quadrant is a flat overhead seamless repeating terrain texture filling its entire quadrant edge to edge. Upper-left: soft medium muted sage green short meadow grass, subtle tiny grass blades and fine varied green pixel clusters, low contrast background that will not compete with characters, no large objects. Upper-right: pale earthy sandy bank, tiny grains and sparse fine pebbles, tan beige restrained low contrast. Lower-left: clean teal-blue pond water, subtle small horizontal broken ripples and delicate light pixel clusters, consistent tone, no bank, no rocks, no objects. Lower-right: weathered gray-green stony earth, fine grit, tiny scattered chips and moss flecks, low contrast. All viewed vertically from directly above, zero perspective, no bevel, no shadows around squares, no 3D blocks, no canvas grid. TRUE meticulous pixel art with visible square pixels, each quadrant designed at about 64x64 logical pixels enlarged using nearest-neighbor, crisp hard-edged clusters, limited harmonious natural palette, no smooth gradients, no vector graphics, no photorealism. Textures must be uniformly lit and have consistent colors all the way to edges for repeated tiling.

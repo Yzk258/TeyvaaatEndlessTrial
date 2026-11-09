@@ -1,0 +1,317 @@
+{
+  "diona": {
+    "name": "迪奥娜",
+    "src": "/characters/references/diona.jpg",
+    "source": "角色立绘/迪奥娜.jpg",
+    "thumbnail": "/characters/thumbnails/references/diona.png"
+  },
+  "hu-tao": {
+    "name": "胡桃",
+    "src": "/characters/references/hu-tao.jpg",
+    "source": "角色立绘/胡桃.jpg",
+    "thumbnail": "/characters/thumbnails/references/hu-tao.png"
+  },
+  "klee": {
+    "name": "可莉",
+    "src": "/characters/references/klee.jpg",
+    "source": "角色立绘/可利.jpg",
+    "thumbnail": "/characters/thumbnails/references/klee.png"
+  },
+  "keqing": {
+    "name": "刻晴",
+    "src": "/characters/references/keqing.jpg",
+    "source": "角色立绘/客情.jpg",
+    "thumbnail": "/characters/thumbnails/references/keqing.png"
+  },
+  "mona": {
+    "name": "莫娜",
+    "src": "/characters/references/mona.jpg",
+    "source": "角色立绘/莫娜.jpg",
+    "thumbnail": "/characters/thumbnails/references/mona.png"
+  },
+  "ningguang": {
+    "name": "凝光",
+    "src": "/characters/references/ningguang.jpg",
+    "source": "角色立绘/凝光.jpg",
+    "thumbnail": "/characters/thumbnails/references/ningguang.png"
+  },
+  "qiqi": {
+    "name": "七七",
+    "src": "/characters/references/qiqi.jpg",
+    "source": "角色立绘/七七.jpg",
+    "thumbnail": "/characters/thumbnails/references/qiqi.png"
+  },
+  "jean": {
+    "name": "琴",
+    "src": "/characters/references/jean.jpg",
+    "source": "角色立绘/琴.jpg",
+    "thumbnail": "/characters/thumbnails/references/jean.png"
+  },
+  "venti": {
+    "name": "温迪",
+    "src": "/characters/references/venti.jpg",
+    "source": "角色立绘/温迪.jpg",
+    "thumbnail": "/characters/thumbnails/references/venti.png"
+  },
+  "xiangling": {
+    "name": "香菱",
+    "src": "/characters/references/xiangling.jpg",
+    "source": "角色立绘/香菱.jpg",
+    "thumbnail": "/characters/thumbnails/references/xiangling.png"
+  },
+  "xingqiu": {
+    "name": "行秋",
+    "src": "/characters/references/xingqiu.jpg",
+    "source": "角色立绘/行秋.jpg",
+    "thumbnail": "/characters/thumbnails/references/xingqiu.png"
+  },
+  "zhongli": {
+    "name": "钟离",
+    "src": "/characters/references/zhongli.jpg",
+    "source": "角色立绘/钟离.jpg",
+    "thumbnail": "/characters/thumbnails/references/zhongli.png"
+  },
+  "amber": {
+    "name": "安柏",
+    "src": "/characters/references/amber.png",
+    "source": "角色立绘/安伯.png",
+    "thumbnail": "/characters/thumbnails/references/amber.png"
+  },
+  "barbara": {
+    "name": "芭芭拉",
+    "src": "/characters/references/barbara.jpg",
+    "source": "角色立绘/芭芭拉.jpg",
+    "thumbnail": "/characters/thumbnails/references/barbara.png"
+  },
+  "lisa": {
+    "name": "丽莎",
+    "src": "/characters/references/lisa.jpg",
+    "source": "角色立绘/lisa.jpg",
+    "thumbnail": "/characters/thumbnails/references/lisa.png"
+  },
+  "kaeya": {
+    "name": "凯亚",
+    "src": "/characters/references/kaeya.jpg",
+    "source": "角色立绘/凯亚.jpg",
+    "thumbnail": "/characters/thumbnails/references/kaeya.png"
+  },
+  "bennett": {
+    "name": "班尼特",
+    "src": "/characters/references/bennett.png",
+    "source": "角色立绘/班尼特.png",
+    "thumbnail": "/characters/thumbnails/references/bennett.png"
+  },
+  "diluc": {
+    "name": "迪卢克",
+    "src": "/characters/references/diluc.png",
+    "source": "角色立绘/地卢克.png",
+    "thumbnail": "/characters/thumbnails/references/diluc.png"
+  },
+  "escoffier": {
+    "name": "爱可菲",
+    "src": "/characters/references/escoffier.png",
+    "source": "角色立绘/艾克非.png",
+    "thumbnail": "/characters/thumbnails/references/escoffier.png"
+  },
+  "aino": {
+    "name": "艾诺",
+    "src": "/characters/references/aino.png",
+    "source": "角色立绘/艾诺.png",
+    "thumbnail": "/characters/thumbnails/references/aino.png"
+  },
+  "odette": {
+    "name": "奥黛塔",
+    "src": "/characters/references/odette.png",
+    "source": "角色立绘/奥黛塔.png",
+    "thumbnail": "/characters/thumbnails/references/odette.png"
+  },
+  "yae-miko": {
+    "name": "八重神子",
+    "src": "/characters/references/yae-miko.png",
+    "source": "角色立绘/八重身子.png",
+    "thumbnail": "/characters/thumbnails/references/yae-miko.png"
+  },
+  "nahida": {
+    "name": "纳西妲",
+    "src": "/characters/references/nahida.png",
+    "source": "角色立绘/草神.png",
+    "thumbnail": "/characters/thumbnails/references/nahida.png"
+  },
+  "faruzan": {
+    "name": "珐露珊",
+    "src": "/characters/references/faruzan.png",
+    "source": "角色立绘/法露珊.png",
+    "thumbnail": "/characters/thumbnails/references/faruzan.png"
+  },
+  "mavuika": {
+    "name": "玛薇卡",
+    "src": "/characters/references/mavuika.png",
+    "source": "角色立绘/火神.png",
+    "thumbnail": "/characters/thumbnails/references/mavuika.png"
+  },
+  "kujou-sara": {
+    "name": "九条裟罗",
+    "src": "/characters/references/kujou-sara.png",
+    "source": "角色立绘/九条沙罗.png",
+    "thumbnail": "/characters/thumbnails/references/kujou-sara.png"
+  },
+  "clorinde": {
+    "name": "克洛琳德",
+    "src": "/characters/references/clorinde.png",
+    "source": "角色立绘/克罗零的.png",
+    "thumbnail": "/characters/thumbnails/references/clorinde.png"
+  },
+  "lauma": {
+    "name": "菈乌玛",
+    "src": "/characters/references/lauma.png",
+    "source": "角色立绘/拉乌玛.png",
+    "thumbnail": "/characters/thumbnails/references/lauma.png"
+  },
+  "raiden-shogun": {
+    "name": "雷电将军",
+    "src": "/characters/references/raiden-shogun.png",
+    "source": "角色立绘/雷神.png",
+    "thumbnail": "/characters/thumbnails/references/raiden-shogun.png"
+  },
+  "yumemizuki-mizuki": {
+    "name": "梦见月瑞希",
+    "src": "/characters/references/yumemizuki-mizuki.png",
+    "source": "角色立绘/梦见月瑞希.png",
+    "thumbnail": "/characters/thumbnails/references/yumemizuki-mizuki.png"
+  },
+  "sandrone": {
+    "name": "桑多涅",
+    "src": "/characters/references/sandrone.png",
+    "source": "角色立绘/木偶.png",
+    "thumbnail": "/characters/thumbnails/references/sandrone.png"
+  },
+  "neuvillette": {
+    "name": "那维莱特",
+    "src": "/characters/references/neuvillette.png",
+    "source": "角色立绘/那位莱特.png",
+    "thumbnail": "/characters/thumbnails/references/neuvillette.png"
+  },
+  "navia": {
+    "name": "娜维娅",
+    "src": "/characters/references/navia.png",
+    "source": "角色立绘/纳维亚.png",
+    "thumbnail": "/characters/thumbnails/references/navia.png"
+  },
+  "nefer": {
+    "name": "奈芙尔",
+    "src": "/characters/references/nefer.png",
+    "source": "角色立绘/奈菲尔.png",
+    "thumbnail": "/characters/thumbnails/references/nefer.png"
+  },
+  "nicole": {
+    "name": "尼可",
+    "src": "/characters/references/nicole.png",
+    "source": "角色立绘/尼可.png",
+    "thumbnail": "/characters/thumbnails/references/nicole.png"
+  },
+  "nilou": {
+    "name": "妮露",
+    "src": "/characters/references/nilou.png",
+    "source": "角色立绘/尼禄.png",
+    "thumbnail": "/characters/thumbnails/references/nilou.png"
+  },
+  "arlecchino": {
+    "name": "阿蕾奇诺",
+    "src": "/characters/references/arlecchino.png",
+    "source": "角色立绘/仆人.png",
+    "thumbnail": "/characters/thumbnails/references/arlecchino.png"
+  },
+  "chiori": {
+    "name": "千织",
+    "src": "/characters/references/chiori.png",
+    "source": "角色立绘/千织.png",
+    "thumbnail": "/characters/thumbnails/references/chiori.png"
+  },
+  "sucrose": {
+    "name": "砂糖",
+    "src": "/characters/references/sucrose.png",
+    "source": "角色立绘/砂糖.png",
+    "thumbnail": "/characters/thumbnails/references/sucrose.png"
+  },
+  "columbina": {
+    "name": "哥伦比娅",
+    "src": "/characters/references/columbina.png",
+    "source": "角色立绘/少女.png",
+    "thumbnail": "/characters/thumbnails/references/columbina.png"
+  },
+  "kamisato-ayaka": {
+    "name": "神里绫华",
+    "src": "/characters/references/kamisato-ayaka.png",
+    "source": "角色立绘/神力凌华.png",
+    "thumbnail": "/characters/thumbnails/references/kamisato-ayaka.png"
+  },
+  "shenhe": {
+    "name": "申鹤",
+    "src": "/characters/references/shenhe.png",
+    "source": "角色立绘/审核.png",
+    "thumbnail": "/characters/thumbnails/references/shenhe.png"
+  },
+  "furina": {
+    "name": "芙宁娜",
+    "src": "/characters/references/furina.png",
+    "source": "角色立绘/水神.png",
+    "thumbnail": "/characters/thumbnails/references/furina.png"
+  },
+  "skirk": {
+    "name": "丝柯克",
+    "src": "/characters/references/skirk.png",
+    "source": "角色立绘/斯柯克.png",
+    "thumbnail": "/characters/thumbnails/references/skirk.png"
+  },
+  "vesna": {
+    "name": "薇斯纳",
+    "src": "/characters/references/vesna.png",
+    "source": "角色立绘/威斯纳.png",
+    "thumbnail": "/characters/thumbnails/references/vesna.png"
+  },
+  "citlali": {
+    "name": "茜特菈莉",
+    "src": "/characters/references/citlali.png",
+    "source": "角色立绘/希特拉利.png",
+    "thumbnail": "/characters/thumbnails/references/citlali.png"
+  },
+  "xianyun": {
+    "name": "闲云",
+    "src": "/characters/references/xianyun.png",
+    "source": "角色立绘/闲云.png",
+    "thumbnail": "/characters/thumbnails/references/xianyun.png"
+  },
+  "xiao": {
+    "name": "魈",
+    "src": "/characters/references/xiao.png",
+    "source": "角色立绘/魈.png",
+    "thumbnail": "/characters/thumbnails/references/xiao.png"
+  },
+  "yoimiya": {
+    "name": "宵宫",
+    "src": "/characters/references/yoimiya.png",
+    "source": "角色立绘/肖工.png",
+    "thumbnail": "/characters/thumbnails/references/yoimiya.png"
+  },
+  "yelan": {
+    "name": "夜兰",
+    "src": "/characters/references/yelan.png",
+    "source": "角色立绘/叶兰.png",
+    "thumbnail": "/characters/thumbnails/references/yelan.png"
+  },
+  "danika": {
+    "name": "达妮卡",
+    "src": "/characters/references/danika.png",
+    "source": "角色立绘/达尼卡.png",
+    "archiveOnly": true,
+    "thumbnail": "/characters/thumbnails/references/danika.png"
+  },
+  "tsaritsa": {
+    "name": "安娜丝塔夏·费奥多罗夫娜·雪奈茨娜娅",
+    "src": "/characters/references/tsaritsa.png",
+    "source": "角色立绘/冰神.png",
+    "archiveOnly": true,
+    "thumbnail": "/characters/thumbnails/references/tsaritsa.png",
+    "element": "cryo"
+  }
+}

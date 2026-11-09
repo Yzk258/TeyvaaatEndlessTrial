@@ -1,0 +1,15 @@
+import type {LootParticle} from './LootParticle';
+import type {UpgradeChoice} from './UpgradeChoice';
+import type {WorldObstacle} from './WorldObstacle';
+import type {AttackPattern} from '../../objects/AttackPattern';
+import type {Projectile} from './Projectile';
+import type {AttackEffect} from './AttackEffect';
+import type {WeaponTalent} from '../../objects/Weapon';
+import type {AttackStyle} from '../../objects/AttackStyle';
+import type {AttackCue} from './AttackCue';
+import type {HitEffect} from './HitEffect';
+import type {CharacterMotion} from './CharacterMotion';
+import type {AdventurePlan} from '../../objects/AdventurePlan';
+export type Enemy={readonly id:number;readonly x:number;readonly y:number;readonly hp:number;readonly damage:number;readonly kind:'slime'|'hilichurl'|'boss'};
+export type BattleState={readonly adventure:AdventurePlan|null;readonly combatTicks:number;readonly loot:readonly LootParticle[];readonly collectedMora:number;readonly stageMora:number|null;readonly moveSpeed:number;readonly extraAttacks:number;readonly queuedAttackTicks:readonly number[];readonly upgradeSeed:number;readonly upgradeChoices:readonly UpgradeChoice[];readonly motion:CharacterMotion;readonly attackCue:AttackCue|null;readonly hits:readonly HitEffect[];readonly obstacles:readonly WorldObstacle[];readonly collisionChunkX:number;readonly collisionChunkY:number;readonly terrainCollision:boolean;readonly attackPattern:AttackPattern;readonly projectiles:readonly Projectile[];readonly effects:readonly AttackEffect[];readonly facing:number;readonly weaponTalent:WeaponTalent|null;readonly attackRange:number;readonly attackIntervalTicks:number;readonly attackStyle:AttackStyle;readonly countdownTicks:number;readonly phase:'countdown'|'fighting'|'upgrade'|'paused'|'collecting'|'ended';readonly targetEnemies:number|null;readonly tick:number;readonly x:number;readonly y:number;readonly hp:number;readonly maxHp:number;readonly experience:number;readonly pendingUpgrades:number;readonly kills:number;readonly level:number;readonly power:number;readonly enemies:readonly Enemy[];readonly worldSeed:number;readonly seed:number};
+export type BattleAction={readonly kind:'pause'}|{readonly kind:'resume'}|{readonly kind:'tick';readonly keys:readonly string[]}|{readonly kind:'upgrade';readonly choice:UpgradeChoice};

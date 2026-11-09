@@ -1,0 +1,23 @@
+import type {AdventurePlan} from '../../objects/AdventurePlan';
+import {adventureComplete} from '../../game/functions/adventureProgress';
+import {AdventureResult} from './components/AdventureResult';
+import {ExitBattleDialog} from './components/ExitBattleDialog';
+import {UpgradeOptions} from './components/UpgradeOptions';
+import {BattleScene} from './components/BattleScene';
+import {useReducedBattleMotion} from './hooks/useReducedBattleMotion';
+import {BattleHUD} from './components/BattleHUD';
+import type {WeaponLoadout} from '../../objects/Weapon';
+import {useState} from 'react';
+import type {Stage} from '../../objects/Stage';
+import { useBattle } from '../../game/hooks/useBattle';
+import type { Character } from '../../objects/Character';
+export function BattlePage({seed,level,stage,adventure,character,equippedWeapon,onSettle,onAbandon,pending,notice}:{seed:number;level:number;stage:Stage|null;adventure:AdventurePlan|null;equippedWeapon:WeaponLoadout|null;character:Character;onSettle:(kills:number,ticks:number,withdrawing?:boolean)=>void;onAbandon:()=>void;pending:boolean;notice?:string}){
+ const [confirmExit,setConfirmExit]=useState(false);
+ const {state:s,dispatch,pause,resume}=useBattle(seed,character,equippedWeapon,level,stage?.enemies??null,stage?.mora??null,adventure);
+ const reducedMotion=useReducedBattleMotion();
+ return <section className="fixed inset-0 z-40 h-dvh w-screen overflow-hidden bg-[#263d30] text-stone-200">
+ <BattleScene state={s} character={character} bounded={!!stage} reducedMotion={reducedMotion}/>
+ <BattleHUD state={s} title={stage?.title??(adventure?.settings.mode==='timed'?'低语森林 · 限时冒险':'低语森林 · 无尽模式')} pending={pending} confirmExit={confirmExit} notice={notice} onPause={s.phase==='paused'?resume:pause} onExit={()=>{pause();setConfirmExit(true);}}/>
+ <div className="absolute inset-0 z-20 pointer-events-none [&>div]:pointer-events-auto">{s.phase==='collecting'&&<div role="status" className="absolute inset-x-0 bottom-12 text-center text-sm text-amber-100">正在吸收经验与摩拉…</div>}{s.phase==='countdown'&&!confirmExit&&<div role="status" aria-live="polite" className="absolute inset-0 grid place-content-center gap-5 bg-slate-950/75 text-center"><p className="text-sm tracking-[.3em] text-amber-100/70">准备迎战</p><p className="font-serif text-8xl text-amber-100">{Math.ceil(s.countdownTicks/20)}</p><p className="text-sm text-stone-400">WASD / 方向键移动 · 战斗即将开始</p></div>}{s.phase==='paused'&&!confirmExit&&<div role="dialog" aria-modal="true" aria-label="战斗已暂停" className="absolute inset-0 grid place-content-center gap-5 bg-slate-950/90 text-center"><h2 className="font-serif text-4xl text-amber-100">战斗已暂停</h2><p className="text-sm text-stone-400">时间、敌人和技能均已冻结</p><button onClick={resume} className="rounded-full bg-amber-100 px-8 py-3 text-slate-900">继续战斗</button><button onClick={()=>setConfirmExit(true)} className="text-sm text-rose-100">退出试炼</button></div>}{s.phase==='upgrade'&&<UpgradeOptions state={s} onChoose={choice=>dispatch({kind:'upgrade',choice})}/>}{s.phase==='ended'&&<div className="absolute inset-0 grid place-content-center gap-5 bg-slate-950/90 text-center"><h2 className="font-serif text-4xl text-amber-100">{stage?(s.kills>=stage.enemies?'关卡通关':'挑战失败'):adventureComplete(s.adventure,s.combatTicks)?'限时冒险完成':'旅途暂歇'}</h2><p>击败 {s.kills} 名敌人 · 坚持 {Math.floor(s.combatTicks/20)} 秒</p>{!stage&&<AdventureResult state={s}/>}<button disabled={pending} className="rounded-full bg-amber-100 px-8 py-3 text-slate-900 disabled:opacity-40" onClick={()=>onSettle(s.kills,s.combatTicks)}>{pending?'正在结算…':stage&&s.kills<stage.enemies?'结束挑战并返回':'领取奖励并返回'}</button></div>}{confirmExit&&<ExitBattleDialog state={s} stage={!!stage} pending={pending} onConfirm={()=>stage?onAbandon():onSettle(s.kills,s.combatTicks,true)} onCancel={()=>{setConfirmExit(false);resume();}}/>}</div>
+ </section>;
+}

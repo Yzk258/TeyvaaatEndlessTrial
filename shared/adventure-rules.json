@@ -1,0 +1,20 @@
+{
+  "stepSeconds": 30,
+  "healthGrowthPercent": 25,
+  "damageGrowthPercent": 12,
+  "baseSpawnIntervalTicks": 12,
+  "minSpawnIntervalTicks": 4,
+  "maxSpawnCount": 4,
+  "spawnCountStepWaves": 2,
+  "baseEnemyLimit": 80,
+  "maxEnemyLimit": 240,
+  "enemyLimitPerWave": 12,
+  "timeBlockSeconds": 30,
+  "moraPerTimeBlock": 40,
+  "moraPerKill": 10,
+  "primogemsPerTimeBlock": 3,
+  "killBlock": 50,
+  "primogemsPerKillBlock": 2,
+  "completionMora": 150,
+  "completionPrimogems": 10
+}

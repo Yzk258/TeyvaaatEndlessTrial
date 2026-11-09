@@ -1,0 +1,19 @@
+# 胡桃像素立绘
+
+使用内置 image_gen 生成，以用户保存的胡桃原图为身份与衣装参考，以已完成的安柏像素立绘为画风与站姿构图参考。
+
+素材：frontend/public/characters/pixel/hu-tao-v2.png（透明 PNG）。配置：shared/character-portraits.json 中 hu-tao。培养页使用半身取景，图鉴等页面使用全身取景。战斗使用下方单独的 Q 版素材。
+
+设计重点：黑色帽子与红梅枝、长发渐红发梢、红色花形瞳孔、深色中式衣装与金色纹饰；扶帽沿站姿和微笑。构图为居中全身，帽饰和双脚完整，半身取景保留面部、帽饰与上衣。
+
+## 战斗用 Q 版
+
+使用内置 imagegen，以既有立绘为角色参考。透明素材保存于 `frontend/public/characters/pixel/hu-tao-battle-chibi.png`。战斗按 46×46 游戏单位显示，复用移动起伏、翻转和攻击姿态。只有胡桃的战斗渲染选用此素材。
+
+生成提示词如下。
+
+Create a NEW game-ready battle sprite of Hu Tao from Genshin Impact, using the attached existing Hu Tao portrait only as an identity and costume reference. Redesign her as an exaggerated big-headed Q-style chibi, like a playable sprite in a retro top-down action RPG. One centered full-body sprite on a square canvas with actual transparent alpha. Facing forward with a slight three-quarter tilt, both arms relaxed and both tiny feet planted. Exaggerated proportion: hat and face together take about 60–65% of the total sprite height, compact body with short stubby limbs. Oversized dark flat-topped funeral director hat with one clear red plum blossom cluster and small pale talisman emblem, two bright red eyes, a tiny mischievous smile, dark brown hair with reddish ends, dark brown coat with a few gold pixels and red collar, small white socks and dark shoes. Strong instantly readable silhouette with few details. Genuine low-resolution 32–40 logical pixel sprite, enlarged using nearest neighbor; large crisp square pixels, a compact palette, chunky dark outlines and simplified light/shadow clusters. Keep the face bold and readable at 40 screen pixels. Use only a few details per area. Whole sprite occupies about 88 percent of the canvas height, with even clear padding, no cropping. No normal anime body proportions, no intricate embroidery, no smooth contours, no gradients, no semi-realistic rendering, no weapon, no ghost, no background, no glow, no shadow on the ground, no letters, no extra poses.
+
+## 最终提示词
+
+Use case: stylized-concept. Create a NEW game-ready pixel-art character portrait of Hu Tao from Genshin Impact. Image 1 is the identity and outfit reference only. Image 2 is the pixel-art rendering and centered standing portrait composition reference only; do NOT copy Amber's clothing, colors or face. Full body, single character, vertical 2:3 canvas, true transparent background. Faithful Hu Tao identity: very long dark brown hair with reddish tips and long trailing twin sections, straight side bangs, lively red eyes with small pale plum-blossom shaped highlights, playful subtle closed-mouth smile, signature dark flat-topped Chinese funeral-director hat with pale rectangular talisman emblem on the front and red plum blossom branch at the side. Outfit: dark brown/charcoal Chinese-style long-sleeved short coat with stand collar, crimson inner collar and tie, fine pale-gold floral embroidery and frog closures, long split embroidered coattails, short dark shorts, dark knee socks with red flower-and-ribbon details, brown low heeled shoes. Accurate recognisable costume, modest neutral presentation. Stand facing forward, slight three-quarter head tilt, one relaxed hand near her hat brim and other resting at side, both feet visible. Keep pose narrow enough for an RPG portrait cutout; all hair, hat and shoes completely inside frame with 4 percent transparent padding. Head and upper torso centered in upper half so same asset crops beautifully to a half-body cultivation portrait. Detailed polished 16-bit anime pixel art, crisp dark pixel outlines, carefully clustered square pixels, rich cloth embroidery, clear facial detail, limited coordinated palette, clean stepped edges, matching the sophistication of image 2. No smooth vector graphics, no photorealism, no painterly blur, no glow outside silhouette, no solid background, no ground platform, no typography, no logos, no watermark, no weapon, no ghost companion.
