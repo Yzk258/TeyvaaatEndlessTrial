@@ -1,10 +1,10 @@
 import type {Enemy} from '../objects/BattleState';
 import type {LootParticle} from '../objects/LootParticle';
-export const enemyExperience={slime:5,hilichurl:12,boss:100} as const;
+import {enemyDefinitions} from '../objects/Enemy';
 export function createEnemyLoot(enemies:readonly Enemy[],killsBefore:number,targetEnemies:number|null,stageMora:number|null,adventureMoraPerKill=10):readonly LootParticle[]{
  return enemies.flatMap((enemy,index)=>{
   const mora=targetEnemies!==null&&stageMora!==null?Math.floor((killsBefore+index+1)*stageMora/targetEnemies)-Math.floor((killsBefore+index)*stageMora/targetEnemies):adventureMoraPerKill;
-  return ([{kind:'experience',value:enemyExperience[enemy.kind]},{kind:'mora',value:mora}] as const).flatMap(({kind,value})=>{
+  return ([{kind:'experience',value:enemyDefinitions[enemy.kind].experience},{kind:'mora',value:mora}] as const).flatMap(({kind,value})=>{
    const count=Math.min(3,value);
    return Array.from({length:count},(_,i)=>{
     const angle=((enemy.id*137+i*113+(kind==='mora'?47:0))%360)*Math.PI/180,speed=3+(i%2)*2;

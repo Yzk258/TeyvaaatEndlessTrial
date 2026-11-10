@@ -1,11 +1,15 @@
 import type {UserRole} from '../../objects/CurrentUser';
-import {useEffect,useState} from 'react';
+import {useCallback,useEffect,useState} from 'react';
 
-type PageId='overview'|'camp'|'characters'|'wishes'|'stages'|'weapons'|'archive'|'activities'|'account'|'admin';
-const pages:readonly {readonly id:PageId;readonly href:string;readonly label:string}[]=[
+export type PageId='overview'|'camp'|'characters'|'wishes'|'stages'|'weapons'|'archive'|'activities'|'account'|'admin';
+type NavigationPage={readonly id:PageId;readonly href:string;readonly label:string};
+export type NavigationGroup={readonly id:'adventure';readonly label:string;readonly children:readonly NavigationPage[]};
+const entries:readonly (NavigationPage|NavigationGroup)[]=[
   {id:'overview',href:'#/overview',label:'综合'},
-  {id:'camp',href:'#/camp',label:'冒险营地'},
-  {id:'stages',href:'#/stages',label:'关卡挑战'},
+  {id:'adventure',label:'冒险',children:[
+    {id:'camp',href:'#/camp',label:'冒险营地'},
+    {id:'stages',href:'#/stages',label:'关卡挑战'}
+  ]},
   {id:'characters',href:'#/characters',label:'角色培养'},
   {id:'weapons',href:'#/weapons',label:'武器培养'},
   {id:'archive',href:'#/archive',label:'图鉴'},
@@ -14,9 +18,11 @@ const pages:readonly {readonly id:PageId;readonly href:string;readonly label:str
   {id:'account',href:'#/account',label:'我的账号'},
   {id:'admin',href:'#/admin',label:'管理员中心'}
 ];
+const pages=entries.flatMap(entry=>'children' in entry?entry.children:[entry]);
 function parsePage(hash:string):PageId {
   switch(hash){
     case '#/overview':return 'overview';
+    case '#/camp':return 'camp';
     case '#/account':return 'account';
     case '#/admin':return 'admin';
     case '#/archive':return 'archive';
@@ -25,7 +31,7 @@ function parsePage(hash:string):PageId {
     case '#/stages':return 'stages';
     case '#/characters':return 'characters';
     case '#/wishes':return 'wishes';
-    default:return 'camp';
+    default:return 'overview';
   }
 }
 export function usePageNavigation(role:UserRole='user'){
@@ -35,5 +41,10 @@ export function usePageNavigation(role:UserRole='user'){
     window.addEventListener('hashchange',update);
     return ()=>window.removeEventListener('hashchange',update);
   },[]);
-  return {current,pages:pages.filter(p=>p.id!=='admin'||role==='admin'),title:pages.find(p=>p.id===current)!.label};
+  const replacePage=useCallback((page:PageId)=>{
+    const href=pages.find(p=>p.id===page)!.href;
+    if(window.location.hash!==href)window.history.replaceState(window.history.state,'',href);
+    setCurrent(page);
+  },[]);
+  return {current,replacePage,entries:entries.filter(entry=>entry.id!=='admin'||role==='admin'),title:pages.find(p=>p.id===current)!.label};
 }

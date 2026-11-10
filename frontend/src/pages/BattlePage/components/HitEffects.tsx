@@ -1,8 +1,27 @@
-import type {HitEffect} from '../../../game/objects/HitEffect';
+import {playerHitTicks,type HitEffect,type PlayerHitEffect} from '../../../game/objects/HitEffect';
+
+export function PlayerHitEffects({hits,tick,reducedMotion}:{hits:readonly PlayerHitEffect[];tick:number;reducedMotion:boolean}){
+ return <g aria-hidden="true" pointerEvents="none">{hits.map(hit=>{
+  const age=tick-hit.tick;
+  const progress=age/playerHitTicks;
+  return <g key={hit.tick} data-player-hit-effect="damage" opacity={Math.min(1,(1-progress)*3)}>
+   {age<5&&<g transform={'translate('+hit.x+' '+(hit.y-8)+')'} shapeRendering="crispEdges">
+    <path d="M -8 -2 H -2 V -8 H 2 V -2 H 8 V 2 H 2 V 8 H -2 V 2 H -8 Z" fill="#ff9b92" stroke="#601f30" strokeWidth="1"/>
+    {!reducedMotion&&[0,1,2,3].map(i=>{
+     const direction=hit.angle+(i-1.5)*.63,distance=12+age*3;
+     return <rect key={i} x={Math.round(Math.cos(direction)*distance)-2} y={Math.round(Math.sin(direction)*distance)-2} width="4" height="4" fill={i%2===0?'#fff2db':'#ff7a70'}/>;
+    })}
+   </g>}
+   <text x={hit.x} y={hit.y-34-(reducedMotion?0:Math.round(progress*22))} textAnchor="middle" fontFamily="monospace" fontWeight="bold"
+    fontSize="16" fill="#ff8c86" stroke="#3d1523" strokeWidth="3" paintOrder="stroke">−{Math.round(hit.damage*10)/10}</text>
+  </g>;
+ })}</g>;
+}
+
 export function HitEffects({hits,color,reducedMotion}:{hits:readonly HitEffect[];color:string;reducedMotion:boolean}){
  return <g aria-hidden="true" pointerEvents="none">{hits.map(hit=>{
   const progress=1-hit.life/10,opacity=Math.min(1,hit.life/4);
-  const height=hit.enemyKind==='boss'?58:hit.enemyKind==='hilichurl'?34:23;
+  const height=hit.enemyKind==='elite'?65:hit.enemyKind==='boss'?58:hit.enemyKind==='slime'?23:34;
   return <g key={hit.id} data-hit-effect={hit.defeated?'defeated':'hit'} opacity={opacity}>
    {hit.life>=5&&<g transform={'translate('+hit.x+' '+(hit.y-7)+')'} shapeRendering="crispEdges">
     <path d="M -8 -2 H -2 V -8 H 2 V -2 H 8 V 2 H 2 V 8 H -2 V 2 H -8 Z" fill="#fff5d8" opacity={hit.life/10}/>

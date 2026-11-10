@@ -21,7 +21,7 @@ export function OverviewPage({profile,currentUser,selected}:{profile:Profile;cur
  return <div className="space-y-8">
   <header><p className="text-xs tracking-[.3em] text-emerald-100/50">OVERVIEW</p><h1 className="mt-4 font-serif text-4xl text-amber-50">综合</h1><p className="mt-3 text-sm leading-7 text-stone-400">{currentUser?currentUser.nickname+'：':'冒险者：'}这里汇总你的出战角色与收集进度。</p></header>
   <section className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
-   <article className="rounded-2xl border border-white/10 bg-[#142a31]/75 p-6">
+   <article data-tutorial-target="active-character" className="rounded-2xl border border-white/10 bg-[#142a31]/75 p-6">
     <div className="flex items-center justify-between"><h2 className="font-serif text-xl text-amber-50">当前出战</h2><span className="rounded-full border border-amber-100/25 px-3 py-1 text-[11px] text-amber-100">{identity}</span></div>
     {active?<div className="mt-4 flex items-center gap-5">
      <CharacterPortrait characterId={active.id} label={active.name+'半身立绘'} framing="bust" allowReference className="h-28 w-24 shrink-0"/>

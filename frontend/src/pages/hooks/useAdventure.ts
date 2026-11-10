@@ -22,25 +22,53 @@ import {StartRunMessage} from '../../apis/runs/StartRunMessage';
 import {AbandonRunMessage} from '../../apis/runs/AbandonRunMessage';
 import {SubmitRunResultMessage} from '../../apis/runs/SubmitRunResultMessage';
 type PageState={readonly status:'unauthenticated';readonly message?:string}|{readonly status:'loading'}|{readonly status:'error';readonly message:string}|{readonly status:'ready';readonly profile:Profile};
+const defaultCharacter:CharacterId='amber';
+const selectionKey=(userId:string)=>'teyvat-selected-character:'+userId;
+
+function restoreSelection(userId:string,profile:Profile):CharacterId{
+ const saved=localStorage.getItem(selectionKey(userId));
+ const owned=characters.filter(character=>profile.characters.some(entry=>entry.id===character.id));
+ return owned.find(character=>character.id===saved)?.id
+  ??owned.find(character=>character.id===defaultCharacter)?.id
+  ??owned[0]?.id
+  ??defaultCharacter;
+}
+
 export function useAdventure(){
- const [page,setPage]=useState<PageState>({status:'loading'}),[selected,onSelect]=useState<CharacterId>('amber'),[pending,setPending]=useState(false),[notice,setNotice]=useState(''),[run,setRun]=useState<RunStart|null>(null),[result,setResult]=useState<WishResult|null>(null);
+ const [page,setPage]=useState<PageState>({status:'loading'}),[selected,setSelected]=useState<CharacterId>(defaultCharacter),[pending,setPending]=useState(false),[notice,setNotice]=useState(''),[run,setRun]=useState<RunStart|null>(null),[result,setResult]=useState<WishResult|null>(null);
  const [requests,setRequests]=useState<Readonly<Record<string,string>>>(()=>({wish:crypto.randomUUID(),weaponWish:crypto.randomUUID(),...Object.fromEntries(weapons.map(w=>['weapon:'+w.id,crypto.randomUUID()])),start:crypto.randomUUID(),...Object.fromEntries(characters.map(c=>['character:'+c.id,crypto.randomUUID()])),exchangeFates:crypto.randomUUID()}));
  const [wishReveal,setWishReveal]=useState<WishReveal|null>(null);
  const closeWishReveal=()=>setWishReveal(null);
  const renew=(key:string)=>setRequests(r=>({...r,[key]:crypto.randomUUID()}));
  const [authRevision,setAuthRevision]=useState(0);
  const [currentUser,setCurrentUser]=useState<CurrentUser|null>(null);
- const clearSession=()=>{localStorage.removeItem('teyvat-token');setCurrentUser(null);setRun(null);setResult(null);setWeaponResult(null);setWishReveal(null);setExitMessage(null);setNotice('');setPage({status:'unauthenticated'});onSelect('amber');};
+ const onSelect=(id:CharacterId)=>{
+  if(!currentUser||page.status!=='ready'||!page.profile.characters.some(character=>character.id===id))return;
+  setSelected(id);
+  try {
+   localStorage.setItem(selectionKey(currentUser.id),id);
+  } catch {
+   setNotice('出战角色已切换，但浏览器未能记住本次选择');
+  }
+ };
+ const clearSession=()=>{localStorage.removeItem('teyvat-token');setCurrentUser(null);setRun(null);setResult(null);setWeaponResult(null);setWishReveal(null);setExitMessage(null);setNotice('');setPage({status:'unauthenticated'});setSelected(defaultCharacter);};
  const load=()=>{
-  if(!localStorage.getItem('teyvat-token')){setCurrentUser(null);setPage({status:'unauthenticated'});return Promise.resolve();}
-  return Promise.all([new GetCurrentUserMessage().send(),new GetProfileMessage().send()]).then(([user,profile])=>{setCurrentUser(user);setPage({status:'ready',profile});}).catch(error=>{
+  const token=localStorage.getItem('teyvat-token');
+  if(!token){setCurrentUser(null);setSelected(defaultCharacter);setPage({status:'unauthenticated'});return Promise.resolve();}
+  return Promise.all([new GetCurrentUserMessage().send(),new GetProfileMessage().send()]).then(([user,profile])=>{
+   if(localStorage.getItem('teyvat-token')!==token)return;
+   setSelected(restoreSelection(user.id,profile));
+   setCurrentUser(user);
+   setPage({status:'ready',profile});
+  }).catch(error=>{
+   if(localStorage.getItem('teyvat-token')!==token)return;
    if(error instanceof APIError&&error.status===401){clearSession();setPage({status:'unauthenticated',message:'登录已过期，请重新登录'});}
    else setPage({status:'error',message:'无法连接服务器，请确认后端和数据库已启动后重试'});
   });
  };
  useEffect(()=>{load();},[]);
  const perform=(op:()=>Promise<unknown>)=>{if(pending)return;setPending(true);setNotice('');op().catch(error=>{if(error instanceof APIError&&error.status===401){clearSession();setNotice('登录已过期，请重新登录');}else setNotice(error.message);}).finally(()=>setPending(false));};
- const acceptSession=(session:AuthSession,loginEvent=true)=>{if(loginEvent)setAuthRevision(v=>v+1);localStorage.setItem('teyvat-token',session.token);setCurrentUser(session.user);setRun(null);setResult(null);setWeaponResult(null);setWishReveal(null);setExitMessage(null);onSelect('amber');return load();};
+ const acceptSession=(session:AuthSession,loginEvent=true)=>{if(loginEvent)setAuthRevision(v=>v+1);localStorage.setItem('teyvat-token',session.token);setCurrentUser(session.user);setRun(null);setResult(null);setWeaponResult(null);setWishReveal(null);setExitMessage(null);setPage({status:'loading'});return load();};
  const onLogin=(username:string,password:string)=>perform(()=>new LoginMessage(username,password).send().then(response=>{if(response.status!=='authenticated')throw new Error(response.message);return acceptSession(response.session);}));
  const onRegister=(username:string,password:string,nickname:string)=>perform(()=>new RegisterMessage(username,password,nickname).send().then(acceptSession));
  const onBind=(username:string,password:string,nickname:string)=>perform(()=>new BindAccountMessage(username,password,nickname).send().then(session=>acceptSession(session,false)));

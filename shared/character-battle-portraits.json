@@ -1,0 +1,201 @@
+[
+  {
+    "src": "/characters/battle/chibi-sheet-a.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "amber",
+      "barbara",
+      "lisa",
+      "kaeya"
+    ]
+  },
+  {
+    "src": "/characters/battle/chibi-sheet-b.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "bennett",
+      "diluc",
+      "diona",
+      "klee"
+    ]
+  },
+  {
+    "src": "/characters/battle/chibi-sheet-c.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "keqing",
+      "mona",
+      "ningguang",
+      null
+    ]
+  },
+  {
+    "src": "/characters/pixel/hu-tao-battle-chibi.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 1,
+    "rows": 1,
+    "characters": [
+      "hu-tao"
+    ]
+  },
+  {
+    "src": "/characters/battle/chibi-sheet-d.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "qiqi",
+      "jean",
+      "venti",
+      "xiangling"
+    ]
+  },
+  {
+    "src": "/characters/battle/chibi-sheet-e.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "xingqiu",
+      "zhongli",
+      "escoffier",
+      "aino"
+    ]
+  },
+  {
+    "src": "/characters/battle/chibi-sheet-f.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      null,
+      "yae-miko",
+      "nahida",
+      "faruzan"
+    ]
+  },
+  {
+    "src": "/characters/battle/chibi-sheet-g.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "mavuika",
+      "kujou-sara",
+      "clorinde",
+      "lauma"
+    ]
+  },
+  {
+    "src": "/characters/battle/chibi-sheet-h.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "raiden-shogun",
+      "yumemizuki-mizuki",
+      "sandrone",
+      "neuvillette"
+    ]
+  },
+  {
+    "src": "/characters/battle/chibi-sheet-i.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "navia",
+      "nefer",
+      "nicole",
+      "nilou"
+    ]
+  },
+  {
+    "src": "/characters/battle/chibi-sheet-j.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "arlecchino",
+      "chiori",
+      "sucrose",
+      "columbina"
+    ]
+  },
+  {
+    "src": "/characters/battle/chibi-sheet-k.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "kamisato-ayaka",
+      "shenhe",
+      "furina",
+      "skirk"
+    ]
+  },
+  {
+    "src": "/characters/battle/chibi-sheet-l.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      null,
+      "citlali",
+      "xianyun",
+      "xiao"
+    ]
+  },
+  {
+    "src": "/characters/battle/chibi-sheet-m.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "yoimiya",
+      "yelan",
+      null,
+      null
+    ]
+  },
+  {
+    "src": "/characters/battle/odette-chibi-v3.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 1,
+    "rows": 1,
+    "characters": [
+      "odette"
+    ]
+  },
+  {
+    "src": "/characters/battle/vesna-chibi-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 1,
+    "rows": 1,
+    "characters": [
+      "vesna"
+    ]
+  }
+]

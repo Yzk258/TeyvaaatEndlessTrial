@@ -1,0 +1,270 @@
+[
+  {
+    "src": "/characters/display/portrait-early-v3-a.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      null,
+      null,
+      "lisa",
+      "kaeya"
+    ]
+  },
+  {
+    "src": "/characters/display/portrait-early-v2-a.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "amber",
+      "barbara",
+      null,
+      null
+    ]
+  },
+  {
+    "src": "/characters/display/portrait-early-v3-b.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "bennett",
+      null,
+      "diona",
+      "hu-tao"
+    ]
+  },
+  {
+    "src": "/characters/display/portrait-early-v2-b.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "mirroredCharacters": [
+      "diluc"
+    ],
+    "characters": [
+      null,
+      "diluc",
+      null,
+      null
+    ]
+  },
+  {
+    "src": "/characters/display/portrait-early-v3-c.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      null,
+      "keqing",
+      "mona",
+      "ningguang"
+    ]
+  },
+  {
+    "src": "/characters/display/portrait-early-v2-c.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "klee",
+      null,
+      null,
+      null
+    ]
+  },
+  {
+    "src": "/characters/display/portrait-early-v3-d.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "qiqi",
+      null,
+      "venti",
+      "xiangling"
+    ]
+  },
+  {
+    "src": "/characters/display/portrait-early-v2-d.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      null,
+      "jean",
+      null,
+      null
+    ]
+  },
+  {
+    "src": "/characters/display/portrait-early-v3-e.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "xingqiu",
+      null,
+      null,
+      "aino"
+    ]
+  },
+  {
+    "src": "/characters/display/portrait-early-v2-e.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "mirroredCharacters": [
+      "zhongli"
+    ],
+    "characters": [
+      null,
+      "zhongli",
+      "escoffier",
+      null
+    ]
+  },
+  {
+    "src": "/characters/display/portrait-early-v3-f.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "yae-miko",
+      "nahida",
+      "faruzan",
+      null
+    ]
+  },
+  {
+    "src": "/characters/display/portrait-early-v2-f.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      null,
+      null,
+      null,
+      "sandrone"
+    ]
+  },
+  {
+    "src": "/characters/display/odette-ballet-v5.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 1,
+    "rows": 1,
+    "characters": ["odette"]
+  },
+  {
+    "src": "/characters/display/portrait-sheet-d.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "mavuika",
+      "kujou-sara",
+      "clorinde",
+      "lauma"
+    ]
+  },
+  {
+    "src": "/characters/display/portrait-sheet-e.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "raiden-shogun",
+      "yumemizuki-mizuki",
+      "neuvillette",
+      "navia"
+    ]
+  },
+  {
+    "src": "/characters/display/portrait-sheet-f.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "nefer",
+      "nicole",
+      "nilou",
+      "arlecchino"
+    ]
+  },
+  {
+    "src": "/characters/display/portrait-sheet-g.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "chiori",
+      "sucrose",
+      "columbina",
+      "kamisato-ayaka"
+    ]
+  },
+  {
+    "src": "/characters/display/portrait-sheet-h.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "shenhe",
+      "furina",
+      null,
+      "vesna"
+    ]
+  },
+  {
+    "src": "/characters/display/portrait-sheet-i.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 2,
+    "rows": 2,
+    "characters": [
+      "citlali",
+      "xianyun",
+      "xiao",
+      "yoimiya"
+    ]
+  },
+  {
+    "src": "/characters/display/yelan-dice.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 1,
+    "rows": 1,
+    "characters": [
+      "yelan"
+    ]
+  },
+  {
+    "src": "/characters/display/skirk-bust-v2.png",
+    "width": 1254,
+    "height": 1254,
+    "columns": 1,
+    "rows": 1,
+    "characters": [
+      "skirk"
+    ]
+  }
+]

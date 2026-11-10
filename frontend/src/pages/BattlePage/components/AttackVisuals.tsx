@@ -2,6 +2,16 @@ import type {AttackVisual} from '../../../objects/AttackVisual';
 import type {Projectile} from '../../../game/objects/Projectile';
 import type {AttackEffect} from '../../../game/objects/AttackEffect';
 import type {AttackCue} from '../../../game/objects/AttackCue';
+import type {EnemyProjectile} from '../../../game/objects/Enemy';
+
+export function EnemyAttackVisuals({projectiles}:{projectiles:readonly EnemyProjectile[]}){
+ return <g aria-hidden="true" pointerEvents="none">{projectiles.map(shot=><g key={shot.id} data-enemy-projectile={shot.kind}
+  transform={'translate('+shot.x+' '+shot.y+') rotate('+(Math.atan2(shot.dy,shot.dx)*180/Math.PI)+')'}>
+  {shot.kind==='arrow'?<path d="M -10 0 H 7 M 3 -3 L 8 0 L 3 3" fill="none" stroke="#ffd09a" strokeWidth="2"/>
+   :shot.kind==='stone'?<path d="M -6 -2 L -2 -6 4 -5 6 1 2 5 -5 4 Z" fill="#bd945b" stroke="#fff0b1" strokeWidth="1.5"/>
+   :<path d="M -10 0 L -3 -3 0 -6 6 0 0 6 -3 3 Z" fill="#ed633a" stroke="#ffd29c" strokeWidth="1.5"/>}
+ </g>)}</g>;
+}
 function arcPath(x:number,y:number,radius:number,angle:number,degrees:number):string {
  const half=degrees*Math.PI/360,a=angle-half,b=angle+half;
  return 'M '+(x+Math.cos(a)*radius)+' '+(y+Math.sin(a)*radius)+' A '+radius+' '+radius+' 0 '+(degrees>180?1:0)+' 1 '+(x+Math.cos(b)*radius)+' '+(y+Math.sin(b)*radius);

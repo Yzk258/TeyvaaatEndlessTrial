@@ -1,4 +1,5 @@
 import type {AdventurePlan} from '../../objects/AdventurePlan';
+export const eliteWaveInterval=10;
 export function adventureDifficulty(plan:AdventurePlan,ticks:number){
  const r=plan.rules,wave=Math.floor(ticks/(20*r.stepSeconds));
  return {wave:wave+1,health:1+wave*r.healthGrowthPercent/100,damage:1+wave*r.damageGrowthPercent/100,

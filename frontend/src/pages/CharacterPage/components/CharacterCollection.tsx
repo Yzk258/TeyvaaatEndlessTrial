@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {CharacterPortrait} from '../../../components/ui/CharacterPortrait';
+import {CharacterPortrait,hasDisplayPortrait} from '../../../components/ui/CharacterPortrait';
 import {RarityBadge} from '../../../components/ui/RarityBadge';
 import {CharacterFilterControls} from '../../../components/ui/CharacterFilterControls';
 import {CharacterPageControls} from '../../../components/ui/CharacterPageControls';
@@ -7,7 +7,6 @@ import {characters,type CharacterId} from '../../../objects/Character';
 import type {Profile} from '../../../objects/Profile';
 import {elementLabels} from '../../../objects/Element';
 import {allCharacterFilters,characterPageSize,characterRegion,matchesCharacterFilter,regionLabels} from '../../../objects/CharacterFilter';
-import portraits from '../../../../../shared/character-portraits.json';
 export function CharacterCollection({profile,selected,onSelect}:{profile:Profile;selected:CharacterId;onSelect:(id:CharacterId)=>void}){
  const [filter,setFilter]=useState(allCharacterFilters);
  const [index,setIndex]=useState(0);
@@ -27,7 +26,7 @@ export function CharacterCollection({profile,selected,onSelect}:{profile:Profile
     <div className="flex justify-between gap-2 text-xs text-stone-400"><span>{elementLabels[character.element]}</span><span>{owned?'Lv.'+owned.level:'未获得'}</span></div>
     <CharacterPortrait characterId={character.id} label={character.name+'半身立绘'} framing="bust" allowReference className="my-3 h-32 w-full"/>
     <RarityBadge rarity={character.rarity}/><h3 className="mt-2 font-serif text-xl text-amber-50">{character.name}</h3>
-    <p className="mt-2 text-[11px] text-stone-400">{regionLabels[characterRegion(character.id)]} · {Object.hasOwn(portraits,character.id)?'像素立绘':'原图占位'}</p>
+    <p className="mt-2 text-[11px] text-stone-400">{regionLabels[characterRegion(character.id)]} · {hasDisplayPortrait(character.id)?'像素立绘':'原图占位'}</p>
    </button>;
   })}</div>
   <CharacterPageControls index={index} count={pageCount} onChange={setIndex}/>

@@ -1,119 +1,75 @@
 {
-  "slime": {
-    "width": 16,
-    "height": 16,
-    "palette": {
-      "o": "#25536d",
-      "c": "#62b9d1",
-      "d": "#3b91b3",
-      "l": "#a5e2e9",
-      "e": "#17384e",
-      "w": "#e5f9ee",
-      "m": "#e1a4ae"
+  "sheets": [
+    {
+      "src": "/enemies/enemy-sheet-a.png",
+      "width": 1254,
+      "height": 1254,
+      "columns": 2,
+      "rows": 2
     },
-    "rows": [
-      "................",
-      "................",
-      "................",
-      ".....oooooo.....",
-      "...oolllllloo...",
-      "...ollllllllo...",
-      "..oclllcccccco..",
-      "..ocwcccccccco..",
-      "..occcccccccco..",
-      "..occeeccceeco..",
-      "..occeeccceeco..",
-      "..olcccmmcccco..",
-      "..ooddddddddoo..",
-      "...ooddddddoo...",
-      "....oooooooo....",
-      "................"
-    ]
-  },
-  "hilichurl": {
-    "width": 20,
-    "height": 24,
-    "palette": {
-      "o": "#3b302c",
-      "h": "#614732",
-      "c": "#8c6949",
-      "d": "#5c4436",
-      "m": "#e2d5b2",
-      "l": "#f8ebca",
-      "e": "#392f2a",
-      "r": "#b0594b",
-      "t": "#b59b6c"
+    {
+      "src": "/enemies/enemy-sheet-b.png",
+      "width": 1254,
+      "height": 1254,
+      "columns": 2,
+      "rows": 2
     },
-    "rows": [
-      "....mm........mm....",
-      "...omm........mmo...",
-      "...omm........mmo...",
-      "...ooo........ooo...",
-      "...ooollllllllooo...",
-      "...oomllllllllmoo...",
-      "...hhlmmmmmmmmmhh...",
-      "...hhleremmeremhh...",
-      "...hhleeerreeemhh...",
-      "...hhleeerreeemhh...",
-      "...hhlmmmrrmmmmhh...",
-      "...hhmmmeeeemmmhh...",
-      "...hhmmmmmmmmmmhh...",
-      "...hhoccccccccohh...",
-      "....oochhhhhhcoo....",
-      "...dddchhtthhcddd...",
-      "...dddcccttcccddd...",
-      "...dddcccttcccddd...",
-      "...dddcccttcccddd...",
-      "...dddttttttttddd...",
-      "......oooooooo......",
-      "......oooooooo......",
-      "......ddd..ddd......",
-      "......ddd..ddd......"
-    ]
-  },
-  "boss": {
-    "width": 24,
-    "height": 28,
-    "palette": {
-      "o": "#302a2c",
-      "h": "#553b36",
-      "c": "#70503e",
-      "d": "#463538",
-      "m": "#d9c29b",
-      "l": "#f4dfb5",
-      "e": "#30282d",
-      "r": "#ad5147",
-      "t": "#b39260"
+    {
+      "src": "/enemies/pyro-abyss-mage-v2.png",
+      "width": 1254,
+      "height": 1254,
+      "columns": 1,
+      "rows": 1
+    }
+  ],
+  "sprites": {
+    "slime": {
+      "name": "水史莱姆",
+      "sheet": 0,
+      "cell": 0,
+      "size": 40
     },
-    "rows": [
-      "...mmm............mmm...",
-      "...mmm............mmm...",
-      "..mmmm............mmmm..",
-      "..mmmoooooooooooooommm..",
-      "..mmmoolllllllllloommm..",
-      "..mrrrmllllllllllmrrrm..",
-      "...rrrmmmmmmmmmmmmrrr...",
-      ".....omeeeerreeeemo.....",
-      ".....omerrerrerremo.....",
-      ".....omeeeerreeeemo.....",
-      ".....ommmmmrrmmmmmo.....",
-      ".....ommmmmrrmmmmmo.....",
-      ".....ommmeeeeeemmmo.....",
-      ".....ommmmmmmmmmmmo.....",
-      "...rrrrrccccccccrrrrr...",
-      "..drrrrrhhhhhhhhrrrrrd..",
-      "..drrrrrhhhmmhhhrrrrrd..",
-      "..ddddcchhtmmthhccdddd..",
-      "..ddddcccctmmtccccdddd..",
-      "..ddddcccccmmcccccdddd..",
-      "..ddddccccccccccccdddd..",
-      "..ddddccccccccccccdddd..",
-      "..mmmmccccccccccccmmmm..",
-      "..mmmmttttttttttttmmmm..",
-      "......tttttttttttt......",
-      "......ooooo..ooooo......",
-      "......ooooo..ooooo......",
-      "......ooooo..ooooo......"
-    ]
+    "hilichurl": {
+      "name": "丘丘人",
+      "sheet": 0,
+      "cell": 1,
+      "size": 50
+    },
+    "shooter": {
+      "name": "射手丘丘人",
+      "sheet": 0,
+      "cell": 2,
+      "size": 50
+    },
+    "samachurl": {
+      "name": "岩丘丘萨满",
+      "sheet": 0,
+      "cell": 3,
+      "size": 46
+    },
+    "abyssMage": {
+      "name": "火深渊法师",
+      "sheet": 2,
+      "cell": 0,
+      "size": 52
+    },
+    "whopperflower": {
+      "name": "炽热骗骗花",
+      "sheet": 1,
+      "cell": 3,
+      "size": 48
+    },
+    "elite": {
+      "name": "丘丘岩盔王",
+      "sheet": 1,
+      "cell": 1,
+      "size": 84
+    },
+    "boss": {
+      "name": "火斧丘丘暴徒",
+      "sheet": 1,
+      "cell": 0,
+      "size": 76
+    }
   }
 }
