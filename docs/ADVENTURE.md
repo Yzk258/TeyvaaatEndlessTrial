@@ -42,22 +42,18 @@
 
 ## 类型、函数与服务边界
 
-- AdventureMode 是 timed／endless 的封闭类型；前端 AdventureSettings 使用区分联合，后端用枚举与 Option 表达时长并校验合法组合。
-- AdventurePlan 包含设置与规则快照。StartRunMessage 验证设置、固定角色与武器，并把快照写入 run_adventures；重试相同请求返回同一局，换模式或时长必须使用新请求。
+- AdventureSettings 使用区分联合表达限时与无尽。开局时校验限时范围，并生成包含规则、角色与武器的本局快照。
 - adventureDifficulty、adventureComplete、adventureReward 是只依赖输入的纯函数。stepBattle 消费不可变战斗状态，处理生成、伤害、倒计时和结束，不写钱包。
-- AdventureTable 与其初始化器封装快照持久化；SQL 和连接操作留在所属表模块。
-- SubmitRunResultMessage 读取归属与开局快照，校验现实经过时间、所选时长、最大可生成敌人数，再在同一事务中写入钱包、流水和 Settled 状态。客户端只提交击杀与有效步数，不能指定奖励金额。
-- AbandonRunMessage 对冒险接收进度并执行同一套结算；关卡放弃仍记录 Abandoned。相同结果重复提交不再发奖，不同结果的重复提交被拒绝。
+- settleTrial 根据本局快照、击杀数和有效步数计算奖励。IndexedDB 在同一次事务中保存货币、试炼结果及通关记录。
+- 结算记录按试炼 ID 防止重复发奖。冒险撤离按有效进度结算，关卡放弃直接返回关卡页。
 
-本版对局仍在客户端模拟，服务器检查时间和数量边界，并非完整的服务器逐帧重演。刷新或关闭网页无法恢复内存中的局内进度；需要主动使用撤离按钮完成结算。
+刷新或关闭网页时会结束当前未结算对局。冒险中可使用撤离按钮保存本局累计奖励。
 
 ## 验证
 
-- npm run build：TypeScript 与前端构建。
-- npm run compile:backend：Scala 编译。
-- node tools/verify-battle.mjs：独立战斗计时、难度增长、生成数量与上限、伤害、限时结束、暂停冻结和进度奖励。
-- powershell -NoProfile -ExecutionPolicy Bypass -File tools/backend.ps1 verify-adventure：刷怪数量逐帧交叉核对、设置验证、快照、零进度、撤离奖励、完成奖励、异常数据与并发结算。
-- node tools/verify-adventure-ui.mjs：独立浏览器验证输入边界、自定义开局、无尽开局、退出弹窗、奖励结果和限时倒计时。
-- node tools/verify-api.mjs、node tools/verify-stages.mjs、node tools/verify-abandon.mjs：原有账户、祈愿、培养和关卡回归。
+- `npm run build` 检查类型并构建游戏。
+- `node tools/verify-battle.mjs` 检查战斗计时、难度、刷怪、伤害、暂停和进度奖励。
+- `node tools/verify-local-save.mjs` 检查通关、撤离奖励与重复结算。
+- `node tools/verify-adventure-ui.mjs` 在浏览器检查新建存档、模式切换、撤离和刷新后继续。
 
 页面截图位于 docs/assets/adventure-timed.png、adventure-custom.png、adventure-endless.png、adventure-withdrawal.png。

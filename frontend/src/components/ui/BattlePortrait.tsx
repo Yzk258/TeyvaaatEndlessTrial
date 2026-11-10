@@ -1,12 +1,13 @@
 import type {ReactNode} from 'react';
 import portraitSheets from '../../../../shared/character-battle-portraits.json';
+import {gameAsset} from '../../system/gameAsset';
 
 const battlePortraits=new Map(portraitSheets.flatMap(sheet=>{
  const cellWidth=sheet.width/sheet.columns,cellHeight=sheet.height/sheet.rows;
  return sheet.characters.flatMap((id,index)=>{
   if(id===null)return [];
   const x=index%sheet.columns*cellWidth,y=Math.floor(index/sheet.columns)*cellHeight;
-  return [[id,{src:sheet.src,width:sheet.width,height:sheet.height,viewBox:[x,y,cellWidth,cellHeight].join(' ')}]] as const;
+  return [[id,{src:gameAsset(sheet.src),width:sheet.width,height:sheet.height,viewBox:[x,y,cellWidth,cellHeight].join(' ')}]] as const;
  });
 }));
 

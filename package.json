@@ -3,13 +3,6 @@
   "private": true,
   "scripts": {
     "dev": "npm --prefix frontend run dev",
-    "build": "npm --prefix frontend run build",
-    "start:backend": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/backend.ps1 run",
-    "compile:backend": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/backend.ps1 compile",
-    "db:init": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/database.ps1 init",
-    "db:status": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/database.ps1 status",
-    "db:backup": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/database.ps1 backup",
-    "verify:database-transaction": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/backend.ps1 verify-db",
-    "admin:setup": "node tools/setup-admin.mjs"
+    "build": "npm --prefix frontend run build"
   }
 }

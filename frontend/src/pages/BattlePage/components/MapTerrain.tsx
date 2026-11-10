@@ -1,8 +1,9 @@
 import {memo,useMemo,useId} from 'react';
 import {generateChunk,nearbyChunks,TILE_SIZE} from '../../../game/functions/generateMap';
 import type {MapTile} from '../../../game/objects/MapTile';
-const groundAtlas='/terrain/ground-v2.png',objectAtlas='/terrain/objects-v2.png';
-const ruinAtlas='/terrain/ruins-v2.png';
+import {gameAsset} from '../../../system/gameAsset';
+const groundAtlas=gameAsset('/terrain/ground-v2.png'),objectAtlas=gameAsset('/terrain/objects-v2.png');
+const ruinAtlas=gameAsset('/terrain/ruins-v2.png'),waypointAtlas=gameAsset('/terrain/waypoint-v2.png');
 const textures=[{name:'meadow',x:0,y:0},{name:'sand',x:500,y:0},{name:'water',x:0,y:500},{name:'stone',x:500,y:500}] as const;
 const groundMaterials=[...textures.map(texture=>texture.name),'paving'] as const;
 function groundMaterial(t:MapTile){
@@ -20,7 +21,7 @@ function shorePath(t:MapTile):string{
 function Feature({tile:t}:{tile:MapTile}){
  if(t.kind==='waypoint'){
   const x=t.x+TILE_SIZE/2,y=t.y+TILE_SIZE/2;
-  return <image href="/terrain/waypoint-v2.png" x={x-25} y={y-62} width="50" height="75" className="[image-rendering:pixelated]" data-map-feature="waypoint"/>;
+  return <image href={waypointAtlas} x={x-25} y={y-62} width="50" height="75" className="[image-rendering:pixelated]" data-map-feature="waypoint"/>;
  }
  const ruin=t.kind==='ruinArch'?{box:'48 17 412 446',w:72,h:78,foot:8}:
   t.kind==='ruinWall'?{box:'526 166 450 200',w:64,h:29,foot:8}:

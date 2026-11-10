@@ -3,7 +3,7 @@ import {createPortal} from 'react-dom';
 import type {PageId} from '../../pages/hooks/usePageNavigation';
 
 type GuideStep={readonly page:PageId;readonly target:string;readonly title:string;readonly description:string};
-const steps:readonly GuideStep[]=[
+const guide:readonly GuideStep[]=[
  {page:'overview',target:'active-character',title:'当前出战',description:'这里可以查看下次出战的角色、等级和装备。旁边汇总试炼次数和收集进度。'},
  {page:'camp',target:'adventure-mode',title:'选择冒险方式',description:'限时冒险可以设定时长，无尽模式会逐波增加难度。两种模式都可以主动撤离并按进度结算。'},
  {page:'camp',target:'adventure-start',title:'进入战斗',description:'从这里开始冒险。WASD 或方向键移动，角色会自动攻击。击败敌人获得经验，升级时三选一。按 Esc 可暂停。'},
@@ -13,9 +13,8 @@ const steps:readonly GuideStep[]=[
  {page:'archive',target:'archive-tabs',title:'图鉴',description:'切换角色或武器图鉴，查看基础属性、成长和天赋。未解锁的条目会灰显。'},
  {page:'wishes',target:'wish-pools',title:'祈愿',description:'用纠缠之缘在角色或武器卡池祈愿。两个卡池各自记录四星和五星保底。'},
  {page:'activities',target:'page-title',title:'活动',description:'这里汇总签到和后续活动预告。'},
- {page:'account',target:'page-title',title:'我的账号',description:'查看账号身份、绑定体验档案或退出登录。'}
+ {page:'overview',target:'save-tools',title:'本地存档',description:'进度自动保存。可以导出备份，也可以返回标题切换存档或导入备份。'}
 ];
-const adminStep:GuideStep={page:'admin',target:'page-title',title:'管理员中心',description:'管理员可查看账号列表并调整其他用户的身份。'};
 
 type FocusRect={readonly left:number;readonly top:number;readonly width:number;readonly height:number};
 type GuideLayout={readonly focus:FocusRect|null;readonly left:number;readonly top:number};
@@ -40,10 +39,9 @@ function guideLayout(anchor:DOMRect|undefined,card:DOMRect,width:number,height:n
  return {focus,left,top:focus.top+focus.height/2<height/2?Math.max(gap,topLimit):gap};
 }
 
-export function TutorialGuide({currentPage,admin,goTo,onClose}:{currentPage:PageId;admin:boolean;goTo:(page:PageId)=>void;onClose:()=>void}){
+export function TutorialGuide({currentPage,goTo,onClose}:{currentPage:PageId;goTo:(page:PageId)=>void;onClose:()=>void}){
  const [origin]=useState(()=>({page:currentPage,x:window.scrollX,y:window.scrollY}));
  const [index,setIndex]=useState(0);
- const guide=admin?[...steps,adminStep]:steps;
  const step=guide[Math.min(index,guide.length-1)];
  const [layout,setLayout]=useState<GuideLayout|null>(null);
  const panel=useRef<HTMLDivElement>(null);

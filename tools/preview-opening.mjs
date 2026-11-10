@@ -5,7 +5,7 @@ import {createElement} from '../frontend/node_modules/react/index.js';
 import {renderToStaticMarkup} from '../frontend/node_modules/react-dom/server.node.js';
 const server=await createServer({root:fileURLToPath(new URL('../frontend',import.meta.url)),server:{middlewareMode:true,hmr:false},appType:'custom'});
 await server.ssrLoadModule('/src/pages/OpeningPage/index.tsx').then(async({OpeningPage})=>{
- const markup=renderToStaticMarkup(createElement(OpeningPage,{status:'ready',pending:false,initialLogin:false,authRevision:0,user:null,onEnter:()=>{},onRetry:()=>{},onLogin:()=>{},onRegister:()=>{}})).replaceAll('src="/backgrounds/','src="../../frontend/public/backgrounds/');
+ const markup=renderToStaticMarkup(createElement(OpeningPage,{save:null,saves:[],loading:false,pending:false,notice:'',error:''})).replaceAll('src="/backgrounds/','src="../../frontend/public/backgrounds/');
  const assets=await fs.readdir(fileURLToPath(new URL('../frontend/dist/assets',import.meta.url)));
  const cssFile=assets.find(name=>name.endsWith('.css'));
  const css=cssFile?await fs.readFile(fileURLToPath(new URL('../frontend/dist/assets/'+cssFile,import.meta.url)),'utf8'):'';

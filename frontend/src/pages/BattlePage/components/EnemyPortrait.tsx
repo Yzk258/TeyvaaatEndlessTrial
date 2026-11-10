@@ -4,6 +4,7 @@ import type {Enemy} from '../../../game/objects/BattleState';
 import type {HitEffect} from '../../../game/objects/HitEffect';
 import {enemyDefinitions} from '../../../game/objects/Enemy';
 import {enemyWindupTicks} from '../../../game/functions/enemyAttacks';
+import {gameAsset} from '../../../system/gameAsset';
 
 const sprites=Object.entries(appearance.sprites).map(([kind,variant])=>{
  const sheet=appearance.sheets[variant.sheet];
@@ -13,7 +14,7 @@ const sprites=Object.entries(appearance.sprites).map(([kind,variant])=>{
 });
 export const EnemySpriteLibrary=memo(function EnemySpriteLibrary({prefix}:{prefix:string}){
  return <>{sprites.map(({id,sheet,viewBox})=><symbol key={id} id={prefix+'-'+id}
-  viewBox={viewBox} overflow="hidden"><image href={sheet.src} width={sheet.width} height={sheet.height} imageRendering="pixelated"/></symbol>)}</>;
+ viewBox={viewBox} overflow="hidden"><image href={gameAsset(sheet.src)} width={sheet.width} height={sheet.height} imageRendering="pixelated"/></symbol>)}</>;
 });
 export function EnemyPortrait({enemy,tick,hit,spritePrefix,reducedMotion=false}:{enemy:Enemy;tick:number;hit?:HitEffect;spritePrefix:string;reducedMotion?:boolean}){
  const {name,size}=appearance.sprites[enemy.kind];

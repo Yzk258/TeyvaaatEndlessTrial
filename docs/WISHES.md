@@ -25,26 +25,19 @@
 
 ## 类型与执行边界
 
-- shared/weapons.json 与 shared/characters.json：rarity 是数字3／4／5；角色仅允许4／5。后端使用 Rarity 枚举解码，前端使用字面量联合类型。
-- shared/wish-rules.json：前后端共享概率、软保底、硬保底与费用配置。
-- wishes/objects/WishReward：角色／武器封闭奖励类型，JSON 为 kind、id、rarity。两个抽取接口都返回 reward、duplicate、profile，前端按实际奖励展示，不按卡池名称推断类别。
-- wishes/utils/wishRules.scala：星级判断、候选过滤、保底状态转换均为纯函数。随机数只由后端在 IO 边界生成。
-- 两个公开抽取消息的 plan：锁用户行、检查回执、校验资源、抽取、扣费、发放、保存保底与回执，全部在同一事务中；客户端不传概率、星级或抽取结果。
+- `shared/weapons.json` 和 `shared/characters.json` 保存物品与角色的星级。`shared/wish-rules.json` 保存概率、保底与费用配置。
+- `WishReward` 以 `kind` 区分角色和武器。页面按实际抽取的奖励展示动画和结果。
+- `performWish` 负责星级判断、候选过滤、重复记录和保底转换。它接收可替换的随机数函数，便于验证概率边界。
+- 纠缠之缘扣除、物品发放和保底更新一起写入当前存档。保存成功后播放祈愿动画。
 
-## 数据升级
+## 存档字段
 
-新增 wishes 所属的 banner_pity 表，以用户与卡池作为复合主键，分别记录 four_count、five_count。数据库约束限定合法卡池及计数范围。旧 pity_states 与 weapon_pity 继续保留供迁移读取，不再作为新祈愿计数来源。
-
-wish-rarity.v2 迁移将旧版0～4进度同时计入对应池的新四星／五星进度，保留已有资产、培养等级和装备。迁移仅记录一次；重复插入不会覆盖已有新计数。旧五抽补缺规则终止。
-
-Profile 的 pity、weaponPity 现在表示对应池五星进度，新增 fourStarPity、weaponFourStarPity 表示四星进度。旧培养回执的快照缺少新四星字段时解码为0。新祈愿回执采用版本指纹，旧规则下已使用的请求标识会被拒绝复用，防止再次扣款发奖；更新后刷新页面生成新请求标识。
+`Profile` 中的 `pity` 和 `weaponPity` 分别记录角色池、武器池的五星进度。`fourStarPity` 和 `weaponFourStarPity` 记录两池的四星进度。
 
 ## 验证
 
-- tools/backend.ps1 verify-wishes：直接调用实际纯函数，验证概率边界、软／硬保底、五星优先、四星顺延、重置与奖励隔离。
-- tools/backend.ps1 verify-wish-db：独立测试档案验证旧计数迁移、并发请求仅扣费一次、卡池隔离、15件武器培养、装备快照和失败回滚。
-- node tools/verify-weapons.mjs：通过公开HTTP接口验证武器星级、幂等抽取和升级、10抽四星或以上、余额不足保持状态。
-- npm run build：前端类型检查与构建；node tools/verify-battle.mjs：战斗回归。
+- `node tools/verify-local-save.mjs` 检查两池保底、纠缠之缘消耗和余额不足。
+- `npm run build` 检查类型并构建游戏。
 
 ## 参考来源
 

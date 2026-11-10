@@ -4,11 +4,6 @@ dist/
 target/
 .vite/
 .tooling/
-.bsp/
-.bloop/
-.metals/
-.scala-build/
-/backend/null/Coursier/
 __pycache__/
 *.pyc
 *.tsbuildinfo

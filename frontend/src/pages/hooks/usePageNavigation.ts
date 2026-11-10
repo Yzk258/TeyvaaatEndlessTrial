@@ -1,7 +1,6 @@
-import type {UserRole} from '../../objects/CurrentUser';
 import {useCallback,useEffect,useState} from 'react';
 
-export type PageId='overview'|'camp'|'characters'|'wishes'|'stages'|'weapons'|'archive'|'activities'|'account'|'admin';
+export type PageId='overview'|'camp'|'characters'|'wishes'|'stages'|'weapons'|'archive'|'activities';
 type NavigationPage={readonly id:PageId;readonly href:string;readonly label:string};
 export type NavigationGroup={readonly id:'adventure';readonly label:string;readonly children:readonly NavigationPage[]};
 const entries:readonly (NavigationPage|NavigationGroup)[]=[
@@ -14,17 +13,13 @@ const entries:readonly (NavigationPage|NavigationGroup)[]=[
   {id:'weapons',href:'#/weapons',label:'武器培养'},
   {id:'archive',href:'#/archive',label:'图鉴'},
   {id:'wishes',href:'#/wishes',label:'祈愿'},
-  {id:'activities',href:'#/activities',label:'活动'},
-  {id:'account',href:'#/account',label:'我的账号'},
-  {id:'admin',href:'#/admin',label:'管理员中心'}
+  {id:'activities',href:'#/activities',label:'活动'}
 ];
 const pages=entries.flatMap(entry=>'children' in entry?entry.children:[entry]);
 function parsePage(hash:string):PageId {
   switch(hash){
     case '#/overview':return 'overview';
     case '#/camp':return 'camp';
-    case '#/account':return 'account';
-    case '#/admin':return 'admin';
     case '#/archive':return 'archive';
     case '#/activities':return 'activities';
     case '#/weapons':return 'weapons';
@@ -34,7 +29,7 @@ function parsePage(hash:string):PageId {
     default:return 'overview';
   }
 }
-export function usePageNavigation(role:UserRole='user'){
+export function usePageNavigation(){
   const [current,setCurrent]=useState<PageId>(()=>parsePage(window.location.hash));
   useEffect(()=>{
     const update=()=>setCurrent(parsePage(window.location.hash));
@@ -46,5 +41,5 @@ export function usePageNavigation(role:UserRole='user'){
     if(window.location.hash!==href)window.history.replaceState(window.history.state,'',href);
     setCurrent(page);
   },[]);
-  return {current,replacePage,entries:entries.filter(entry=>entry.id!=='admin'||role==='admin'),title:pages.find(p=>p.id===current)!.label};
+  return {current,replacePage,entries,title:pages.find(p=>p.id===current)!.label};
 }

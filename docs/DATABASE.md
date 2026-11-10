@@ -1,5 +1,7 @@
 # PostgreSQL 数据库系统
 
+> 旧版数据库的历史记录。当前游戏的启动与存档方式见 [项目首页](../README.md)。
+
 账号系统新增accounts、login_sessions、login_attempts、role_audit四张表，保存凭据/角色、会话摘要、失败限速与角色审计。旧users和资产表保留。现支持用户名密码登录，以下“仅体验令牌”的边界说明为历史状态，以 [账号说明](AUTH.md) 为准。
 
 ## 当前状态

@@ -1,98 +1,132 @@
+import {useCallback,useEffect,useRef,useState} from 'react';
 import type {AdventureSettings} from '../../objects/AdventureSettings';
+import type {RunStart,WishResult} from '../../objects/Profile';
 import type {WishReveal} from '../WishPage/objects/WishReveal';
-import {PerformWeaponWishMessage} from '../../apis/wishes/PerformWeaponWishMessage';
-import {LevelUpWeaponMessage} from '../../apis/weapons/LevelUpWeaponMessage';
-import {EquipWeaponMessage} from '../../apis/weapons/EquipWeaponMessage';
-import {weapons,type WeaponWishResult} from '../../objects/Weapon';
-import {useEffect,useState} from 'react';
-import {characters,type CharacterId} from '../../objects/Character';
-import type {Profile,RunStart,WishResult} from '../../objects/Profile';
-import {GetCurrentUserMessage} from '../../apis/identity/GetCurrentUserMessage';
-import {LoginMessage} from '../../apis/identity/LoginMessage';
-import {RegisterMessage} from '../../apis/identity/RegisterMessage';
-import {BindAccountMessage} from '../../apis/identity/BindAccountMessage';
-import {LogoutMessage} from '../../apis/identity/LogoutMessage';
-import type {CurrentUser,AuthSession} from '../../objects/CurrentUser';
-import {APIError} from '../../system/api/APIError';
-import {GetProfileMessage} from '../../apis/economy/GetProfileMessage';
-import {ExchangeFatesMessage} from '../../apis/economy/ExchangeFatesMessage';
-import {LevelUpCharacterMessage} from '../../apis/characters/LevelUpCharacterMessage';
-import {PerformWishMessage} from '../../apis/wishes/PerformWishMessage';
-import {StartRunMessage} from '../../apis/runs/StartRunMessage';
-import {AbandonRunMessage} from '../../apis/runs/AbandonRunMessage';
-import {SubmitRunResultMessage} from '../../apis/runs/SubmitRunResultMessage';
-type PageState={readonly status:'unauthenticated';readonly message?:string}|{readonly status:'loading'}|{readonly status:'error';readonly message:string}|{readonly status:'ready';readonly profile:Profile};
-const defaultCharacter:CharacterId='amber';
-const selectionKey=(userId:string)=>'teyvat-selected-character:'+userId;
-
-function restoreSelection(userId:string,profile:Profile):CharacterId{
- const saved=localStorage.getItem(selectionKey(userId));
- const owned=characters.filter(character=>profile.characters.some(entry=>entry.id===character.id));
- return owned.find(character=>character.id===saved)?.id
-  ??owned.find(character=>character.id===defaultCharacter)?.id
-  ??owned[0]?.id
-  ??defaultCharacter;
-}
+import {createSave,starterCharacter,type LocalSave} from '../../game/local/LocalSave';
+import {addSave,downloadSave,importSave,listSaves,loadSave,updateSave} from '../../game/local/saveStore';
+import {equipWeapon,exchangeFate,levelUp,performWish,selectCharacter,settleTrial,startTrial,trialReward} from '../../game/local/progression';
 
 export function useAdventure(){
- const [page,setPage]=useState<PageState>({status:'loading'}),[selected,setSelected]=useState<CharacterId>(defaultCharacter),[pending,setPending]=useState(false),[notice,setNotice]=useState(''),[run,setRun]=useState<RunStart|null>(null),[result,setResult]=useState<WishResult|null>(null);
- const [requests,setRequests]=useState<Readonly<Record<string,string>>>(()=>({wish:crypto.randomUUID(),weaponWish:crypto.randomUUID(),...Object.fromEntries(weapons.map(w=>['weapon:'+w.id,crypto.randomUUID()])),start:crypto.randomUUID(),...Object.fromEntries(characters.map(c=>['character:'+c.id,crypto.randomUUID()])),exchangeFates:crypto.randomUUID()}));
+ const [saves,setSaves]=useState<readonly LocalSave[]>([]);
+ const [save,setSave]=useState<LocalSave|null>(null);
+ const [loading,setLoading]=useState(true);
+ const [saveError,setSaveError]=useState('');
+ const [pending,setPending]=useState(false);
+ const [notice,setNotice]=useState('');
+ const [run,setRun]=useState<RunStart|null>(null);
+ const [result,setResult]=useState<WishResult|null>(null);
+ const [weaponResult,setWeaponResult]=useState<WishResult|null>(null);
  const [wishReveal,setWishReveal]=useState<WishReveal|null>(null);
- const closeWishReveal=()=>setWishReveal(null);
- const renew=(key:string)=>setRequests(r=>({...r,[key]:crypto.randomUUID()}));
- const [authRevision,setAuthRevision]=useState(0);
- const [currentUser,setCurrentUser]=useState<CurrentUser|null>(null);
- const onSelect=(id:CharacterId)=>{
-  if(!currentUser||page.status!=='ready'||!page.profile.characters.some(character=>character.id===id))return;
-  setSelected(id);
-  try {
-   localStorage.setItem(selectionKey(currentUser.id),id);
-  } catch {
-   setNotice('出战角色已切换，但浏览器未能记住本次选择');
-  }
- };
- const clearSession=()=>{localStorage.removeItem('teyvat-token');setCurrentUser(null);setRun(null);setResult(null);setWeaponResult(null);setWishReveal(null);setExitMessage(null);setNotice('');setPage({status:'unauthenticated'});setSelected(defaultCharacter);};
- const load=()=>{
-  const token=localStorage.getItem('teyvat-token');
-  if(!token){setCurrentUser(null);setSelected(defaultCharacter);setPage({status:'unauthenticated'});return Promise.resolve();}
-  return Promise.all([new GetCurrentUserMessage().send(),new GetProfileMessage().send()]).then(([user,profile])=>{
-   if(localStorage.getItem('teyvat-token')!==token)return;
-   setSelected(restoreSelection(user.id,profile));
-   setCurrentUser(user);
-   setPage({status:'ready',profile});
-  }).catch(error=>{
-   if(localStorage.getItem('teyvat-token')!==token)return;
-   if(error instanceof APIError&&error.status===401){clearSession();setPage({status:'unauthenticated',message:'登录已过期，请重新登录'});}
-   else setPage({status:'error',message:'无法连接服务器，请确认后端和数据库已启动后重试'});
-  });
- };
- useEffect(()=>{load();},[]);
- const perform=(op:()=>Promise<unknown>)=>{if(pending)return;setPending(true);setNotice('');op().catch(error=>{if(error instanceof APIError&&error.status===401){clearSession();setNotice('登录已过期，请重新登录');}else setNotice(error.message);}).finally(()=>setPending(false));};
- const acceptSession=(session:AuthSession,loginEvent=true)=>{if(loginEvent)setAuthRevision(v=>v+1);localStorage.setItem('teyvat-token',session.token);setCurrentUser(session.user);setRun(null);setResult(null);setWeaponResult(null);setWishReveal(null);setExitMessage(null);setPage({status:'loading'});return load();};
- const onLogin=(username:string,password:string)=>perform(()=>new LoginMessage(username,password).send().then(response=>{if(response.status!=='authenticated')throw new Error(response.message);return acceptSession(response.session);}));
- const onRegister=(username:string,password:string,nickname:string)=>perform(()=>new RegisterMessage(username,password,nickname).send().then(acceptSession));
- const onBind=(username:string,password:string,nickname:string)=>perform(()=>new BindAccountMessage(username,password,nickname).send().then(session=>acceptSession(session,false)));
- const onLogout=()=>perform(()=>new LogoutMessage().send().then(clearSession));
- const onLevel=()=>perform(()=>new LevelUpCharacterMessage(selected,requests['character:'+selected]).send().then(profile=>{setPage({status:'ready',profile});setNotice('角色已提升一级');renew('character:'+selected);}));
- const onWish=()=>{if(wishReveal)return;perform(()=>new PerformWishMessage(requests.wish).send().then(r=>{renew('wish');setWishReveal({...r.reward,duplicate:r.duplicate,sequence:requests.wish});setResult(r);setPage({status:'ready',profile:r.profile});}));};
- const onExchangeFates=()=>perform(()=>new ExchangeFatesMessage(1,requests.exchangeFates).send().then(profile=>{renew('exchangeFates');setPage({status:'ready',profile});setNotice('已用原石兑换 1 个纠缠之缘');}));
- const [weaponResult,setWeaponResult]=useState<WeaponWishResult|null>(null);
- const onWeaponWish=()=>{if(wishReveal)return;perform(()=>new PerformWeaponWishMessage(requests.weaponWish).send().then(r=>{renew('weaponWish');setWishReveal({...r.reward,duplicate:r.duplicate,sequence:requests.weaponWish});setWeaponResult(r);setPage({status:'ready',profile:r.profile});}));};
- const onLevelWeapon=(id:string)=>perform(()=>new LevelUpWeaponMessage(id,requests['weapon:'+id]).send().then(profile=>{renew('weapon:'+id);setPage({status:'ready',profile});setNotice('武器已升级，词条已提升');}));
- const onEquipWeapon=(characterId:string,weaponId:string|null)=>perform(()=>new EquipWeaponMessage(characterId,weaponId).send().then(profile=>{setPage({status:'ready',profile});setNotice(weaponId?'武器已装备，下次开局生效':'武器已卸下');}));
  const [exitMessage,setExitMessage]=useState<string|null>(null);
- const closeExitMessage=()=>setExitMessage(null);
- const [stageRequests,setStageRequests]=useState<Readonly<Record<string,string>>>({});
- const onStartStage=(id:string)=>perform(()=>{const requestId=stageRequests[id]??crypto.randomUUID();setStageRequests(r=>({...r,[id]:requestId}));return new StartRunMessage(selected,requestId,id).send().then(r=>{setStageRequests(keys=>({...keys,[id]:crypto.randomUUID()}));setRun(r);});});
- const [adventureRequests,setAdventureRequests]=useState<Readonly<Record<string,string>>>({});
- const onStart=(settings:AdventureSettings)=>perform(()=>{const key=selected+':'+JSON.stringify(settings),requestId=adventureRequests[key]??crypto.randomUUID();setAdventureRequests(r=>({...r,[key]:requestId}));return new StartRunMessage(selected,requestId,null,settings).send().then(r=>{setAdventureRequests(keys=>({...keys,[key]:crypto.randomUUID()}));setRun(r);});});
- const onAbandon=()=>perform(()=>run?new AbandonRunMessage(run.runId).send().then(profile=>{const destination=run.stage?'#/stages':'#/camp';setPage({status:'ready',profile});setRun(null);window.location.hash=destination;setExitMessage('已放弃本次试炼，未发放奖励');}):Promise.resolve());
- const onSettle=(kills:number,ticks:number,withdrawing=false)=>perform(()=>run?new SubmitRunResultMessage(run.runId,kills,ticks).send().then(profile=>{
-  const previous=page.status==='ready'?page.profile:null;
-  const message=run.stage?(kills===run.stage.enemies?'关卡通关！摩拉 +'+run.stage.mora+'，原石 +'+run.stage.primogems:'挑战失败，本次未获得通关奖励'):
-   '本次冒险已结算：摩拉 +'+(profile.mora-(previous?.mora??profile.mora))+'，原石 +'+(profile.primogems-(previous?.primogems??profile.primogems));
-  setPage({status:'ready',profile});setRun(null);window.location.hash=run.stage?'#/stages':'#/camp';
-  if(withdrawing){setExitMessage(message);}else setNotice(message);
- }):Promise.resolve());
- return {authRevision,currentUser,onLogin,onRegister,onBind,onLogout,retry:load,wishReveal,closeWishReveal,weaponResult,onWeaponWish,onLevelWeapon,onEquipWeapon,exitMessage,closeExitMessage,page,selected,onSelect,pending,notice,run,result,onLevel,onWish,onStart,onStartStage,onSettle,onAbandon,onExchangeFates};
+ const busy=useRef(false);
+
+ const reloadSaves=useCallback(async()=>{
+  setLoading(true);
+  setSaveError('');
+  try{setSaves(await listSaves());}
+  catch(error){setSaveError(error instanceof Error?error.message:'无法读取本地存档');}
+  finally{setLoading(false);}
+ },[]);
+ useEffect(()=>{void reloadSaves();},[reloadSaves]);
+
+ async function perform(work:()=>Promise<void>){
+  if(busy.current)return;
+  busy.current=true;
+  setPending(true);
+  setNotice('');
+  try{await work();}
+  catch(error){setNotice(error instanceof Error?error.message:'无法完成本次操作');}
+  finally{busy.current=false;setPending(false);}
+ }
+
+ const onOpen=(id:string)=>perform(async()=>setSave(await loadSave(id)));
+ const onCreate=(nickname:string)=>perform(async()=>setSave(await addSave(createSave(nickname))));
+ const onImport=(file:File)=>perform(async()=>setSave(await importSave(file)));
+ const onExport=()=>perform(async()=>{if(save)downloadSave(await loadSave(save.id));});
+ const onReturn=()=>{
+  if(busy.current||run)return false;
+  setSave(null);
+  setResult(null);
+  setWeaponResult(null);
+  setWishReveal(null);
+  setExitMessage(null);
+  setNotice('');
+  void reloadSaves();
+  return true;
+ };
+
+ function changeProgress(change:(current:LocalSave)=>LocalSave,message?:string){
+  return perform(async()=>{
+   if(!save)return;
+   setSave(await updateSave(save.id,change));
+   if(message)setNotice(message);
+  });
+ }
+
+ const onSelect=(id:string)=>changeProgress(current=>selectCharacter(current,id));
+ const onLevel=()=>{if(save)return changeProgress(current=>({...current,profile:levelUp(current.profile,'character',save.selected)}),'角色已提升一级');};
+ const onLevelWeapon=(id:string)=>changeProgress(current=>({...current,profile:levelUp(current.profile,'weapon',id)}),'武器已升级，词条已提升');
+ const onEquipWeapon=(characterId:string,weaponId:string|null)=>changeProgress(
+  current=>({...current,profile:equipWeapon(current.profile,characterId,weaponId)}),
+  weaponId?'武器已装备，下次开局生效':'武器已卸下'
+ );
+ const onExchangeFates=()=>changeProgress(current=>({...current,profile:exchangeFate(current.profile)}),'已用原石兑换 1 个纠缠之缘');
+ const onCheckIn=()=>changeProgress(current=>current.checkIns<7?{...current,checkIns:current.checkIns+1}:current);
+ const onResetCheckIns=()=>changeProgress(current=>({...current,checkIns:0}));
+
+ function wish(banner:'character'|'weapon'){
+  if(wishReveal)return;
+  return perform(async()=>{
+   if(!save)return;
+   let outcome!:WishResult;
+   const next=await updateSave(save.id,current=>{
+    outcome=performWish(current.profile,banner);
+    return {...current,profile:outcome.profile};
+   });
+   setSave(next);
+   if(banner==='character')setResult(outcome);
+   else setWeaponResult(outcome);
+   setWishReveal({...outcome.reward,duplicate:outcome.duplicate,sequence:crypto.randomUUID()});
+  });
+ }
+
+ function begin(trial:Parameters<typeof startTrial>[1]){
+  return perform(async()=>{
+   if(!save||run)return;
+   const current=await loadSave(save.id);
+   const next=startTrial({...current,selected:save.selected},trial);
+   setSave(current);
+   setRun(next);
+  });
+ }
+ const onStart=(settings:AdventureSettings)=>begin({kind:'adventure',settings});
+ const onStartStage=(stageId:string)=>begin({kind:'stage',stageId});
+ const onAbandon=()=>{
+  if(busy.current||!run?.stage)return;
+  setRun(null);
+  window.location.hash='#/stages';
+  setExitMessage('已放弃本次试炼，未发放奖励');
+ };
+ const onSettle=(kills:number,ticks:number,withdrawing=false)=>perform(async()=>{
+  if(!save||!run)return;
+  const next=await updateSave(save.id,current=>settleTrial(current,run,kills,ticks));
+  const reward=trialReward(run,kills,ticks);
+  const gains='摩拉 +'+reward.mora+'，原石 +'+reward.primogems;
+  const message=run.stage
+   ?kills===run.stage.enemies?'关卡通关！'+gains:'挑战失败，本次未获得通关奖励'
+   :'本次冒险已结算：'+gains;
+  setSave(next);
+  setRun(null);
+  window.location.hash=run.stage?'#/stages':'#/camp';
+  if(withdrawing)setExitMessage(message);
+  else setNotice(message);
+ });
+
+ return {
+  save,saves,loading,saveError,reloadSaves,onOpen,onCreate,onImport,onExport,onReturn,
+  selected:save?.selected??starterCharacter,onSelect,pending,notice,run,
+  result,weaponResult,onLevel,onLevelWeapon,onEquipWeapon,onExchangeFates,onCheckIn,onResetCheckIns,
+  onWish:()=>wish('character'),onWeaponWish:()=>wish('weapon'),wishReveal,closeWishReveal:()=>setWishReveal(null),
+  onStart,onStartStage,onSettle,onAbandon,exitMessage,closeExitMessage:()=>setExitMessage(null)
+ };
 }

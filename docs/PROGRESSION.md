@@ -48,7 +48,7 @@ HUD显示当前攻击、射程、攻速、移速、每轮攻击次数及摩拉�
 
 ## 验证与预览
 
-node tools/verify-battle.mjs 覆盖掉落总量、吸收仅一次、移动追踪、远距清理、暂停冻结、通关末尾吸收、随机三选一、7类选项、上限过滤、非法选择拒绝、真实属性变化与3类判定追加攻击。node tools/verify-stages.mjs 验证失败无奖励、通关奖励、冒险零进度零奖励与重复结算。
+`node tools/verify-battle.mjs` 检查掉落吸收、暂停、随机三选一、强化数值和追加攻击。`node tools/verify-local-save.mjs` 检查关卡失败、通关奖励、冒险撤离和重复结算。
 
 npm run build 通过；node tools/preview-progression.mjs 使用实际页面组件生成截图预览，已检查半身取景、原图占位、强化布局与粒子关键帧。
 
