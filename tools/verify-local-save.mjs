@@ -12,7 +12,7 @@ async function loadModule(name){
 }
 
 const {createSave,readSaveData}=await loadModule('LocalSave');
-const {startTrial,settleTrial,trialReward,exchangeFate,levelUp,equipWeapon,performWish,selectCharacter}=await loadModule('progression');
+const {startTrial,settleTrial,trialReward,exchangeFate,levelUp,equipWeapon,performWish,performWishes,selectCharacter}=await loadModule('progression');
 const initial=createSave('旅行者');
 const another=createSave('另一份存档');
 assert.notEqual(initial.id,another.id);
@@ -54,6 +54,26 @@ assert.equal(weaponWish.reward.rarity,5);
 assert.equal(weaponWish.profile.weaponPity,0);
 assert.equal(weaponWish.profile.intertwinedFates,exchange.intertwinedFates-2);
 assert.throws(()=>performWish({...exchange,intertwinedFates:0},'weapon'),/纠缠之缘不足/);
+
+for(const banner of ['character','weapon']){
+ const before={...exchange,intertwinedFates:10,pity:89,weaponPity:79};
+ const batch=performWishes(before,banner,10,()=>0.99);
+ let expected=before;
+ const expectedPulls=[];
+ for(let index=0;index<10;index++){
+  const {profile,reward,duplicate}=performWish(expected,banner,()=>0.99);
+  expected=profile;
+  expectedPulls.push({reward,duplicate});
+ }
+ assert.deepEqual(batch.pulls,expectedPulls);
+ assert.deepEqual(batch.profile,expected);
+ assert.equal(batch.profile.intertwinedFates,0);
+ assert.equal(batch.pulls[0].reward.rarity,5);
+ assert(batch.pulls.some(({reward,duplicate})=>reward.rarity===3&&duplicate));
+ assert.equal(batch.profile[banner==='character'?'weaponPity':'pity'],before[banner==='character'?'weaponPity':'pity']);
+ if(banner==='weapon')assert(batch.pulls.every(({reward})=>reward.kind==='weapon'));
+}
+assert.throws(()=>performWishes({...exchange,intertwinedFates:9},'character',10,()=>assert.fail('余额不足时不应抽取')),/需要 10 个/);
 const bow={id:'raven-bow',level:1,copies:1};
 const equipped=equipWeapon({...initial.profile,weapons:[bow]},'amber',bow.id);
 const loadout=startTrial({...initial,profile:equipped},{kind:'stage',stageId:'forest'});

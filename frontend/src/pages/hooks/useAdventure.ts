@@ -1,10 +1,11 @@
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {AdventureSettings} from '../../objects/AdventureSettings';
-import type {RunStart,WishResult} from '../../objects/Profile';
+import type {RunStart} from '../../objects/Profile';
+import type {WishBanner,WishCount,WishPulls} from '../../objects/WishReward';
 import type {WishReveal} from '../WishPage/objects/WishReveal';
 import {createSave,starterCharacter,type LocalSave} from '../../game/local/LocalSave';
 import {addSave,downloadSave,importSave,listSaves,loadSave,updateSave} from '../../game/local/saveStore';
-import {equipWeapon,exchangeFate,levelUp,performWish,selectCharacter,settleTrial,startTrial,trialReward} from '../../game/local/progression';
+import {equipWeapon,exchangeFate,levelUp,performWishes,selectCharacter,settleTrial,startTrial,trialReward} from '../../game/local/progression';
 
 export function useAdventure(){
  const [saves,setSaves]=useState<readonly LocalSave[]>([]);
@@ -14,8 +15,8 @@ export function useAdventure(){
  const [pending,setPending]=useState(false);
  const [notice,setNotice]=useState('');
  const [run,setRun]=useState<RunStart|null>(null);
- const [result,setResult]=useState<WishResult|null>(null);
- const [weaponResult,setWeaponResult]=useState<WishResult|null>(null);
+ const [result,setResult]=useState<WishPulls|null>(null);
+ const [weaponResult,setWeaponResult]=useState<WishPulls|null>(null);
  const [wishReveal,setWishReveal]=useState<WishReveal|null>(null);
  const [exitMessage,setExitMessage]=useState<string|null>(null);
  const busy=useRef(false);
@@ -74,19 +75,20 @@ export function useAdventure(){
  const onCheckIn=()=>changeProgress(current=>current.checkIns<7?{...current,checkIns:current.checkIns+1}:current);
  const onResetCheckIns=()=>changeProgress(current=>({...current,checkIns:0}));
 
- function wish(banner:'character'|'weapon'){
+ function onWish(banner:WishBanner,count:WishCount){
   if(wishReveal)return;
   return perform(async()=>{
    if(!save)return;
-   let outcome!:WishResult;
+   let pulls!:WishPulls;
    const next=await updateSave(save.id,current=>{
-    outcome=performWish(current.profile,banner);
+    const outcome=performWishes(current.profile,banner,count);
+    pulls=outcome.pulls;
     return {...current,profile:outcome.profile};
    });
    setSave(next);
-   if(banner==='character')setResult(outcome);
-   else setWeaponResult(outcome);
-   setWishReveal({...outcome.reward,duplicate:outcome.duplicate,sequence:crypto.randomUUID()});
+   if(banner==='character')setResult(pulls);
+   else setWeaponResult(pulls);
+   setWishReveal({pulls,sequence:crypto.randomUUID()});
   });
  }
 
@@ -126,7 +128,7 @@ export function useAdventure(){
   save,saves,loading,saveError,reloadSaves,onOpen,onCreate,onImport,onExport,onReturn,
   selected:save?.selected??starterCharacter,onSelect,pending,notice,run,
   result,weaponResult,onLevel,onLevelWeapon,onEquipWeapon,onExchangeFates,onCheckIn,onResetCheckIns,
-  onWish:()=>wish('character'),onWeaponWish:()=>wish('weapon'),wishReveal,closeWishReveal:()=>setWishReveal(null),
+  onWish,wishReveal,closeWishReveal:()=>setWishReveal(null),
   onStart,onStartStage,onSettle,onAbandon,exitMessage,closeExitMessage:()=>setExitMessage(null)
  };
 }

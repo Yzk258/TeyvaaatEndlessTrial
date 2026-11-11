@@ -6,7 +6,7 @@ import type {AdventureSettings} from '../../objects/AdventureSettings';
 import type {Profile,RunStart,WishResult} from '../../objects/Profile';
 import type {Rarity} from '../../objects/Rarity';
 import {stages} from '../../objects/Stage';
-import type {WishReward} from '../../objects/WishReward';
+import type {WishBanner,WishCount,WishPull,WishPulls,WishReward} from '../../objects/WishReward';
 import {adventureReward} from '../functions/adventureProgress';
 import type {LocalSave} from './LocalSave';
 
@@ -49,7 +49,7 @@ function tierProbability(base:number,count:number,softStart:number,softStep:numb
  return count+1>=hardPity?1:Math.min(1,base+Math.max(0,count+2-softStart)*softStep);
 }
 
-export function performWish(profile:Profile,banner:'character'|'weapon',random:()=>number=Math.random):WishResult{
+export function performWish(profile:Profile,banner:WishBanner,random:()=>number=Math.random):WishResult{
  if(profile.intertwinedFates<1)throw new Error('纠缠之缘不足，需要 1 个纠缠之缘');
  const rules=wishRules[banner];
  const fiveKey=banner==='character'?'pity':'weaponPity';
@@ -75,6 +75,19 @@ export function performWish(profile:Profile,banner:'character'|'weapon',random:(
   [fiveKey]:rarity===5?0:profile[fiveKey]+1,
   [fourKey]:rarity===4?0:Math.min(rules.fourHardPity-1,profile[fourKey]+1)
  }};
+}
+
+export function performWishes(profile:Profile,banner:WishBanner,count:WishCount,random:()=>number=Math.random):{profile:Profile;pulls:WishPulls}{
+ if(profile.intertwinedFates<count)throw new Error('纠缠之缘不足，需要 '+count+' 个纠缠之缘');
+ const first=performWish(profile,banner,random);
+ let updatedProfile=first.profile;
+ const pulls:[WishPull,...WishPull[]]=[{reward:first.reward,duplicate:first.duplicate}];
+ for(let index=1;index<count;index++){
+  const next=performWish(updatedProfile,banner,random);
+  pulls.push({reward:next.reward,duplicate:next.duplicate});
+  updatedProfile=next.profile;
+ }
+ return {profile:updatedProfile,pulls};
 }
 
 type Trial={readonly kind:'stage';readonly stageId:string}|{readonly kind:'adventure';readonly settings:AdventureSettings};

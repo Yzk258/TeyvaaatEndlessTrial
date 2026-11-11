@@ -1,2 +1,2 @@
-import type {WishReward} from '../../../objects/WishReward';
-export type WishReveal=WishReward&{readonly duplicate:boolean;readonly sequence:string};
+import type {WishPulls} from '../../../objects/WishReward';
+export type WishReveal={readonly pulls:WishPulls;readonly sequence:string};

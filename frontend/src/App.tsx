@@ -64,7 +64,7 @@ export function App(){
    :navigation.current==='stages'?<StagesPage onStart={a.onStartStage} pending={a.pending} clearedStages={clearedStages}/>
    :navigation.current==='weapons'?<WeaponsPage profile={profile} selected={a.selected} onLevelWeapon={a.onLevelWeapon} onEquipWeapon={a.onEquipWeapon} pending={a.pending}/>
    :navigation.current==='characters'?<CharacterPage {...a} profile={profile}/>
-     :navigation.current==='wishes'?<WishPage weaponResult={a.weaponResult} onWeaponWish={a.onWeaponWish} profile={profile} onWish={a.onWish} onExchangeFates={a.onExchangeFates} result={a.result} pending={a.pending}/>
+     :navigation.current==='wishes'?<WishPage weaponResult={a.weaponResult} profile={profile} onWish={a.onWish} onExchangeFates={a.onExchangeFates} result={a.result} pending={a.pending}/>
      :navigation.current==='activities'?<ActivitiesPage claimed={a.save.checkIns} pending={a.pending} onClaim={a.onCheckIn} onReset={a.onResetCheckIns}/>
     :<HomePage {...a} profile={profile}/>}</div>
    </main>
