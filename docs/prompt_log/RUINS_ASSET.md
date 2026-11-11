@@ -1,4 +1,4 @@
-# 遗迹庭院像素素材
+# 遗迹庭院像素素材工作记录
 
 使用内置 imagegen 生成 `frontend/public/terrain/ruins-v2.png`。参考截图中的灰绿石材、残墙、断柱、拱门和破裂地砖，组成可重复使用的图集。
 

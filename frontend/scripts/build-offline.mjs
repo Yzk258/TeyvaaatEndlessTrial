@@ -10,6 +10,7 @@ const [portraits,references,display,battle,weapons,enemies]=await Promise.all([
 ].map(readConfig));
 const publicFiles=[...new Set([
  '/backgrounds/sky-gate-pixel-v2.png',
+ '/backgrounds/sky-gate-clouds-a.png','/backgrounds/sky-gate-clouds-b.png',
  '/terrain/ground-v2.png','/terrain/objects-v2.png','/terrain/ruins-v2.png','/terrain/waypoint-v2.png',
  '/currency/mora.png','/currency/primogem.png','/currency/fate.png',
  ...Object.values(portraits).flatMap(entry=>[entry.src,entry.thumbnail].filter(Boolean)),

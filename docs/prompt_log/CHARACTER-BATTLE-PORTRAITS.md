@@ -1,4 +1,4 @@
-# 全角色战斗像素图
+# 全角色战斗像素图工作记录
 
 当前 50 位角色均有 Q 版战斗像素图。以各自的原图作为造型参考，以胡桃的战斗像素图作为比例和画风参考。每位角色按 46×46 游戏单位绘制到战场，并沿用战斗中根据移动距离、朝向和攻击计算的姿态。
 
@@ -170,5 +170,3 @@ Precisely edit the FIRST PNG of Odette. The SECOND image is her screenshot refer
 ```text
 Draw ONE full-body battle sprite of Odette (奥黛塔) in a square transparent PNG. Image 1 is her correct identity reference including her face, hair, outfit and original color palette. Image 2 is Hu Tao's existing battle sprite and the exact scale, chunky pixel texture and chibi proportions reference only. Create a very big-headed figure, head 62–66% of total height, tiny body, tiny hands and short legs and shoes. Front-facing at eye level with a quiet smile, vivid AMETHYST PURPLE eyes with lowered upper eyelids, short round powder-blue bob with an asymmetric side-swept fringe and one curved face-framing lock. The exact SMALL silver-white feather-shaped forehead jewel with centered blue gemstone and a single narrow icy curved feather above. NO giant hair bow, NO bonnet, NO navy hat, NO dark ribbon, NO extra hair ornaments. Preserve a compact blue and pale icy-white short swan ballet dress, pale shoulder ruffles, left-of-image white sleeve, right-of-image cobalt glove, tiny pointe shoes. Neutral idle standing, arms relaxed at sides, full body from feather to shoes visible; feet aligned horizontally close to the lower margin. Compact centered sprite, 93% canvas height, same footprint as Hu Tao. Visible chunky square pixels on a virtual 48-by-48 grid, thick dark stepped outlines and broad flat color clusters, silhouette must be recognizable at 46 pixels. Transparent alpha around figure, no text, scenery, shadow, glow or weapon.
 ```
-
-

@@ -17,11 +17,16 @@ export function OpeningPage({save,saves,loading,pending,notice,error,onEnter,onR
   return ()=>window.clearTimeout(timer);
  },[screen,onEnter]);
  return <main className="relative isolate flex min-h-dvh items-center justify-center overflow-hidden bg-[#111e25] px-5 py-16">
-  <img src={gameAsset('/backgrounds/sky-gate-pixel-v2.png')} alt="" draggable={false} className={'pointer-events-none absolute inset-0 -z-10 h-full w-full select-none object-cover object-center [image-rendering:pixelated] transition-[transform,filter,opacity] ease-in-out motion-reduce:transition-none '+(screen==='gate'?'duration-[850ms] scale-100 brightness-100 opacity-100':screen==='entering'?'duration-[350ms] scale-[1.12] brightness-75 opacity-0':'duration-[850ms] scale-[1.08] brightness-75 opacity-100')}/>
+  <div aria-hidden="true" className={'pointer-events-none absolute inset-0 -z-10 select-none transition-[transform,filter,opacity] ease-in-out motion-reduce:transition-none '+(screen==='gate'?'duration-[850ms] scale-100 brightness-100 opacity-100':screen==='entering'?'duration-[350ms] scale-[1.12] brightness-75 opacity-0':'duration-[850ms] scale-[1.08] brightness-75 opacity-100')}>
+   <img src={gameAsset('/backgrounds/sky-gate-pixel-v2.png')} alt="" draggable={false}
+    className="absolute inset-0 h-full w-full object-cover object-center [image-rendering:pixelated]"/>
+   <img src={gameAsset('/backgrounds/sky-gate-clouds-a.png')} alt="" draggable={false} decoding="async" className="gate-cloud-frame"/>
+   <img src={gameAsset('/backgrounds/sky-gate-clouds-b.png')} alt="" draggable={false} decoding="async" className="gate-cloud-frame gate-cloud-frame-next"/>
+   <div className="gate-sunlight"/>
+  </div>
   {screen==='gate'&&<div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
    <div className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-[#0b1620]/75 to-transparent"/>
    <div className="absolute inset-x-0 bottom-0 h-60 bg-gradient-to-t from-[#0b1620]/85 to-transparent"/>
-   <div className="absolute left-1/2 top-[-12%] h-[128%] w-[52%] -translate-x-1/2 animate-gate-glow bg-gradient-to-b from-amber-50/15 via-white/5 to-transparent blur-2xl motion-reduce:animate-none"/>
    {Array.from({length:16},(_,i)=><span key={i} className="absolute bottom-0 animate-gate-mote rounded-full bg-amber-50/70 opacity-0 blur-[1px] motion-reduce:animate-none" style={{left:((i*61+7)%100)+'%',width:(i%3)+3,height:(i%3)+3,animationDelay:(i*0.62).toFixed(2)+'s',animationDuration:(7+(i%5)).toFixed(1)+'s'}}/>)}
   </div>}
   {screen==='gate'&&<div className="pointer-events-none absolute inset-x-0 top-[12%] flex flex-col items-center text-center">

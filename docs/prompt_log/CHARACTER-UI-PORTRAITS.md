@@ -1,4 +1,4 @@
-# 角色展示立绘
+# 全角色展示立绘工作记录
 
 当前 50 位角色均有像素半身展示立绘，供培养、综合、图鉴及祈愿使用。战斗入口使用独立的素材选用方式。
 
@@ -134,7 +134,6 @@ lower left 珐露珊 (faruzan): A lecturing three-quarter lean, one index finger
 lower right 桑多涅 (sandrone): An exacting downward side glance, one gloved hand manipulating a small brass cog just beside her shoulder, the other hand braced near the waist. Preserve her hairstyle, headpiece and exact costume from the saved illustration; only Sandrone, no large robot or background figures.
 ```
 
-
 ## 第三至第五页
 
 使用内置 imagegen 绘制剩余 25 位角色，输入为用户保存的对应角色参考和奥黛塔独立立绘的画风示例。D 至 I 图集各为两列两行，夜兰为单张。下面的提示词按图集内位置排列。
@@ -206,7 +205,6 @@ lower right 宵宫 (yoimiya): A beaming half-turn with one hand raised in a live
 ```text
 Create one standalone square game UI character bust pixel-art PNG. Image 1 is the identity reference; preserve faces, hair, eyes, original outfits and silhouette-defining headpieces or accessories. Do not copy the splash art background, effects, or pose. Image 2 is ONLY a reference for the texture, pixel cluster rendering and waist-up crop. Do not include that character or use the same pose for everyone. Use cohesive 16-bit anime pixel art, crisp square pixel clusters, stepped dark contours, and a genuinely transparent alpha background. Center the character and leave modest transparent padding. Show heads, shoulder silhouettes and specified gestures in each waist-up composition. Make the four gestures and the angles of the head and shoulder lines distinctly different. No typography, no scenic background, no panel decoration, no effects behind the figures. Subject 夜兰 (yelan): A relaxed diagonal lean in three-quarter view, one elbow raised while rolling a single tiny blue die across her fingertips, fur mantle swept over the opposite shoulder.
 ```
-
 
 ## 奥黛塔独立立绘
 

@@ -22,9 +22,10 @@ export function CharacterCollection({profile,selected,onSelect}:{profile:Profile
   {matching.length===0&&<p className="rounded-xl border border-white/10 p-5 text-center text-sm text-stone-400">没有符合筛选条件的角色。</p>}
   <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-6">{page.map(character=>{
    const owned=profile.characters.find(c=>c.id===character.id);
-   return <button key={character.id} disabled={!owned} aria-pressed={selected===character.id} onClick={()=>onSelect(character.id)} className={'overflow-hidden rounded-2xl border bg-[#142a31]/75 p-4 text-left transition duration-200 hover:border-amber-100/50 enabled:hover:-translate-y-1 enabled:hover:shadow-[0_16px_36px_-18px_rgba(0,0,0,.75)] disabled:opacity-50 '+(selected===character.id?'border-amber-100/60':'border-white/10')}>
+   return <button key={character.id} disabled={!owned} aria-pressed={selected===character.id} onClick={()=>onSelect(character.id)}
+    className={'overflow-hidden rounded-2xl border bg-[#142a31]/75 p-4 text-left transition duration-200 enabled:hover:border-amber-100/50 enabled:hover:-translate-y-1 enabled:hover:shadow-[0_16px_36px_-18px_rgba(0,0,0,.75)] disabled:bg-[#29424a]/85 '+(selected===character.id?'border-amber-100/60':'border-white/10')}>
     <div className="flex justify-between gap-2 text-xs text-stone-400"><span>{elementLabels[character.element]}</span><span>{owned?'Lv.'+owned.level:'未获得'}</span></div>
-    <CharacterPortrait characterId={character.id} label={character.name+'半身立绘'} framing="bust" allowReference className="my-3 h-32 w-full"/>
+    <CharacterPortrait characterId={character.id} label={character.name+'半身立绘'} framing="bust" allowReference silhouette={!owned} className="my-3 h-32 w-full"/>
     <RarityBadge rarity={character.rarity}/><h3 className="mt-2 font-serif text-xl text-amber-50">{character.name}</h3>
     <p className="mt-2 text-[11px] text-stone-400">{regionLabels[characterRegion(character.id)]} · {hasDisplayPortrait(character.id)?'像素立绘':'原图占位'}</p>
    </button>;

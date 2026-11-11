@@ -1,4 +1,4 @@
-# 传送锚点像素素材
+# 传送锚点像素素材工作记录
 
 使用内置 imagegen，以用户提供的锚点截图作为造型参考。透明 PNG 保存于 `frontend/public/terrain/waypoint-v2.png`。
 
