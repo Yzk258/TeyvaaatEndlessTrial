@@ -3,7 +3,7 @@ import type {WorldObstacle} from '../objects/WorldObstacle';
 import type {MapDecoration} from '../objects/MapChunk';
 const COLLIDERS:Readonly<Partial<Record<MapDecoration['kind'],{readonly dy:number;readonly radius:number}>>>={
  tree:{dy:2,radius:9},bigtree:{dy:4,radius:14},rock:{dy:0,radius:9},bush:{dy:-2,radius:14},
- crag:{dy:0,radius:16},water:{dy:0,radius:23},
+ crag:{dy:0,radius:16},
  ruin:{dy:0,radius:24},windmill:{dy:-4,radius:22},camp:{dy:2,radius:26},
  tower:{dy:-6,radius:26},statue:{dy:-2,radius:20},waypoint:{dy:0,radius:11},
  lantern:{dy:-1,radius:9},signpost:{dy:-1,radius:9},crate:{dy:0,radius:15},

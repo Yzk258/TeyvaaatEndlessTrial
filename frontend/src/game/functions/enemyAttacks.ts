@@ -5,17 +5,18 @@ import type {CollisionTerrain} from './obstacleIndex';
 
 export const enemyWindupTicks=3;
 
-export function moveBattleEnemy(enemy:Enemy,x:number,y:number,terrain:CollisionTerrain,bounds:WorldBounds|null):Enemy{
+export function moveBattleEnemy(enemy:Enemy,x:number,y:number,terrain:CollisionTerrain,bounds:WorldBounds|null,speedFactor=1):Enemy{
  const {radius,attack}=enemyDefinitions[enemy.kind];
  if(attack.kind==='ranged'){
   const dx=enemy.x-x,dy=enemy.y-y,distance=Math.hypot(dx,dy);
   if(distance<attack.standOff*.72){
    const angle=distance===0?(enemy.id%2===0?0:Math.PI):Math.atan2(dy,dx);
-   return {...enemy,...moveWithCollision(enemy.x,enemy.y,Math.cos(angle)*1.7,Math.sin(angle)*1.7,radius,terrain,bounds)};
+   const speed=1.7*speedFactor;
+   return {...enemy,...moveWithCollision(enemy.x,enemy.y,Math.cos(angle)*speed,Math.sin(angle)*speed,radius,terrain,bounds)};
   }
   if(distance<=attack.standOff&&obstacleHitTime(enemy.x,enemy.y,x,y,attack.radius,terrain)===Infinity)return enemy;
  }
- return {...enemy,...moveEnemyAroundObstacle(enemy.id,enemy.x,enemy.y,x,y,radius,terrain,bounds)};
+ return {...enemy,...moveEnemyAroundObstacle(enemy.id,enemy.x,enemy.y,x,y,radius,terrain,bounds,speedFactor)};
 }
 
 export function resolveEnemyAttacks(enemies:readonly Enemy[],inFlight:readonly EnemyProjectile[],x:number,y:number,tick:number,terrain:CollisionTerrain){

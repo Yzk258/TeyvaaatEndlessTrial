@@ -1,5 +1,5 @@
 import {adventureComplete} from './adventureProgress';
-import {CHUNK_SIZE} from './generateMap';
+import {CHUNK_SIZE,terrainMovementFactor} from './generateMap';
 import {terrainObstacles} from './terrainObstacles';
 import {moveWithCollision} from './collisionGeometry';
 import {indexObstacles} from './obstacleIndex';
@@ -47,7 +47,9 @@ export function stepBattle(s:BattleState,a:BattleAction):BattleState {
  const adventure=s.targetEnemies===null;
  const bounds=adventure?null:{minX:20,minY:20,maxX:880,maxY:520};
  const previousIndex=s.obstacleIndex?.source===s.obstacles?s.obstacleIndex:s.terrainCollision?indexObstacles(s.obstacles):undefined;
- const position=moveWithCollision(s.x,s.y,dx/norm*s.moveSpeed,dy/norm*s.moveSpeed,12,previousIndex??s.obstacles,bounds),x=position.x,y=position.y;
+ const speedFactor=(x:number,y:number)=>s.terrainCollision?terrainMovementFactor(s.worldSeed,x,y):1;
+ const moveSpeed=s.moveSpeed*speedFactor(s.x,s.y);
+ const position=moveWithCollision(s.x,s.y,dx/norm*moveSpeed,dy/norm*moveSpeed,12,previousIndex??s.obstacles,bounds),x=position.x,y=position.y;
  const traveled=Math.hypot(x-s.x,y-s.y),motion={moving:traveled>0.001,distance:s.motion.distance+traveled};
  const collisionChunkX=adventure?Math.floor(x/CHUNK_SIZE):0,collisionChunkY=adventure?Math.floor(y/CHUNK_SIZE):0;
  const obstacles=s.terrainCollision&&(collisionChunkX!==s.collisionChunkX||collisionChunkY!==s.collisionChunkY)?terrainObstacles(s.worldSeed,adventure,collisionChunkX,collisionChunkY):s.obstacles;
@@ -58,7 +60,7 @@ export function stepBattle(s:BattleState,a:BattleAction):BattleState {
  const spawned=spawnBattleEnemies(s,nearby,x,y,seed,terrain);
  const facing=dx!==0||dy!==0?Math.atan2(dy,dx):s.facing;
  const enemyBounds=adventure?null:{minX:24,minY:24,maxX:876,maxY:516};
- const candidates=spawned.enemies.map(e=>moveBattleEnemy(e,x,y,terrain,enemyBounds));
+ const candidates=spawned.enemies.map(e=>moveBattleEnemy(e,x,y,terrain,enemyBounds,speedFactor(e.x,e.y)));
  const resolved=resolveAttacks(s,candidates,x,y,facing,tick,terrain);
  const defeated=resolved.enemies.filter(e=>e.hp<=0);
  const loot=stepLoot([...s.loot,...createEnemyLoot(defeated,s.kills,s.targetEnemies,s.stageMora,s.adventure?.rules.moraPerKill??10)],x,y);

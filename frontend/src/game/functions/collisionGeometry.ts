@@ -45,7 +45,7 @@ export function findSpawnPoint(x:number,y:number,radius:number,terrain:Collision
  const offset=spawnOffsets.find(p=>canStand(x+p.x,y+p.y,radius,terrain,bounds));
  return offset?{x:x+offset.x,y:y+offset.y}:undefined;
 }
-export function moveEnemyAroundObstacle(id:number,x:number,y:number,targetX:number,targetY:number,radius:number,terrain:CollisionTerrain,bounds:WorldBounds|null):{x:number;y:number} {
+export function moveEnemyAroundObstacle(id:number,x:number,y:number,targetX:number,targetY:number,radius:number,terrain:CollisionTerrain,bounds:WorldBounds|null,speedFactor=1):{x:number;y:number} {
  const dx=targetX-x,dy=targetY-y,distance=Math.hypot(dx,dy);
  if(distance===0)return {x,y};
  // Only obstacles ahead can affect navigation; all terrain still shares one geometry source.
@@ -62,6 +62,6 @@ export function moveEnemyAroundObstacle(id:number,x:number,y:number,targetX:numb
   const angle=Math.atan2(y-blocking.y,x-blocking.x)+(id%2===0?1:-1)*Math.max(.18,Math.acos(Math.min(1,safeRadius/Math.max(d,safeRadius)))*.85);
   return {x:blocking.x+Math.cos(angle)*safeRadius,y:blocking.y+Math.sin(angle)*safeRadius};
  })();
- const length=Math.hypot(waypoint.x-x,waypoint.y-y)||1,speed=Math.min(1.7,length);
+ const length=Math.hypot(waypoint.x-x,waypoint.y-y)||1,speed=Math.min(1.7*speedFactor,length);
  return moveWithCollision(x,y,(waypoint.x-x)/length*speed,(waypoint.y-y)/length*speed,radius,terrain,bounds);
 }

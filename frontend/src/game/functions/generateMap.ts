@@ -23,6 +23,9 @@ const clearCell=(x:number,y:number)=>Math.hypot((x+.5)*TILE_SIZE-450,(y+.5)*TILE
 export function isWaterCell(seed:number,x:number,y:number):boolean {
  return !clearCell(x,y)&&terrainNoise(seed,x,y,14,301)*.76+terrainNoise(seed,x,y,5,302)*.24<.32;
 }
+export function terrainMovementFactor(seed:number,x:number,y:number):number {
+ return isWaterCell(seed,Math.floor(x/TILE_SIZE),Math.floor(y/TILE_SIZE)) ? .5 : 1;
+}
 const neighbors=[[-1,0],[1,0],[0,-1],[0,1]] as const;
 export function terrainCellKind(seed:number,x:number,y:number):MapTileKind {
  if(isWaterCell(seed,x,y))return 'water';

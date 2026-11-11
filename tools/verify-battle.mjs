@@ -169,7 +169,7 @@ assert.equal(keepStage.enemies.length,1);
 assert.equal(endless.worldSeed,initial.worldSeed);
 const mapSource=fs.readFileSync(new URL('../frontend/src/game/functions/generateMap.ts',import.meta.url),'utf8');
 const mapJs=ts.transpileModule(mapSource,{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
-const {generateChunk,nearbyChunks,CHUNK_SIZE}=await import('data:text/javascript;base64,'+Buffer.from(mapJs).toString('base64'));
+const {generateChunk,nearbyChunks,terrainCellKind,CHUNK_SIZE,TILE_SIZE}=await import('data:text/javascript;base64,'+Buffer.from(mapJs).toString('base64'));
 assert.deepEqual(generateChunk(42,-4,3),generateChunk(42,-4,3));
 assert.notDeepEqual(generateChunk(42,-4,3),generateChunk(43,-4,3));
 assert.equal(generateChunk(42,-1,-1).x,-CHUNK_SIZE);
@@ -208,6 +208,29 @@ const collisionWalk=Array.from({length:250}).reduce((state,_,index)=>{
 },{...initialBattle(17),terrainCollision:true,obstacles:activeTerrain});
 assert.equal(collisionWalk.worldSeed,17);
 console.log('PASS: 实际地图连续移动、跨区块与新生/绕行敌人均未穿入障碍');
+
+for(const adventure of [true,false]){
+ const seed=17,shore={x:5*TILE_SIZE,y:2.5*TILE_SIZE};
+ assert.equal(terrainCellKind(seed,4,2),'sand');
+ assert.equal(terrainCellKind(seed,5,2),'water');
+ const obstacles=terrainObstacles(seed,adventure,0,0);
+ assert.ok(canMove(shore.x-16,shore.y,shore.x+16,shore.y,12,obstacles));
+ const state={...initialBattle(seed),x:shore.x-2,y:shore.y,terrainCollision:true,obstacles,targetEnemies:adventure?null:50,
+  collisionChunkX:0,collisionChunkY:0};
+ const move=(s,key)=>stepBattle(s,{kind:'tick',keys:[key]});
+ const entered=move(state,'d');
+ assert.equal(entered.x,shore.x+4);
+ const wading=move(entered,'d');
+ assert.equal(wading.x,shore.x+7);
+ const exited=move({...wading,x:shore.x+1},'a');
+ assert.equal(exited.x,shore.x-2);
+ assert.equal(move(exited,'a').x,shore.x-8);
+
+ const enemy={id:1,kind:'slime',x:shore.x+16,y:shore.y,hp:10,damage:4};
+ const chased=stepBattle({...state,enemies:[enemy]},{kind:'tick',keys:[]}).enemies[0];
+ assert.ok(Math.abs(chased.x-(enemy.x-.85))<1e-9);
+}
+console.log('PASS: 冒险和关卡均可进出水格，角色与敌人水中移速减半');
 
 const walkingFeedback=stepBattle(initial,{kind:'tick',keys:['d']});
 assert.deepEqual(walkingFeedback.motion,{moving:true,distance:6});
