@@ -187,7 +187,7 @@
     "attackIntervalTicks": 13,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "projectile",
       "speed": 16,
@@ -217,7 +217,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 120
@@ -245,7 +245,7 @@
     "attackIntervalTicks": 15,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "area",
       "splashRadius": 50
@@ -417,7 +417,7 @@
     "attackIntervalTicks": 15,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "area",
       "splashRadius": 55
@@ -501,7 +501,7 @@
     "attackIntervalTicks": 16,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 140
@@ -529,7 +529,7 @@
     "attackIntervalTicks": 12,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 120
@@ -557,7 +557,7 @@
     "attackIntervalTicks": 16,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 150
@@ -585,7 +585,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 110
@@ -613,7 +613,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "projectile",
       "speed": 12,
@@ -643,7 +643,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "projectile",
       "speed": 12,
@@ -673,7 +673,7 @@
     "attackIntervalTicks": 12,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "projectile",
       "speed": 18,
@@ -703,7 +703,7 @@
     "attackIntervalTicks": 16,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 150
@@ -731,7 +731,7 @@
     "attackIntervalTicks": 12,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "projectile",
       "speed": 18,
@@ -761,7 +761,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 110
@@ -789,7 +789,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "projectile",
       "speed": 12,
@@ -819,7 +819,7 @@
     "attackIntervalTicks": 12,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 120
@@ -847,7 +847,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "projectile",
       "speed": 12,
@@ -877,7 +877,7 @@
     "attackIntervalTicks": 16,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 150
@@ -905,7 +905,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "projectile",
       "speed": 12,
@@ -935,7 +935,7 @@
     "attackIntervalTicks": 16,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 150
@@ -963,7 +963,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "projectile",
       "speed": 12,
@@ -993,7 +993,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "projectile",
       "speed": 12,
@@ -1023,7 +1023,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 110
@@ -1051,7 +1051,7 @@
     "attackIntervalTicks": 12,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 120
@@ -1079,7 +1079,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 110
@@ -1137,7 +1137,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "projectile",
       "speed": 12,
@@ -1167,7 +1167,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 110
@@ -1195,7 +1195,7 @@
     "attackIntervalTicks": 12,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 120
@@ -1223,7 +1223,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 110
@@ -1251,7 +1251,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 110
@@ -1279,7 +1279,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 110
@@ -1307,7 +1307,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "projectile",
       "speed": 12,
@@ -1337,7 +1337,7 @@
     "attackIntervalTicks": 14,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "projectile",
       "speed": 12,
@@ -1367,7 +1367,7 @@
     "attackIntervalTicks": 12,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "meleeArc",
       "angleDegrees": 120
@@ -1395,7 +1395,7 @@
     "attackIntervalTicks": 12,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "projectile",
       "speed": 18,
@@ -1425,7 +1425,7 @@
     "attackIntervalTicks": 12,
     "maxLevel": 20,
     "levelUpCost": 500,
-    "inStandardBanner": true,
+    "inStandardBanner": false,
     "attackPattern": {
       "kind": "projectile",
       "speed": 18,

@@ -40,7 +40,7 @@ export function WishRevealDialog({result:reveal,onClose}:{result:WishReveal;onCl
      <h2 id="wish-reveal-title" className="mt-3 font-serif text-5xl tracking-widest text-amber-50">{title}</h2>
      <p className="mt-4 text-sm text-indigo-100/60">{character?elementLabels[character.element]+' · '+weaponLabels[character.weapon]+' · '+character.title:weapon?weaponLabels[weapon.weapon]:''}</p>
      {weapon&&<p className="mt-4 text-sm text-stone-300">{statLabels[weapon.mainStat.kind]} {formatWeaponStat(weapon.mainStat,1)}<span className="mx-3 text-stone-600">/</span>{statLabels[weapon.subStat.kind]} {formatWeaponStat(weapon.subStat,1)}</p>}
-     <p className="mt-6 text-sm text-stone-400">{result.duplicate?(result.kind==='character'?'角色印记 +1':'武器重复记录 +1'):(result.kind==='character'?'已加入你的冒险队伍':'已收入你的武器收藏')}</p>
+     <p className="mt-6 text-sm text-stone-400">{result.kind==='weapon'?'武器数量 +1':result.duplicate?'角色印记 +1':'已加入你的冒险队伍'}</p>
      <button autoFocus onClick={onClose} className="mt-9 rounded-full bg-[#e8dbc2] px-12 py-3 text-sm font-medium text-[#243630] transition hover:bg-amber-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-100">继续冒险</button>
     </section>}
   </div>

@@ -1,4 +1,3 @@
-import {adventureComplete} from './adventureProgress';
 import {CHUNK_SIZE,terrainMovementFactor} from './generateMap';
 import {terrainObstacles} from './terrainObstacles';
 import {moveWithCollision} from './collisionGeometry';
@@ -26,7 +25,7 @@ export function gainExperience(level:number,experience:number,gained:number):{le
 }
 export function stepBattle(s:BattleState,a:BattleAction):BattleState {
  if(a.kind==='pause')return s.phase==='countdown'||s.phase==='fighting'||s.phase==='upgrade'||s.phase==='collecting'?{...s,phase:'paused'}:s;
- if(a.kind==='resume')return s.phase==='paused'?{...s,phase:s.countdownTicks>0?'countdown':s.hp<=0||adventureComplete(s.adventure,s.combatTicks)||s.targetEnemies!==null&&s.kills>=s.targetEnemies?'collecting':s.pendingUpgrades>0?'upgrade':'fighting'}:s;
+ if(a.kind==='resume')return s.phase==='paused'?{...s,phase:s.countdownTicks>0?'countdown':s.hp<=0||s.targetEnemies!==null&&s.kills>=s.targetEnemies?'collecting':s.pendingUpgrades>0?'upgrade':'fighting'}:s;
  if(a.kind==='upgrade'){
   if(s.phase!=='upgrade'||!s.upgradeChoices.includes(a.choice))return s;
   const upgraded={...applyUpgradeStats(s,a.choice),pendingUpgrades:Math.max(0,s.pendingUpgrades-1)};
@@ -47,12 +46,12 @@ export function stepBattle(s:BattleState,a:BattleAction):BattleState {
  const adventure=s.targetEnemies===null;
  const bounds=adventure?null:{minX:20,minY:20,maxX:880,maxY:520};
  const previousIndex=s.obstacleIndex?.source===s.obstacles?s.obstacleIndex:s.terrainCollision?indexObstacles(s.obstacles):undefined;
- const speedFactor=(x:number,y:number)=>s.terrainCollision?terrainMovementFactor(s.worldSeed,x,y):1;
+ const speedFactor=(x:number,y:number)=>s.terrainCollision?terrainMovementFactor(s.worldSeed,x,y,!adventure):1;
  const moveSpeed=s.moveSpeed*speedFactor(s.x,s.y);
  const position=moveWithCollision(s.x,s.y,dx/norm*moveSpeed,dy/norm*moveSpeed,12,previousIndex??s.obstacles,bounds),x=position.x,y=position.y;
  const traveled=Math.hypot(x-s.x,y-s.y),motion={moving:traveled>0.001,distance:s.motion.distance+traveled};
  const collisionChunkX=adventure?Math.floor(x/CHUNK_SIZE):0,collisionChunkY=adventure?Math.floor(y/CHUNK_SIZE):0;
- const obstacles=s.terrainCollision&&(collisionChunkX!==s.collisionChunkX||collisionChunkY!==s.collisionChunkY)?terrainObstacles(s.worldSeed,adventure,collisionChunkX,collisionChunkY):s.obstacles;
+ const obstacles=s.terrainCollision&&(collisionChunkX!==s.collisionChunkX||collisionChunkY!==s.collisionChunkY)?terrainObstacles(s.worldSeed,adventure,collisionChunkX,collisionChunkY,s.terrainRuins):s.obstacles;
  const obstacleIndex=obstacles===s.obstacles?previousIndex:indexObstacles(obstacles);
  const terrain=obstacleIndex??obstacles;
  const seed=(Math.imul(s.seed,1664525)+1013904223)>>>0;
@@ -69,7 +68,7 @@ export function stepBattle(s:BattleState,a:BattleAction):BattleState {
  const kills=s.kills+defeated.length,hp=Math.max(0,s.hp-enemyAttacks.damage);
  const playerHits=recentPlayerHits(s.playerHits??[],tick);
  if(hp<s.hp)playerHits.push({tick,x,y,angle:enemyAttacks.hitAngle,damage:s.hp-hp});
- const terminal=hp<=0||adventureComplete(s.adventure,combatTicks)||s.targetEnemies!==null&&kills>=s.targetEnemies;
+ const terminal=hp<=0||s.targetEnemies!==null&&kills>=s.targetEnemies;
  const next:BattleState={...s,motion,attackCue:resolved.attackCue,hits:resolved.hits,playerHits,obstacles,obstacleIndex,collisionChunkX,collisionChunkY,combatTicks,tick,x,y,facing,
   projectiles:terminal?[]:resolved.projectiles,enemyProjectiles:terminal?[]:enemyAttacks.projectiles,lastEliteWave:spawned.lastEliteWave,
   queuedAttackTicks:terminal?[]:resolved.queuedAttackTicks,effects:resolved.effects,hp,kills,enemies:enemyAttacks.enemies,seed,

@@ -4,5 +4,4 @@ export type AdventureRules={
  readonly baseEnemyLimit:number;readonly maxEnemyLimit:number;readonly enemyLimitPerWave:number;
  readonly timeBlockSeconds:number;readonly moraPerTimeBlock:number;readonly moraPerKill:number;
  readonly primogemsPerTimeBlock:number;readonly killBlock:number;readonly primogemsPerKillBlock:number;
- readonly completionMora:number;readonly completionPrimogems:number;
 };

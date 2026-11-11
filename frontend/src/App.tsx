@@ -4,6 +4,7 @@ import {useCallback,useRef,useState} from 'react';
 import {WishRevealDialog} from './pages/WishPage/components/WishRevealDialog';
 import {ArchivePage} from './pages/ArchivePage';
 import {WeaponsPage} from './pages/WeaponsPage';
+import {ConfirmDialog} from './components/ui/ConfirmDialog';
 import {MessageDialog} from './components/ui/MessageDialog';
 import {Compass,GraduationCap,Sparkles} from 'lucide-react';
 import {MainNavigation} from './components/ui/MainNavigation';
@@ -19,11 +20,15 @@ import {usePageNavigation} from './pages/hooks/usePageNavigation';
 import {CharacterPage} from './pages/CharacterPage';
 import {WishPage} from './pages/WishPage';
 import {OpeningPage} from './pages/OpeningPage';
+import type {AdventureDifficultyId} from './objects/AdventureSettings';
+import {stageCategories,type StageCategoryId} from './objects/Stage';
 export function App(){
  const a=useAdventure();
  const navigation=usePageNavigation();
  const presentation=useBattlePresentation(a.run?.runId??null);
  const [entered,setEntered]=useState(false);
+ const [adventureDifficulty,setAdventureDifficulty]=useState<AdventureDifficultyId>('normal');
+ const [stageCategory,setStageCategory]=useState<StageCategoryId>(stageCategories[0].id);
  const enter=useCallback(()=>setEntered(true),[]);
  const [tutorialOpen,setTutorialOpen]=useState(false);
  const tutorialButton=useRef<HTMLButtonElement>(null);
@@ -33,8 +38,10 @@ export function App(){
   requestAnimationFrame(()=>tutorialButton.current?.focus({preventScroll:true}));
  },[]);
  if(!entered||!a.save)return <OpeningPage save={a.save} saves={a.saves} loading={a.loading} pending={a.pending} notice={a.notice} error={a.saveError} onEnter={enter} onRetry={a.reloadSaves} onOpen={a.onOpen} onCreate={a.onCreate} onImport={a.onImport}/>;
- if(presentation.battleVisible&&a.run)return <BattlePage key={a.run.runId} stage={a.run.stage} adventure={a.run.adventure??null} seed={a.run.seed} level={a.run.level} equippedWeapon={a.run.equippedWeapon} character={a.run.character} onSettle={a.onSettle} onAbandon={a.onAbandon} pending={a.pending} notice={a.notice}/>;
+ if(presentation.battleVisible&&a.run)return <BattlePage key={a.run.runId} run={a.run} onSettle={a.onSettle} onAbandon={a.onAbandon} pending={a.pending} notice={a.notice}/>;
  const {profile,nickname,clearedStages,favoriteCharacters}=a.save;
+ const exchange=a.wishExchange;
+ const exchangeMessage=exchange?`还缺 ${exchange.missingFates} 个纠缠之缘，兑换需要 ${exchange.primogemCost} 原石。`:'';
  return <div className="relative isolate animate-opening-main motion-reduce:animate-none min-h-screen font-sans text-stone-200 selection:bg-amber-100/30">
   <MenuMapBackground/>
   <div inert={presentation.transitioning||tutorialVisible} className={'transition-opacity duration-[350ms] motion-reduce:transition-none '+(presentation.transitioning?'pointer-events-none opacity-0':'opacity-100')}>
@@ -61,15 +68,20 @@ export function App(){
     <div key={navigation.current} className="animate-page-enter motion-reduce:animate-none">{
      navigation.current==='overview'?<OverviewPage profile={profile} nickname={nickname} selected={a.selected}/>
    :navigation.current==='archive'?<ArchivePage profile={profile} favoriteCharacters={favoriteCharacters} pending={a.pending} onFavorite={a.onFavorite}/>
-   :navigation.current==='stages'?<StagesPage onStart={a.onStartStage} pending={a.pending} clearedStages={clearedStages}/>
-   :navigation.current==='weapons'?<WeaponsPage profile={profile} selected={a.selected} onLevelWeapon={a.onLevelWeapon} onEquipWeapon={a.onEquipWeapon} pending={a.pending}/>
-   :navigation.current==='characters'?<CharacterPage {...a} profile={profile} favoriteCharacters={favoriteCharacters}/>
-     :navigation.current==='wishes'?<WishPage weaponResult={a.weaponResult} profile={profile} onWish={a.onWish} onExchangeFates={a.onExchangeFates} result={a.result} pending={a.pending}/>
+   :navigation.current==='stages'?<StagesPage category={stageCategory} onCategoryChange={setStageCategory} onStart={a.onStartStage} pending={a.pending} clearedStages={clearedStages}/>
+   :navigation.current==='weapons'?<WeaponsPage profile={profile} onLevelWeapon={a.onLevelWeapon} pending={a.pending}/>
+   :navigation.current==='characters'?<CharacterPage profile={profile} selected={a.selected} favoriteCharacters={favoriteCharacters} pending={a.pending}
+    onSelect={a.onSelect} onFavorite={a.onFavorite} onLevel={a.onLevel} onEquipWeapon={a.onEquipWeapon}/>
+     :navigation.current==='wishes'?<WishPage weaponResult={a.weaponResult} profile={profile} onWish={a.onWish} result={a.result} pending={a.pending}/>
      :navigation.current==='activities'?<ActivitiesPage claimed={a.save.checkIns} pending={a.pending} onClaim={a.onCheckIn} onReset={a.onResetCheckIns}/>
-    :<HomePage {...a} profile={profile}/>}</div>
+    :<HomePage profile={profile} selected={a.selected} difficulty={adventureDifficulty} onDifficultyChange={setAdventureDifficulty} onStart={a.onStart} pending={a.pending}/>}</div>
    </main>
   </div>
+  {a.toast&&<div role="status" className="pointer-events-none fixed inset-x-4 bottom-5 z-30 mx-auto w-fit max-w-[calc(100%-2rem)] animate-page-enter rounded-xl border border-amber-100/25 bg-[#182a31]/95 px-5 py-3 text-sm text-amber-100 shadow-lg motion-reduce:animate-none sm:left-auto sm:right-6">{a.toast}</div>}
   {tutorialVisible&&<TutorialGuide currentPage={navigation.current} goTo={navigation.replacePage} onClose={closeTutorial}/>}
+  {exchange&&(profile.primogems>=exchange.primogemCost?
+   <ConfirmDialog title="兑换纠缠之缘" message={exchangeMessage+'是否兑换后继续祈愿？'} confirmLabel="兑换并祈愿" pending={a.pending} onConfirm={a.confirmWishExchange} onCancel={a.cancelWishExchange}/>:
+   <MessageDialog title="原石不足" message={exchangeMessage+`当前拥有 ${profile.primogems} 原石。`} onClose={a.cancelWishExchange}/>)}
   {a.wishReveal&&<WishRevealDialog key={a.wishReveal.sequence} result={a.wishReveal} onClose={a.closeWishReveal}/>}
   {a.exitMessage&&<MessageDialog title="已退出试炼" message={a.exitMessage} onClose={a.closeExitMessage}/>}
  </div>;

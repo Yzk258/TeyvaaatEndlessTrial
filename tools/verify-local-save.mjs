@@ -12,13 +12,14 @@ async function loadModule(name,directory='game/local'){
 }
 
 const {createSave,readSaveData}=await loadModule('LocalSave');
-const {startTrial,settleTrial,trialReward,exchangeFate,levelUp,equipWeapon,performWish,performWishes,selectCharacter,setCharacterFavorite}=await loadModule('progression');
+const {startTrial,settleTrial,trialRewards,levelUp,equipWeapon,performWish,performWishes,requestWishes,selectCharacter,setCharacterFavorite}=await loadModule('progression');
 const {characterListEntries}=await loadModule('CharacterList','objects');
 const initial=createSave('旅行者');
 const another=createSave('另一份存档');
 assert.notEqual(initial.id,another.id);
 assert.equal(initial.selected,'amber');
-assert.throws(()=>readSaveData({...initial,version:2}),/版本/);
+assert.equal(initial.version,2);
+assert.throws(()=>readSaveData({...initial,version:3}),/版本/);
 assert.throws(()=>readSaveData({...initial,profile:{...initial.profile,mora:-1}}),/格式/);
 assert.equal(readSaveData({...initial,selected:'unavailable'}).selected,'amber');
 assert.throws(()=>selectCharacter(initial,'unavailable'),/尚未拥有/);
@@ -40,16 +41,31 @@ const removed=setCharacterFavorite(savedFavorites,'hu-tao',false);
 assert.deepEqual(characterListEntries(removed.profile.characters,removed.favoriteCharacters).slice(0,3).map(entry=>entry.definition.id),['furina','amber','hu-tao']);
 
 const trial=startTrial(initial,{kind:'stage',stageId:'forest'});
+assert.equal(trial.map.layout,'arena');
 const cleared=settleTrial(initial,trial,trial.stage.enemies,60);
-assert.equal(cleared.profile.mora,initial.profile.mora+trial.stage.mora);
-assert.equal(cleared.profile.primogems,initial.profile.primogems+trial.stage.primogems);
+assert.equal(cleared.profile.mora,initial.profile.mora+300);
+assert.equal(cleared.profile.primogems,initial.profile.primogems);
 assert.deepEqual(cleared.clearedStages,['forest']);
 assert.equal(settleTrial(cleared,trial,trial.stage.enemies,60),cleared);
 assert.throws(()=>settleTrial(cleared,trial,trial.stage.enemies,61),/已结算/);
 assert.equal(settleTrial(initial,trial,1,20).profile.mora,initial.profile.mora);
-const endless=startTrial(cleared,{kind:'adventure',settings:{mode:'endless',durationSeconds:null}});
+const gemTrial=startTrial(cleared,{kind:'stage',stageId:'forest-primogems'});
+assert.deepEqual(gemTrial.map,trial.map);
+assert.equal(gemTrial.stage.category,'primogems');
+assert.deepEqual(trialRewards(gemTrial,gemTrial.stage.enemies-1,60),[]);
+const gemClear=settleTrial(cleared,gemTrial,gemTrial.stage.enemies,60);
+assert.equal(gemClear.profile.primogems,cleared.profile.primogems+40);
+assert.equal(gemClear.profile.mora,cleared.profile.mora);
+assert.deepEqual(gemClear.clearedStages,['forest','forest-primogems']);
+assert.equal(settleTrial(gemClear,gemTrial,gemTrial.stage.enemies,60),gemClear);
+const endless=startTrial(cleared,{kind:'adventure',settings:{difficulty:'hard'}});
+assert.equal(endless.map.layout,'endless');
+assert.equal(endless.adventure.difficulty.healthMultiplier,1.35);
+assert.throws(()=>startTrial(cleared,{kind:'adventure',settings:{difficulty:'missing'}}),/有效的无尽难度/);
 const withdrawn=settleTrial(cleared,endless,3,600);
-assert.equal(withdrawn.profile.mora-cleared.profile.mora,trialReward(endless,3,600).mora);
+assert.deepEqual(trialRewards(endless,3,600),[{kind:'currency',currency:'mora',amount:70},{kind:'currency',currency:'primogems',amount:3}]);
+assert.equal(withdrawn.profile.mora-cleared.profile.mora,70);
+assert.equal(withdrawn.profile.primogems-cleared.profile.primogems,3);
 assert.deepEqual(readSaveData(JSON.parse(JSON.stringify(withdrawn))),withdrawn);
 assert.equal(another.profile.runs,0);
 
@@ -57,10 +73,7 @@ const upgraded=levelUp(withdrawn.profile,'character','amber');
 assert.equal(upgraded.characters[0].level,2);
 assert.ok(upgraded.mora<withdrawn.profile.mora);
 assert.throws(()=>levelUp({...upgraded,mora:0},'character','amber'),/摩拉不足/);
-const exchange=exchangeFate(upgraded);
-assert.equal(exchange.primogems,upgraded.primogems-160);
-assert.equal(exchange.intertwinedFates,upgraded.intertwinedFates+1);
-const characterWish=performWish({...exchange,pity:89},'character',()=>0.99);
+const characterWish=performWish({...upgraded,pity:89},'character',()=>0.99);
 assert.equal(characterWish.reward.kind,'character');
 assert.equal(characterWish.reward.rarity,5);
 assert.equal(characterWish.profile.pity,0);
@@ -69,11 +82,11 @@ const weaponWish=performWish({...characterWish.profile,weaponPity:79},'weapon',(
 assert.equal(weaponWish.reward.kind,'weapon');
 assert.equal(weaponWish.reward.rarity,5);
 assert.equal(weaponWish.profile.weaponPity,0);
-assert.equal(weaponWish.profile.intertwinedFates,exchange.intertwinedFates-2);
-assert.throws(()=>performWish({...exchange,intertwinedFates:0},'weapon'),/纠缠之缘不足/);
+assert.equal(weaponWish.profile.intertwinedFates,upgraded.intertwinedFates-2);
+assert.throws(()=>performWish({...upgraded,intertwinedFates:0},'weapon'),/纠缠之缘不足/);
 
 for(const banner of ['character','weapon']){
- const before={...exchange,intertwinedFates:10,pity:89,weaponPity:79};
+ const before={...upgraded,intertwinedFates:10,pity:89,weaponPity:79};
  const batch=performWishes(before,banner,10,()=>0.99);
  let expected=before;
  const expectedPulls=[];
@@ -88,12 +101,54 @@ for(const banner of ['character','weapon']){
  assert.equal(batch.pulls[0].reward.rarity,5);
  assert(batch.pulls.some(({reward,duplicate})=>reward.rarity===3&&duplicate));
  assert.equal(batch.profile[banner==='character'?'weaponPity':'pity'],before[banner==='character'?'weaponPity':'pity']);
+ const weaponPulls=batch.pulls.filter(({reward})=>reward.kind==='weapon');
+ const added=batch.profile.weapons.slice(before.weapons.length);
+ assert.deepEqual(added.map(entry=>entry.weaponId),weaponPulls.map(({reward})=>reward.id));
+ assert.equal(new Set(batch.profile.weapons.map(entry=>entry.id)).size,batch.profile.weapons.length);
+ assert(added.every(entry=>entry.level===1));
  if(banner==='weapon')assert(batch.pulls.every(({reward})=>reward.kind==='weapon'));
 }
-assert.throws(()=>performWishes({...exchange,intertwinedFates:9},'character',10,()=>assert.fail('余额不足时不应抽取')),/需要 10 个/);
-const bow={id:'raven-bow',level:1,copies:1};
-const equipped=equipWeapon({...initial.profile,weapons:[bow]},'amber',bow.id);
-const loadout=startTrial({...initial,profile:equipped},{kind:'stage',stageId:'forest'});
-assert.equal(loadout.equippedWeapon.definition.id,bow.id);
-assert.deepEqual(equipWeapon(equipped,'amber',null).equipment,[]);
-console.log('PASS: 存档格式、角色强化、装备、兑换、两池保底、撤离奖励及结算防重');
+const noRoll=()=>assert.fail('等待兑换时不应抽取');
+assert.throws(()=>performWishes({...upgraded,intertwinedFates:9},'character',10,noRoll),/需要 10 个/);
+for(const [banner,count,available] of [['character',1,0],['weapon',10,3]]){
+ const profile={...upgraded,primogems:1600,intertwinedFates:available};
+ const missingFates=count-available;
+ const primogemCost=160*missingFates;
+ const quote={kind:'exchange',missingFates,primogemCost};
+ assert.deepEqual(requestWishes(profile,banner,count,0,noRoll),quote);
+ assert.deepEqual(requestWishes(profile,banner,count,primogemCost-1,noRoll),quote);
+ assert.deepEqual(requestWishes({...profile,primogems:primogemCost-1},banner,count,primogemCost,noRoll),quote);
+ const funded={...profile,intertwinedFates:count,primogems:profile.primogems-primogemCost};
+ assert.deepEqual(requestWishes(profile,banner,count,primogemCost,()=>0.99),{kind:'drawn',...performWishes(funded,banner,count,()=>0.99)});
+ const sufficient={...profile,intertwinedFates:count+1};
+ assert.deepEqual(requestWishes(sufficient,banner,count,0,()=>0.99),{kind:'drawn',...performWishes(sufficient,banner,count,()=>0.99)});
+}
+const legacy={...initial,version:1,profile:{...initial.profile,
+ characters:[...initial.profile.characters,{id:'yelan',level:1,copies:1},{id:'kaeya',level:1,copies:1}],
+ weapons:[{id:'raven-bow',level:5,copies:3}],equipment:[{characterId:'amber',weaponId:'raven-bow'}]
+}};
+const migrated=readSaveData(legacy);
+assert.equal(migrated.version,2);
+assert.deepEqual(readSaveData(legacy),migrated);
+assert.deepEqual(readSaveData(JSON.parse(JSON.stringify(migrated))),migrated);
+const [first,second,third]=migrated.profile.weapons;
+assert.equal(new Set([first.id,second.id,third.id]).size,3);
+assert.deepEqual(migrated.profile.weapons.map(item=>item.weaponId),['raven-bow','raven-bow','raven-bow']);
+assert.deepEqual(migrated.profile.weapons.map(item=>item.level),[5,1,1]);
+assert.deepEqual(migrated.profile.equipment,[{characterId:'amber',weaponInstanceId:first.id}]);
+assert.throws(()=>readSaveData({...legacy,profile:{...legacy.profile,weapons:[{id:'raven-bow',level:1,copies:Number.MAX_SAFE_INTEGER}]}}),/数量过大/);
+assert.throws(()=>equipWeapon(migrated.profile,'yelan',first.id),/其他角色装备/);
+assert.throws(()=>equipWeapon(migrated.profile,'kaeya',second.id),/类型与角色不匹配/);
+const equipped=equipWeapon(migrated.profile,'yelan',second.id);
+const leveled=levelUp(equipped,'weapon',second.id);
+assert.deepEqual(leveled.weapons.map(item=>item.level),[5,2,1]);
+assert.equal(leveled.mora,equipped.mora-300);
+const amberRun=startTrial({...migrated,profile:leveled},{kind:'stage',stageId:'forest'});
+const yelanRun=startTrial({...migrated,selected:'yelan',profile:leveled},{kind:'stage',stageId:'forest'});
+assert.equal(amberRun.equippedWeapon.definition.id,'raven-bow');
+assert.equal(yelanRun.equippedWeapon.definition.id,'raven-bow');
+assert.equal(amberRun.equippedWeapon.level,5);
+assert.equal(yelanRun.equippedWeapon.level,2);
+assert.deepEqual(equipWeapon(leveled,'amber',null).equipment,[{characterId:'yelan',weaponInstanceId:second.id}]);
+assert.throws(()=>readSaveData({...migrated,profile:{...leveled,equipment:[...leveled.equipment,{characterId:'kaeya',weaponInstanceId:first.id}]}}),/格式/);
+console.log('PASS: 存档迁移、武器副本、独立强化与装备、兑换、两池保底、撤离奖励及结算防重');

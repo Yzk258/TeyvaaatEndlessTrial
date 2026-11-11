@@ -15,6 +15,9 @@
   "primogemsPerTimeBlock": 3,
   "killBlock": 50,
   "primogemsPerKillBlock": 2,
-  "completionMora": 150,
-  "completionPrimogems": 10
+  "difficulties": {
+    "normal": { "label": "普通", "healthMultiplier": 1, "damageMultiplier": 1 },
+    "hard": { "label": "困难", "healthMultiplier": 1.35, "damageMultiplier": 1.2 },
+    "extreme": { "label": "极限", "healthMultiplier": 1.7, "damageMultiplier": 1.45 }
+  }
 }

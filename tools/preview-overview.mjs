@@ -5,7 +5,8 @@ import {createElement} from '../frontend/node_modules/react/index.js';
 import {renderToStaticMarkup} from '../frontend/node_modules/react-dom/server.node.js';
 const server=await createServer({root:fileURLToPath(new URL('../frontend',import.meta.url)),server:{middlewareMode:true,hmr:false},appType:'custom'});
 await Promise.all([server.ssrLoadModule('/src/pages/OverviewPage/index.tsx'),server.ssrLoadModule('/src/objects/Weapon.ts')]).then(async([{OverviewPage},{weapons}])=>{
- const profile={primogems:1600,mora:246800,intertwinedFates:5,characters:[{id:'amber',level:3,copies:1},{id:'kaeya',level:1,copies:1}],pity:12,runs:12,weapons:[{id:weapons[0].id,level:2,copies:1}],equipment:[{characterId:'amber',weaponId:weapons[0].id}],weaponPity:0,fourStarPity:4,weaponFourStarPity:2};
+ const bow=weapons.find(weapon=>weapon.id==='raven-bow');
+ const profile={primogems:1600,mora:246800,intertwinedFates:5,characters:[{id:'amber',level:3,copies:1},{id:'kaeya',level:1,copies:1}],pity:12,runs:12,weapons:[{id:'preview-bow',weaponId:bow.id,level:2}],equipment:[{characterId:'amber',weaponInstanceId:'preview-bow'}],weaponPity:0,fourStarPity:4,weaponFourStarPity:2};
  const markup=renderToStaticMarkup(createElement(OverviewPage,{profile,nickname:'旅行者',selected:'amber'})).replaceAll('src="/currency/','src="../../frontend/public/currency/').replaceAll('href="/characters/','href="../../frontend/public/characters/');
  const assets=await fs.readdir(fileURLToPath(new URL('../frontend/dist/assets',import.meta.url)));
  const cssFile=assets.find(name=>name.endsWith('.css'));

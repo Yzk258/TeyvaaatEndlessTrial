@@ -19,7 +19,7 @@ export function BattleScene({state:s,character,bounded,reducedMotion}:{state:Bat
  return <svg className="absolute inset-0 h-full w-full" viewBox="0 0 900 540" aria-label="试炼战场">
   <defs><EnemySpriteLibrary prefix={spritePrefix}/><filter id="battle-hit-flash" colorInterpolationFilters="sRGB"><feComponentTransfer><feFuncR type="linear" slope="0" intercept="1"/><feFuncG type="linear" slope="0" intercept="1"/><feFuncB type="linear" slope="0" intercept="1"/></feComponentTransfer></filter></defs>
   <g transform={'translate('+(-cameraX)+' '+(-cameraY)+')'} className={motionClass}>
-   <MapTerrain seed={s.worldSeed} adventure={!bounded} chunkX={bounded?0:Math.floor(s.x/CHUNK_SIZE)} chunkY={bounded?0:Math.floor(s.y/CHUNK_SIZE)} screenOnly/>
+   <MapTerrain seed={s.worldSeed} adventure={!bounded} chunkX={bounded?0:Math.floor(s.x/CHUNK_SIZE)} chunkY={bounded?0:Math.floor(s.y/CHUNK_SIZE)} includeRuins={s.terrainRuins} screenOnly/>
    <g aria-hidden="true" pointerEvents="none" transform={'translate('+s.x+' '+s.y+')'} className={motionClass}><circle r={s.attackRange} fill="none" stroke={character.color} strokeOpacity=".5" strokeWidth="1.5" strokeDasharray="8 7"/></g>
    <AttackVisuals visual={character.attackVisual} projectiles={s.projectiles} effects={s.effects} cue={s.attackCue} tick={s.tick} reducedMotion={reducedMotion}/>
    {visibleEnemies.map(enemy=><EnemyPortrait key={enemy.id} enemy={enemy} tick={s.tick} hit={hitsByEnemy[enemy.id]} spritePrefix={spritePrefix} reducedMotion={reducedMotion}/>)}

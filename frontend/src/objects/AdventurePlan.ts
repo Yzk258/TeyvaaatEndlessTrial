@@ -1,3 +1,3 @@
-import type {AdventureSettings} from './AdventureSettings';
+import type {AdventureDifficulty} from './AdventureSettings';
 import type {AdventureRules} from './AdventureRules';
-export type AdventurePlan={readonly settings:AdventureSettings;readonly rules:AdventureRules};
+export type AdventurePlan={readonly difficulty:AdventureDifficulty;readonly rules:AdventureRules};

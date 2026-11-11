@@ -21,7 +21,7 @@ export function WishBatchReveal({pulls,animate,onClose}:{pulls:WishPulls;animate
   <ol aria-label="获得的奖励" className="my-7 grid w-full grid-cols-2 gap-3 sm:grid-cols-5">
    {pulls.map(({reward,duplicate},index)=>{
     const name=(reward.kind==='character'?characters:weapons).find(item=>item.id===reward.id)?.name??reward.id;
-    const status=duplicate?'重复获得':reward.kind==='character'?'新伙伴':'新武器';
+    const status=reward.kind==='weapon'?'数量 +1':duplicate?'重复获得':'新伙伴';
     return <li key={index} className={'min-w-0 rounded-xl border bg-gradient-to-b to-[#10192b] px-2 py-3 '+cardColors[reward.rarity]+(animate?' animate-wish-reveal motion-reduce:animate-none':'')}
      style={animate?{animationDelay:index*65+'ms'}:undefined}>
      {reward.kind==='character'?

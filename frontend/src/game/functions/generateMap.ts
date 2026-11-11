@@ -23,8 +23,10 @@ const clearCell=(x:number,y:number)=>Math.hypot((x+.5)*TILE_SIZE-450,(y+.5)*TILE
 export function isWaterCell(seed:number,x:number,y:number):boolean {
  return !clearCell(x,y)&&terrainNoise(seed,x,y,14,301)*.76+terrainNoise(seed,x,y,5,302)*.24<.32;
 }
-export function terrainMovementFactor(seed:number,x:number,y:number):number {
- return isWaterCell(seed,Math.floor(x/TILE_SIZE),Math.floor(y/TILE_SIZE)) ? .5 : 1;
+export function terrainMovementFactor(seed:number,x:number,y:number,bounded=false):number {
+ const tileX=Math.floor(x/TILE_SIZE),tileY=Math.floor(y/TILE_SIZE);
+ if(bounded&&!isArenaTile(tileX*TILE_SIZE,tileY*TILE_SIZE))return 1;
+ return isWaterCell(seed,tileX,tileY) ? .5 : 1;
 }
 const neighbors=[[-1,0],[1,0],[0,-1],[0,1]] as const;
 export function terrainCellKind(seed:number,x:number,y:number):MapTileKind {
@@ -108,6 +110,14 @@ export function generateChunk(seed:number,chunkX:number,chunkY:number,includeRui
  });
  return {x:chunkX*CHUNK_SIZE,y:chunkY*CHUNK_SIZE,tint:0,tiles,decorations};
 }
-export function nearbyChunks(seed:number,chunkX:number,chunkY:number):readonly MapChunk[] {
- return Array.from({length:25},(_,i)=>generateChunk(seed,chunkX+i%5-2,chunkY+Math.floor(i/5)-2));
+export function nearbyChunks(seed:number,chunkX:number,chunkY:number,includeRuins=true):readonly MapChunk[] {
+ return Array.from({length:25},(_,i)=>generateChunk(seed,chunkX+i%5-2,chunkY+Math.floor(i/5)-2,includeRuins));
+}
+
+export function arenaChunks(seed:number,includeRuins=false):readonly MapChunk[] {
+ return Array.from({length:6},(_,i)=>generateChunk(seed,i%3,Math.floor(i/3),includeRuins));
+}
+
+export function isArenaTile(x:number,y:number):boolean {
+ return x>=48&&x+TILE_SIZE<=852&&y>=48&&y+TILE_SIZE<=492;
 }

@@ -2,12 +2,15 @@ import adventureRules from '../../../../shared/adventure-rules.json';
 import wishRules from '../../../../shared/wish-rules.json';
 import {characters} from '../../objects/Character';
 import {weapons} from '../../objects/Weapon';
-import type {AdventureSettings} from '../../objects/AdventureSettings';
+import {adventureDifficulties,type AdventureSettings} from '../../objects/AdventureSettings';
+import {arenaMaps,defaultEndlessMapId,endlessMaps} from '../../objects/BattleMap';
 import type {Profile,RunStart,WishResult} from '../../objects/Profile';
 import type {Rarity} from '../../objects/Rarity';
 import {stages} from '../../objects/Stage';
+import type {TrialReward} from '../../objects/TrialReward';
 import type {WishBanner,WishCount,WishPull,WishPulls,WishReward} from '../../objects/WishReward';
 import {adventureReward} from '../functions/adventureProgress';
+import {equippedWeaponLoadout} from '../functions/weaponInventory';
 import type {LocalSave} from './LocalSave';
 
 export function selectCharacter(save:LocalSave,id:string):LocalSave{
@@ -26,31 +29,36 @@ export function setCharacterFavorite(save:LocalSave,id:string,favorite:boolean):
 }
 
 export function levelUp(profile:Profile,kind:'character'|'weapon',id:string):Profile{
- const definition=(kind==='character'?characters:weapons).find(entry=>entry.id===id);
- const key=kind==='character'?'characters':'weapons';
- const owned=profile[key].find(entry=>entry.id===id);
+ const character=kind==='character'?profile.characters.find(entry=>entry.id===id):undefined;
+ const weapon=kind==='weapon'?profile.weapons.find(entry=>entry.id===id):undefined;
+ const owned=character??weapon;
+ const definition=kind==='character'?characters.find(entry=>entry.id===id):weapons.find(entry=>entry.id===weapon?.weaponId);
  if(!definition||!owned)throw new Error(kind==='character'?'尚未拥有该角色':'尚未拥有该武器');
  if(owned.level>=definition.maxLevel)throw new Error('已达到等级上限');
  if(profile.mora<definition.levelUpCost)throw new Error('摩拉不足');
- return {...profile,mora:profile.mora-definition.levelUpCost,
-  [key]:profile[key].map(entry=>entry.id===id?{...entry,level:entry.level+1}:entry)};
+ const leveled={...profile,mora:profile.mora-definition.levelUpCost};
+ const upgrade=<T extends {readonly id:string;readonly level:number}>(entry:T)=>entry.id===id?{...entry,level:entry.level+1}:entry;
+ return kind==='character'?{...leveled,characters:profile.characters.map(upgrade)}:{...leveled,weapons:profile.weapons.map(upgrade)};
 }
 
-export function equipWeapon(profile:Profile,characterId:string,weaponId:string|null):Profile{
+export function equipWeapon(profile:Profile,characterId:string,weaponInstanceId:string|null):Profile{
  const character=characters.find(entry=>entry.id===characterId);
  if(!character||!profile.characters.some(entry=>entry.id===characterId))throw new Error('尚未拥有该角色');
  const equipment=profile.equipment.filter(entry=>entry.characterId!==characterId);
- if(weaponId===null)return {...profile,equipment};
- const weapon=weapons.find(entry=>entry.id===weaponId);
- if(!weapon||!profile.weapons.some(entry=>entry.id===weaponId))throw new Error('尚未拥有该武器');
+ if(weaponInstanceId===null)return {...profile,equipment};
+ const owned=profile.weapons.find(entry=>entry.id===weaponInstanceId);
+ const weapon=weapons.find(entry=>entry.id===owned?.weaponId);
+ if(!weapon)throw new Error('尚未拥有该武器');
  if(weapon.weapon!==character.weapon)throw new Error('武器类型与角色不匹配');
- if(equipment.some(entry=>entry.weaponId===weaponId))throw new Error('武器已被其他角色装备，请先卸下');
- return {...profile,equipment:[...equipment,{characterId,weaponId}]};
+ if(equipment.some(entry=>entry.weaponInstanceId===weaponInstanceId))throw new Error('这把武器已被其他角色装备，请先卸下');
+ return {...profile,equipment:[...equipment,{characterId,weaponInstanceId}]};
 }
 
-export function exchangeFate(profile:Profile):Profile{
- if(profile.primogems<wishRules.cost)throw new Error('原石不足');
- return {...profile,primogems:profile.primogems-wishRules.cost,intertwinedFates:profile.intertwinedFates+1};
+function nextWeaponInstanceId(profile:Profile):string{
+ const ids=new Set(profile.weapons.map(entry=>entry.id));
+ let serial=profile.weapons.length+1;
+ while(ids.has('weapon-'+serial))serial++;
+ return 'weapon-'+serial;
 }
 
 function tierProbability(base:number,count:number,softStart:number,softStep:number,hardPity:number){
@@ -73,13 +81,15 @@ export function performWish(profile:Profile,banner:WishBanner,random:()=>number=
   :weapons.filter(entry=>entry.rarity===rarity).map(entry=>({kind:'weapon',id:entry.id,rarity:entry.rarity}));
  const reward=candidates[Math.floor(random()*candidates.length)];
  if(!reward)throw new Error('该星级暂无可用奖励，请检查卡池配置');
- const key=reward.kind==='character'?'characters':'weapons';
- const owned=profile[key];
- const duplicate=owned.some(entry=>entry.id===reward.id);
+ const duplicate=reward.kind==='character'
+  ?profile.characters.some(entry=>entry.id===reward.id)
+  :profile.weapons.some(entry=>entry.weaponId===reward.id);
+ const inventory=reward.kind==='character'?{
+  characters:duplicate?profile.characters.map(entry=>entry.id===reward.id?{...entry,copies:entry.copies+1}:entry)
+   :[...profile.characters,{id:reward.id,level:1,copies:1}]
+ }:{weapons:[...profile.weapons,{id:nextWeaponInstanceId(profile),weaponId:reward.id,level:1}]};
  return {reward,duplicate,profile:{
-  ...profile,intertwinedFates:profile.intertwinedFates-1,
-  [key]:duplicate?owned.map(entry=>entry.id===reward.id?{...entry,copies:entry.copies+1}:entry)
-    :[...owned,{id:reward.id,level:1,copies:1}],
+  ...profile,...inventory,intertwinedFates:profile.intertwinedFates-1,
   [fiveKey]:rarity===5?0:profile[fiveKey]+1,
   [fourKey]:rarity===4?0:Math.min(rules.fourHardPity-1,profile[fourKey]+1)
  }};
@@ -98,38 +108,49 @@ export function performWishes(profile:Profile,banner:WishBanner,count:WishCount,
  return {profile:updatedProfile,pulls};
 }
 
+export function requestWishes(profile:Profile,banner:WishBanner,count:WishCount,approvedCost:number,random:()=>number=Math.random){
+ const missingFates=Math.max(0,count-profile.intertwinedFates);
+ const primogemCost=missingFates*wishRules.cost;
+ if(primogemCost>approvedCost||primogemCost>profile.primogems){
+  return {kind:'exchange' as const,missingFates,primogemCost};
+ }
+ const funded=missingFates===0?profile:{
+  ...profile,primogems:profile.primogems-primogemCost,intertwinedFates:profile.intertwinedFates+missingFates
+ };
+ return {kind:'drawn' as const,...performWishes(funded,banner,count,random)};
+}
+
 type Trial={readonly kind:'stage';readonly stageId:string}|{readonly kind:'adventure';readonly settings:AdventureSettings};
 
 export function startTrial(save:LocalSave,trial:Trial):RunStart{
  const character=characters.find(entry=>entry.id===save.selected);
  const owned=save.profile.characters.find(entry=>entry.id===save.selected);
  if(!character||!owned)throw new Error('请选择已拥有的角色');
- const stage=trial.kind==='stage'?stages.find(entry=>entry.id===trial.stageId):null;
- if(stage===undefined)throw new Error('关卡不存在');
- const settings=trial.kind==='adventure'?trial.settings:null;
- if(settings?.mode==='timed'&&(!Number.isInteger(settings.durationSeconds)||settings.durationSeconds<60||settings.durationSeconds>3600)){
-  throw new Error('限时冒险的时长需为 60 至 3600 秒');
- }
- const equipped=save.profile.equipment.find(entry=>entry.characterId===character.id);
- const definition=equipped?weapons.find(entry=>entry.id===equipped.weaponId&&entry.weapon===character.weapon):undefined;
- const weapon=definition?save.profile.weapons.find(entry=>entry.id===definition.id):undefined;
- return {
-  runId:crypto.randomUUID(),seed:Math.floor(Math.random()*0x7fffffff),level:owned.level,stage,
-  adventure:settings?{settings,rules:adventureRules}:null,character,
-  equippedWeapon:definition&&weapon?{definition,level:weapon.level}:null
+ const loadout={
+  runId:crypto.randomUUID(),seed:Math.floor(Math.random()*0x7fffffff),level:owned.level,character,
+  equippedWeapon:equippedWeaponLoadout(save.profile,character)
  };
+ if(trial.kind==='stage'){
+  const stage=stages.find(entry=>entry.id===trial.stageId);
+  if(!stage)throw new Error('关卡不存在');
+  return {...loadout,stage,adventure:null,map:arenaMaps[stage.mapId]};
+ }
+ const difficultyId=trial.settings.difficulty;
+ const mapId=trial.settings.mapId??defaultEndlessMapId;
+ if(!Object.hasOwn(adventureDifficulties,difficultyId))throw new Error('请选择有效的无尽难度');
+ if(!Object.hasOwn(endlessMaps,mapId))throw new Error('无尽地图不存在');
+ return {...loadout,stage:null,adventure:{difficulty:adventureDifficulties[difficultyId],rules:adventureRules},map:endlessMaps[mapId]};
 }
 
-export function trialReward(run:RunStart,kills:number,ticks:number){
- if(run.stage)return kills===run.stage.enemies
-  ?{mora:run.stage.mora,primogems:run.stage.primogems}:{mora:0,primogems:0};
- return run.adventure?adventureReward(run.adventure,kills,ticks):{mora:0,primogems:0};
+export function trialRewards(run:RunStart,kills:number,ticks:number):readonly TrialReward[]{
+ if(run.stage)return kills===run.stage.enemies?run.stage.rewards:[];
+ const {mora,primogems}=adventureReward(run.adventure,kills,ticks);
+ return [{kind:'currency',currency:'mora',amount:mora},{kind:'currency',currency:'primogems',amount:primogems}];
 }
 
 export function settleTrial(save:LocalSave,run:RunStart,kills:number,ticks:number):LocalSave{
  if(!Number.isSafeInteger(kills)||kills<0||!Number.isSafeInteger(ticks)||ticks<0||
-  (run.stage&&(kills>run.stage.enemies||ticks===0))||
-  (run.adventure?.settings.mode==='timed'&&ticks>run.adventure.settings.durationSeconds*20)){
+  (run.stage&&(kills>run.stage.enemies||ticks===0))){
   throw new Error('本局战果无效');
  }
  const existing=save.results.find(result=>result.runId===run.runId);
@@ -137,10 +158,14 @@ export function settleTrial(save:LocalSave,run:RunStart,kills:number,ticks:numbe
   if(existing.kills!==kills||existing.ticks!==ticks)throw new Error('该试炼已结算');
   return save;
  }
- const reward=trialReward(run,kills,ticks);
+ const profile=trialRewards(run,kills,ticks).reduce<Profile>((current,reward)=>{
+  switch(reward.kind){
+   case 'currency':return {...current,[reward.currency]:current[reward.currency]+reward.amount};
+  }
+ },save.profile);
  const cleared=run.stage&&kills===run.stage.enemies&&!save.clearedStages.includes(run.stage.id);
  return {...save,
-  profile:{...save.profile,mora:save.profile.mora+reward.mora,primogems:save.profile.primogems+reward.primogems,runs:save.profile.runs+1},
+  profile:{...profile,runs:profile.runs+1},
   clearedStages:cleared&&run.stage?[...save.clearedStages,run.stage.id]:save.clearedStages,
   results:[...save.results,{runId:run.runId,kills,ticks}]
  };

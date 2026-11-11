@@ -21,7 +21,7 @@ await Promise.all([
  const render=(component,props)=>renderToStaticMarkup(createElement(component,props)).replaceAll('href="/characters/','href="../../frontend/public/characters/').replaceAll('src="/characters/','src="../../frontend/public/characters/');
  const html=(title,body)=>'<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+title+'</title><style>'+css+'body{background:#101e25;color:#e7e1d7;font-family:system-ui}.page{max-width:1360px;margin:0 auto;padding:28px}.page>h1{font-size:28px;margin-bottom:10px}.page>p{font-size:13px;color:#a6b5b8;margin-bottom:24px}.frames{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.frames article{background:#21382d;border:1px solid #ffffff20;border-radius:12px;overflow:hidden}.frames h2{font-size:15px;padding:12px}.scene{position:relative;height:280px}.options{position:relative;height:410px;margin-top:20px;overflow:hidden;border-radius:16px}</style><main class="page"><h1>'+title+'</h1>'+body+'</main></html>';
  const profile={primogems:1600,mora:5000,intertwinedFates:10,characters:characters.map(c=>({id:c.id,level:1,copies:0})),weapons:[],equipment:[],pity:0,weaponPity:0,fourStarPity:0,weaponFourStarPity:0,runs:0};
- const roster=render(CharacterRoster,{profile,selected:'amber',favoriteCharacters:[],onSelect:()=>{},onFavorite:()=>{},onLevel:()=>{},pending:false});
+ const roster=render(CharacterRoster,{profile,selected:'amber',favoriteCharacters:[],onSelect:()=>{},onFavorite:()=>{},onLevel:()=>{},onEquipWeapon:()=>{},pending:false});
  if(roster.match(/aria-label="安柏半身立绘"[^>]*data-portrait="gallery-pixel"/g)?.length!==2)throw Error('Amber gallery portrait missing from selection or character list');
  await fs.writeFile(new URL('../docs/assets/character-development-preview.html',import.meta.url),html('角色培养 · 选中角色与强化', '<p>实际页面组件预览。上方左侧半身照、右侧强化；下方显示首屏角色像素立绘。</p>'+roster));
  const enemies=[{id:901,x:560,y:270,hp:0,kind:'slime'},{id:902,x:600,y:285,hp:0,kind:'hilichurl'},{id:903,x:640,y:245,hp:0,kind:'boss'}];
@@ -35,12 +35,13 @@ await Promise.all([
  const options=render(UpgradeOptions,{state:{...offerState,upgradeChoices:offer.choices},onChoose:()=>{}});
  await fs.writeFile(new URL('../docs/assets/progression-loot-preview.html',import.meta.url),html('经验与摩拉粒子 · 随机强化','<p>使用实际粒子物理与页面组件渲染的关键帧；游戏中按逻辑时间连续播放。</p><div class="frames">'+frames+'</div><div class="options">'+options+'</div>'));
  const weaponCatalog=JSON.parse(weaponJson);
- const weaponProfile={...profile,weapons:[{id:'skyward-blade',level:5,copies:0},...weaponCatalog.filter(w=>w.id!=='skyward-blade').map(w=>({id:w.id,level:1,copies:0}))],equipment:[{characterId:'kaeya',weaponId:'skyward-blade'}]};
- const renderWeapons=profile=>render(WeaponsPage,{profile,selected:'kaeya',pending:false,onLevelWeapon:()=>{},onEquipWeapon:()=>{}}).replaceAll('src="/weapons/','src="../../frontend/public/weapons/').replaceAll('href="/weapons/','href="../../frontend/public/weapons/');
+ const weaponProfile={...profile,weapons:[{id:'skyward-blade-1',weaponId:'skyward-blade',level:5},{id:'skyward-blade-2',weaponId:'skyward-blade',level:1},
+  ...weaponCatalog.filter(w=>w.id!=='skyward-blade').map(w=>({id:w.id+'-1',weaponId:w.id,level:1}))],equipment:[{characterId:'kaeya',weaponInstanceId:'skyward-blade-1'}]};
+ const renderWeapons=profile=>render(WeaponsPage,{profile,pending:false,onLevelWeapon:()=>{}}).replaceAll('src="/weapons/','src="../../frontend/public/weapons/').replaceAll('href="/weapons/','href="../../frontend/public/weapons/');
  const weaponMarkup=renderWeapons(weaponProfile);
  const weaponEmpty=renderWeapons(profile);
- if(!weaponMarkup.includes('武器强化')||!weaponMarkup.includes('已装备')||!weaponEmpty.includes('尚未拥有武器'))throw Error('Weapon states failed to render');
- await fs.writeFile(new URL('../docs/assets/weapon-development-preview.html',import.meta.url),html('武器培养 · 选中武器与强化','<p>实际页面组件预览：上方左侧选中武器，右侧强化与装备，下方为武器列表。</p>'+weaponMarkup));
+ if(!weaponMarkup.includes('武器强化')||!weaponMarkup.includes('精炼')||!weaponMarkup.includes('数量 2')||!weaponMarkup.includes('装备中 · 凯亚')||!weaponEmpty.includes('尚未拥有武器'))throw Error('Weapon states failed to render');
+ await fs.writeFile(new URL('../docs/assets/weapon-development-preview.html',import.meta.url),html('武器培养 · 选中武器与强化','<p>实际页面组件预览。上方左侧为选中武器，右侧为强化，下方为武器列表。</p>'+weaponMarkup));
  await fs.writeFile(new URL('../docs/assets/weapon-development-empty-preview.html',import.meta.url),html('武器培养 · 尚未获得武器',weaponEmpty));
  console.log('PASS: Character, loot and upgrade previews; weapon equipped/empty states rendered');
 }).finally(()=>server.close());

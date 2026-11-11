@@ -5,11 +5,11 @@ import type {PageId} from '../../pages/hooks/usePageNavigation';
 type GuideStep={readonly page:PageId;readonly target:string;readonly title:string;readonly description:string};
 const guide:readonly GuideStep[]=[
  {page:'overview',target:'active-character',title:'当前出战',description:'这里可以查看下次出战的角色、等级和装备。旁边汇总试炼次数和收集进度。'},
- {page:'camp',target:'adventure-mode',title:'选择冒险方式',description:'限时冒险可以设定时长，无尽模式会逐波增加难度。两种模式都可以主动撤离并按进度结算。'},
+ {page:'camp',target:'adventure-mode',title:'选择无尽难度',description:'难度决定敌人的初始生命和伤害。敌潮会逐波增强，可以随时撤离并按进度结算。'},
  {page:'camp',target:'adventure-start',title:'进入战斗',description:'从这里开始冒险。WASD 或方向键移动，角色会自动攻击。击败敌人获得经验，升级时三选一。按 Esc 可暂停。'},
- {page:'stages',target:'stage-intro',title:'关卡挑战',description:'每个关卡都有固定数量的敌人，击败全部敌人即可获得对应的摩拉和原石。'},
- {page:'characters',target:'character-enhancement',title:'角色培养',description:'从下方列表选择出战角色。这里能对比强化前后的数值，消耗摩拉提升等级。'},
- {page:'weapons',target:'weapon-intro',title:'武器培养',description:'选择一件已获得的武器，强化主副词条，或将它装备给武器类型匹配的角色。'},
+ {page:'stages',target:'stage-intro',title:'关卡挑战',description:'先选择摩拉或原石关卡，再选择地图。击败本关全部敌人即可领取卡片上显示的奖励。'},
+ {page:'characters',target:'character-enhancement',title:'角色培养',description:'从下方选择出战角色。「强化」可对比升级数值，「武器」可为当前角色装备或卸下武器。'},
+ {page:'weapons',target:'weapon-intro',title:'武器培养',description:'选择一件已获得的武器，查看天赋并强化主副词条。'},
  {page:'archive',target:'archive-tabs',title:'图鉴',description:'切换角色或武器图鉴，查看基础属性、成长和天赋。未解锁的条目会灰显。'},
  {page:'wishes',target:'wish-pools',title:'祈愿',description:'用纠缠之缘在角色或武器卡池祈愿。两个卡池各自记录四星和五星保底。'},
  {page:'activities',target:'page-title',title:'活动',description:'这里汇总签到和后续活动预告。'},

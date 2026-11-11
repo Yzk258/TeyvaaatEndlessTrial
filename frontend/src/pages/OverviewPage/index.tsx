@@ -1,4 +1,5 @@
 import {CharacterPortrait} from '../../components/ui/CharacterPortrait';
+import {equippedWeaponLoadout,groupOwnedWeapons} from '../../game/functions/weaponInventory';
 import {characters,type CharacterId} from '../../objects/Character';
 import {weapons} from '../../objects/Weapon';
 import {weaponLabels} from '../../objects/WeaponType';
@@ -12,10 +13,10 @@ function Progress({label,value,total}:{label:string;value:number;total:number}){
 export function OverviewPage({profile,nickname,selected}:{profile:Profile;nickname:string;selected:CharacterId}){
  const active=characters.find(c=>c.id===selected);
  const ownedActive=profile.characters.find(c=>c.id===selected);
- const equipment=profile.equipment.find(e=>e.characterId===selected);
- const weapon=equipment?weapons.find(w=>w.id===equipment.weaponId):undefined;
+ const weapon=active?equippedWeaponLoadout(profile,active)?.definition:undefined;
  const ownedCharacters=characters.filter(c=>profile.characters.some(owned=>owned.id===c.id)).length;
- const ownedWeapons=weapons.filter(w=>profile.weapons.some(owned=>owned.id===w.id)).length;
+ const weaponGroups=groupOwnedWeapons(profile.weapons);
+ const ownedWeapons=weapons.filter(w=>weaponGroups.has(w.id)).length;
  return <div className="space-y-8">
   <header><p className="text-xs tracking-[.3em] text-emerald-100/50">OVERVIEW</p><h1 className="mt-4 font-serif text-4xl text-amber-50">综合</h1><p className="mt-3 text-sm leading-7 text-stone-400">{nickname}，这里汇总你的出战角色与收集进度。</p></header>
   <section className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">

@@ -1,5 +1,5 @@
 import {memo,useMemo,useId} from 'react';
-import {generateChunk,nearbyChunks,TILE_SIZE} from '../../../game/functions/generateMap';
+import {arenaChunks,generateChunk,isArenaTile,nearbyChunks,TILE_SIZE} from '../../../game/functions/generateMap';
 import type {MapTile} from '../../../game/objects/MapTile';
 import {gameAsset} from '../../../system/gameAsset';
 const groundAtlas=gameAsset('/terrain/ground-v2.png'),objectAtlas=gameAsset('/terrain/objects-v2.png');
@@ -42,15 +42,15 @@ function Feature({tile:t}:{tile:MapTile}){
   <image href={objectAtlas} x="0" y="0" width="1000" height="1000" preserveAspectRatio="none" className="[image-rendering:pixelated]"/>
  </svg></g>;
 }
-export const MapTerrain=memo(function MapTerrain({seed,adventure,chunkX,chunkY,screenOnly=false}:{seed:number;adventure:boolean;chunkX:number;chunkY:number;screenOnly?:boolean}){
+export const MapTerrain=memo(function MapTerrain({seed,adventure,chunkX,chunkY,screenOnly=false,includeRuins=adventure}:{seed:number;adventure:boolean;chunkX:number;chunkY:number;screenOnly?:boolean;includeRuins?:boolean}){
  const id=useId().replaceAll(':','');
  const tiles=useMemo(()=>{
   const chunks=adventure
-   ?screenOnly?Array.from({length:15},(_,i)=>generateChunk(seed,chunkX+i%5-2,chunkY+Math.floor(i/5)-1)):nearbyChunks(seed,chunkX,chunkY)
-   :Array.from({length:6},(_,i)=>generateChunk(seed,i%3,Math.floor(i/3),false));
+   ?screenOnly?Array.from({length:15},(_,i)=>generateChunk(seed,chunkX+i%5-2,chunkY+Math.floor(i/5)-1,includeRuins)):nearbyChunks(seed,chunkX,chunkY,includeRuins)
+   :arenaChunks(seed,includeRuins);
   return chunks.flatMap(chunk=>chunk.tiles.map(t=>({...t,x:chunk.x+t.x,y:chunk.y+t.y})))
-   .map(t=>!adventure&&(t.x<48||t.x+TILE_SIZE>852||t.y<48||t.y+TILE_SIZE>492)?{...t,kind:'meadow' as const}:t);
- },[seed,adventure,chunkX,chunkY,screenOnly]);
+   .map(t=>!adventure&&!isArenaTile(t.x,t.y)?{...t,kind:'meadow' as const}:t);
+ },[seed,adventure,chunkX,chunkY,screenOnly,includeRuins]);
  return <g aria-hidden="true" pointerEvents="none"><defs>{textures.map(texture=><pattern key={texture.name} id={id+'-'+texture.name} width="64" height="64" patternUnits="userSpaceOnUse">
   <svg width="64" height="64" viewBox={texture.x+' '+texture.y+' 500 500'} overflow="hidden" preserveAspectRatio="none"><image href={groundAtlas} width="1000" height="1000" preserveAspectRatio="none" className="[image-rendering:pixelated]"/></svg>
  </pattern>)}<pattern id={id+'-paving'} width="96" height="96" patternUnits="userSpaceOnUse">

@@ -14,7 +14,7 @@ const UPCOMING:readonly {readonly Icon:ComponentType<{size?:number;className?:st
 export function ActivitiesPage({claimed,pending,onClaim,onReset}:{claimed:number;pending:boolean;onClaim:()=>void;onReset:()=>void}){
  const complete=claimed>=CHECK_IN.length;
  return <div className="space-y-8">
-  <header><p className="text-xs tracking-[.3em] text-violet-200/50">EVENTS</p><h1 className="mt-4 font-serif text-4xl text-amber-50">活动</h1><p className="mt-4 text-sm leading-7 text-stone-400">查看签到演示与活动预告。演示进度保存在当前存档。</p></header>
+  <header><p className="text-xs tracking-[.3em] text-violet-200/50">EVENTS</p><h1 className="mt-4 font-serif text-4xl text-amber-50">活动（建设中。。。）</h1><p className="mt-4 text-sm leading-7 text-stone-400">查看签到演示与活动预告。演示进度保存在当前存档。</p></header>
   <section className="rounded-2xl border border-white/10 bg-[#142a31]/75 p-6">
    <div className="flex items-center gap-3 text-amber-100"><CalendarCheck size={22}/><h2 className="font-serif text-2xl text-amber-50">七日签到</h2></div>
    <p className="mt-2 text-sm text-stone-400">预览七日签到的奖励配置。</p>

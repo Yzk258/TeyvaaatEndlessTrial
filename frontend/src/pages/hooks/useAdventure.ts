@@ -1,11 +1,15 @@
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {AdventureSettings} from '../../objects/AdventureSettings';
 import type {RunStart} from '../../objects/Profile';
+import {rewardCurrencyLabels} from '../../objects/TrialReward';
 import type {WishBanner,WishCount,WishPulls} from '../../objects/WishReward';
 import type {WishReveal} from '../WishPage/objects/WishReveal';
 import {createSave,starterCharacter,type LocalSave} from '../../game/local/LocalSave';
 import {addSave,downloadSave,importSave,listSaves,loadSave,updateSave} from '../../game/local/saveStore';
-import {equipWeapon,exchangeFate,levelUp,performWishes,selectCharacter,setCharacterFavorite,settleTrial,startTrial,trialReward} from '../../game/local/progression';
+import {equipWeapon,levelUp,requestWishes,selectCharacter,setCharacterFavorite,settleTrial,startTrial,trialRewards} from '../../game/local/progression';
+
+type WishExchange={banner:WishBanner;count:WishCount;missingFates:number;primogemCost:number};
+type Notice={readonly text:string;readonly kind:'inline'|'toast'};
 
 export function useAdventure(){
  const [saves,setSaves]=useState<readonly LocalSave[]>([]);
@@ -13,13 +17,20 @@ export function useAdventure(){
  const [loading,setLoading]=useState(true);
  const [saveError,setSaveError]=useState('');
  const [pending,setPending]=useState(false);
- const [notice,setNotice]=useState('');
+ const [notice,setNotice]=useState<Notice|null>(null);
  const [run,setRun]=useState<RunStart|null>(null);
  const [result,setResult]=useState<WishPulls|null>(null);
  const [weaponResult,setWeaponResult]=useState<WishPulls|null>(null);
  const [wishReveal,setWishReveal]=useState<WishReveal|null>(null);
+ const [wishExchange,setWishExchange]=useState<WishExchange|null>(null);
  const [exitMessage,setExitMessage]=useState<string|null>(null);
  const busy=useRef(false);
+
+ useEffect(()=>{
+  if(notice?.kind!=='toast')return;
+  const timer=window.setTimeout(()=>setNotice(current=>current===notice?null:current),3000);
+  return ()=>window.clearTimeout(timer);
+ },[notice]);
 
  const reloadSaves=useCallback(async()=>{
   setLoading(true);
@@ -34,9 +45,9 @@ export function useAdventure(){
   if(busy.current)return;
   busy.current=true;
   setPending(true);
-  setNotice('');
+  setNotice(null);
   try{await work();}
-  catch(error){setNotice(error instanceof Error?error.message:'无法完成本次操作');}
+  catch(error){setNotice({text:error instanceof Error?error.message:'无法完成本次操作',kind:'inline'});}
   finally{busy.current=false;setPending(false);}
  }
 
@@ -50,48 +61,56 @@ export function useAdventure(){
   setResult(null);
   setWeaponResult(null);
   setWishReveal(null);
+  setWishExchange(null);
   setExitMessage(null);
-  setNotice('');
+  setNotice(null);
   void reloadSaves();
   return true;
  };
 
- function changeProgress(change:(current:LocalSave)=>LocalSave,message?:string){
+ function changeProgress(change:(current:LocalSave)=>LocalSave,success?:Notice){
   return perform(async()=>{
    if(!save)return;
    setSave(await updateSave(save.id,change));
-   if(message)setNotice(message);
+   if(success)setNotice(success);
   });
  }
 
  const onSelect=(id:string)=>changeProgress(current=>selectCharacter(current,id));
  const onFavorite=(id:string,favorite:boolean)=>changeProgress(current=>setCharacterFavorite(current,id,favorite));
- const onLevel=()=>{if(save)return changeProgress(current=>({...current,profile:levelUp(current.profile,'character',save.selected)}),'角色已提升一级');};
- const onLevelWeapon=(id:string)=>changeProgress(current=>({...current,profile:levelUp(current.profile,'weapon',id)}),'武器已升级，词条已提升');
- const onEquipWeapon=(characterId:string,weaponId:string|null)=>changeProgress(
-  current=>({...current,profile:equipWeapon(current.profile,characterId,weaponId)}),
-  weaponId?'武器已装备，下次开局生效':'武器已卸下'
+ const onLevel=()=>{if(save)return changeProgress(current=>({...current,profile:levelUp(current.profile,'character',save.selected)}),{text:'角色已提升一级',kind:'inline'});};
+ const onLevelWeapon=(weaponInstanceId:string)=>changeProgress(current=>({...current,profile:levelUp(current.profile,'weapon',weaponInstanceId)}),{text:'武器已升级，词条已提升',kind:'inline'});
+ const onEquipWeapon=(characterId:string,weaponInstanceId:string|null)=>changeProgress(
+  current=>({...current,profile:equipWeapon(current.profile,characterId,weaponInstanceId)}),
+  {text:weaponInstanceId?'武器已装备，下次开局生效':'武器已卸下',kind:'toast'}
  );
- const onExchangeFates=()=>changeProgress(current=>({...current,profile:exchangeFate(current.profile)}),'已用原石兑换 1 个纠缠之缘');
  const onCheckIn=()=>changeProgress(current=>current.checkIns<7?{...current,checkIns:current.checkIns+1}:current);
  const onResetCheckIns=()=>changeProgress(current=>({...current,checkIns:0}));
 
- function onWish(banner:WishBanner,count:WishCount){
+ function onWish(banner:WishBanner,count:WishCount,approvedCost=0){
   if(wishReveal)return;
   return perform(async()=>{
    if(!save)return;
-   let pulls!:WishPulls;
+   setWishExchange(null);
+   let outcome!:ReturnType<typeof requestWishes>;
    const next=await updateSave(save.id,current=>{
-    const outcome=performWishes(current.profile,banner,count);
-    pulls=outcome.pulls;
-    return {...current,profile:outcome.profile};
+    outcome=requestWishes(current.profile,banner,count,approvedCost);
+    return outcome.kind==='drawn'?{...current,profile:outcome.profile}:current;
    });
    setSave(next);
+   if(outcome.kind==='exchange'){
+    setWishExchange({banner,count,missingFates:outcome.missingFates,primogemCost:outcome.primogemCost});
+    return;
+   }
+   const {pulls}=outcome;
    if(banner==='character')setResult(pulls);
    else setWeaponResult(pulls);
    setWishReveal({pulls,sequence:crypto.randomUUID()});
   });
  }
+ const confirmWishExchange=()=>{
+  if(wishExchange)void onWish(wishExchange.banner,wishExchange.count,wishExchange.primogemCost);
+ };
 
  function begin(trial:Parameters<typeof startTrial>[1]){
   return perform(async()=>{
@@ -113,8 +132,7 @@ export function useAdventure(){
  const onSettle=(kills:number,ticks:number,withdrawing=false)=>perform(async()=>{
   if(!save||!run)return;
   const next=await updateSave(save.id,current=>settleTrial(current,run,kills,ticks));
-  const reward=trialReward(run,kills,ticks);
-  const gains='摩拉 +'+reward.mora+'，原石 +'+reward.primogems;
+  const gains=trialRewards(run,kills,ticks).map(reward=>`${rewardCurrencyLabels[reward.currency]} +${reward.amount}`).join('，');
   const message=run.stage
    ?kills===run.stage.enemies?'关卡通关！'+gains:'挑战失败，本次未获得通关奖励'
    :'本次冒险已结算：'+gains;
@@ -122,14 +140,15 @@ export function useAdventure(){
   setRun(null);
   window.location.hash=run.stage?'#/stages':'#/camp';
   if(withdrawing)setExitMessage(message);
-  else setNotice(message);
+  else setNotice({text:message,kind:'inline'});
  });
 
  return {
   save,saves,loading,saveError,reloadSaves,onOpen,onCreate,onImport,onExport,onReturn,
-  selected:save?.selected??starterCharacter,onSelect,onFavorite,pending,notice,run,
-  result,weaponResult,onLevel,onLevelWeapon,onEquipWeapon,onExchangeFates,onCheckIn,onResetCheckIns,
-  onWish,wishReveal,closeWishReveal:()=>setWishReveal(null),
+  selected:save?.selected??starterCharacter,onSelect,onFavorite,pending,run,
+  notice:notice?.kind==='inline'?notice.text:'',toast:notice?.kind==='toast'?notice.text:'',
+  result,weaponResult,onLevel,onLevelWeapon,onEquipWeapon,onCheckIn,onResetCheckIns,
+  onWish,wishReveal,closeWishReveal:()=>setWishReveal(null),wishExchange,confirmWishExchange,cancelWishExchange:()=>setWishExchange(null),
   onStart,onStartStage,onSettle,onAbandon,exitMessage,closeExitMessage:()=>setExitMessage(null)
  };
 }

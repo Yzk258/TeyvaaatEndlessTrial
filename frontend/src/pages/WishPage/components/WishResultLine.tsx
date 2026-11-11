@@ -11,5 +11,5 @@ export function WishResultLine({result}:{result:WishPulls|null}){
  }
  const [{reward,duplicate}]=result;
  const name=(reward.kind==='character'?characters:weapons).find(item=>item.id===reward.id)?.name??reward.id;
- return <p role="status" className="text-sm text-amber-100"><RarityBadge rarity={reward.rarity}/><span className="ml-3">获得 {name}{duplicate?(reward.kind==='character'?' · 印记 +1':' · 重复记录 +1'):reward.kind==='character'?' · 新伙伴':' · 新武器'}</span></p>;
+ return <p role="status" className="text-sm text-amber-100"><RarityBadge rarity={reward.rarity}/><span className="ml-3">获得 {name}{reward.kind==='weapon'?' · 数量 +1':duplicate?' · 印记 +1':' · 新伙伴'}</span></p>;
 }

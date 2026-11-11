@@ -2,6 +2,7 @@ import {useState} from 'react';
 import {characters} from '../../../objects/Character';
 import {characterListEntries} from '../../../objects/CharacterList';
 import {weapons} from '../../../objects/Weapon';
+import {groupOwnedWeapons} from '../../../game/functions/weaponInventory';
 import {elementLabels} from '../../../objects/Element';
 import {allCharacterFilters,characterPageSize,characterRegion,matchesCharacterFilter,regionLabels,type CharacterFilter} from '../../../objects/CharacterFilter';
 import {weaponLabels} from '../../../objects/WeaponType';
@@ -21,7 +22,8 @@ export function useArchive(profile:Profile,favoriteCharacters:readonly string[])
  const query=search.trim().toLowerCase();
  const visible=(unlocked:boolean,text:string)=>(filter==='all'||(filter==='unlocked'?unlocked:!unlocked))&&text.toLowerCase().includes(query);
  const characterEntries=characterListEntries(profile.characters,favoriteCharacters);
- const weaponEntries=weapons.map(definition=>({definition,owned:profile.weapons.find(w=>w.id===definition.id)}));
+ const weaponGroups=groupOwnedWeapons(profile.weapons);
+ const weaponEntries=weapons.map(definition=>({definition,quantity:weaponGroups.get(definition.id)?.length??0}));
  const matches=characterEntries.filter(({definition:c,owned})=>
   matchesCharacterFilter(c.id,c.element,characterFilter)&&
   visible(!!owned,[c.name,c.title,elementLabels[c.element],weaponLabels[c.weapon],regionLabels[characterRegion(c.id)]].join(' '))
@@ -39,9 +41,9 @@ export function useArchive(profile:Profile,favoriteCharacters:readonly string[])
   setFilter:(next:ArchiveFilter)=>{setFilter(next);setIndex(0);},
   setCharacterFilter:(next:CharacterFilter)=>{setCharacterFilter(next);setIndex(0);},
   characterCount:characterEntries.filter(e=>!!e.owned).length,characterTotal:characters.length,
-  weaponCount:weaponEntries.filter(e=>!!e.owned).length,weaponTotal:weapons.length,
+  weaponCount:weaponEntries.filter(e=>e.quantity>0).length,weaponTotal:weapons.length,
   characters:matches.slice(start,end),
   characterReferences:matchedReferences.slice(Math.max(0,start-matches.length),Math.max(0,end-matches.length)),
-  weapons:weaponEntries.filter(e=>visible(!!e.owned,[e.definition.name,weaponLabels[e.definition.weapon],e.definition.talent.name,e.definition.talent.description].join(' ')))
+  weapons:weaponEntries.filter(e=>visible(e.quantity>0,[e.definition.name,weaponLabels[e.definition.weapon],e.definition.talent.name,e.definition.talent.description].join(' ')))
  };
 }

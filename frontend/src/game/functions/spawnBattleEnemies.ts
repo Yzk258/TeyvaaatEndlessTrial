@@ -20,7 +20,7 @@ export function spawnBattleEnemies(s:BattleState,nearby:readonly Enemy[],x:numbe
  };
  const lastEliteWave=s.lastEliteWave??0;
  const eliteWave=lastEliteWave+eliteWaveInterval;
- const eliteDue=adventure&&s.adventure?.settings.mode==='endless'&&difficulty.wave>=eliteWave;
+ const eliteDue=adventure&&s.adventure!==null&&difficulty.wave>=eliteWave;
  // Reserve a place for the elite even when the ordinary enemy cap has already been reached.
  const displaced=eliteDue&&nearby.length>=difficulty.limit?nearby.findLastIndex(e=>e.kind!=='elite'):-1;
  const elite=eliteDue&&(nearby.length<difficulty.limit||displaced>=0)?spawn('elite',tick*16+14,x+360,y-140):undefined;

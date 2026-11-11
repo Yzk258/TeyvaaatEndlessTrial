@@ -1,7 +1,32 @@
-import {AdventureSetup} from './components/AdventureSetup';
-import type {AdventureSettings} from '../../objects/AdventureSettings';
-import type {Profile} from '../../objects/Profile';
+import {AdventureSetup,type AdventureSetupProps} from './components/AdventureSetup';
+import {CharacterPortrait} from '../../components/ui/CharacterPortrait';
+import {WeaponPortrait} from '../../components/ui/WeaponPortrait';
+import {equippedWeaponLoadout} from '../../game/functions/weaponInventory';
+import {defaultEndlessMapId,endlessMaps} from '../../objects/BattleMap';
 import {characters,type CharacterId} from '../../objects/Character';
-export function HomePage(p:{profile:Profile;selected:CharacterId;onStart:(settings:AdventureSettings)=>void;pending:boolean}){
- return <div className="space-y-10"><section className="relative overflow-hidden rounded-3xl border border-emerald-100/10 bg-gradient-to-br from-[#25483f]/85 via-[#203638]/80 to-[#1b2b34]/60 px-9 py-12 md:px-12"><div className="absolute right-8 top-3 text-[240px] leading-none text-emerald-100/[.05]">✥</div><p className="text-xs tracking-[.4em] text-emerald-100/50">MONDSTADT · ENDLESS EXPLORATION</p><h1 className="mt-6 font-serif text-5xl leading-tight text-[#f2ead9] md:text-6xl">风起之处，<br/>新的试炼。</h1><p className="mt-5 max-w-md text-sm leading-7 text-stone-300/65">穿过低语森林，与熟悉的伙伴并肩。<br/>在无尽敌潮中收集力量，写下属于你的冒险。</p><AdventureSetup pending={p.pending} onStart={p.onStart}/><p className="mt-5 text-xs text-stone-400">无限地图 · 镜头跟随 · 单人探索</p><p className="relative mt-5 text-sm text-stone-300">当前出战：{characters.find(c=>c.id===p.selected)?.name} · <a href="#/characters" className="text-amber-100 underline underline-offset-4">前往角色培养更换</a></p></section><footer className="flex justify-between border-t border-white/10 py-5 text-xs text-stone-500"><span>已完成 {p.profile.runs} 次试炼 · 元素反应与后台协同待实现</span><span>原神同人游戏</span></footer></div>;
+import type {Profile} from '../../objects/Profile';
+
+export function HomePage({selected,profile,...setup}:{selected:CharacterId;profile:Profile}&AdventureSetupProps){
+ const character=characters.find(entry=>entry.id===selected);
+ const weapon=character?equippedWeaponLoadout(profile,character)?.definition:undefined;
+ return <section className="max-w-4xl overflow-hidden rounded-3xl border border-emerald-100/15 bg-gradient-to-br from-[#264b41]/95 via-[#1c3435]/95 to-[#142731]/95">
+  <header className="flex flex-wrap items-center justify-between gap-x-8 gap-y-5 border-b border-white/10 px-5 py-7 sm:px-8 sm:py-9">
+   <div className="min-w-0 flex-1 basis-64">
+    <p className="text-sm text-emerald-200/80">{endlessMaps[defaultEndlessMapId].title} · 区块探索</p>
+    <h1 className="mt-2 font-serif text-4xl text-[#f2ead9] sm:text-5xl">无尽冒险</h1>
+    <p className="mt-4 max-w-xl text-sm leading-7 text-stone-300">在无限地图上迎战不断增强的敌潮。倒下或主动撤离时，按击杀数和存活时间结算。</p>
+   </div>
+   {character&&<div className="flex max-w-full items-center gap-3 rounded-2xl border border-white/15 bg-[#12252c]/60 px-4 py-2.5">
+    <div className="min-w-0">
+     <p className="text-xs text-stone-300">当前出战</p>
+     <a href="#/characters" className="mt-1 inline-flex items-baseline gap-1.5 text-base font-medium text-amber-100 hover:underline">
+      {character.name}<span aria-hidden="true" className="text-xs">↗</span>
+     </a>
+    </div>
+    <CharacterPortrait characterId={character.id} label={character.name+'半身立绘'} framing="bust" allowReference className="h-20 w-20 shrink-0"/>
+    {weapon&&<WeaponPortrait weaponId={weapon.id} label={weapon.name+'武器立绘'} className="h-16 w-14 shrink-0"/>}
+   </div>}
+  </header>
+  <div className="px-5 py-6 sm:px-8 sm:py-8"><AdventureSetup {...setup}/></div>
+ </section>;
 }

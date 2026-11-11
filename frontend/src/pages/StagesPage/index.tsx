@@ -1,24 +1,54 @@
-import {stages} from '../../objects/Stage';
+import {Check,Swords} from 'lucide-react';
+import {CurrencyIcon} from '../../components/ui/CurrencyIcon';
+import {arenaMaps} from '../../objects/BattleMap';
+import {stageCategories,stages,type StageCategoryId} from '../../objects/Stage';
+import {rewardCurrencyLabels,type RewardCurrency} from '../../objects/TrialReward';
 
-export function StagesPage({onStart,pending,clearedStages}:{onStart:(id:string)=>void;pending:boolean;clearedStages:readonly string[]}){
- return <section className="space-y-8">
-  <header data-tutorial-target="stage-intro">
-   <p className="text-xs tracking-[.3em] text-emerald-100/50">EXPEDITION CHALLENGES</p>
-   <h1 className="mt-4 font-serif text-4xl text-amber-50">关卡挑战</h1>
-   <p className="mt-4 text-sm leading-7 text-stone-400">击败本关全部敌人即可通关。每次成功挑战均可获得所列奖励。</p>
-   <p className="text-xs text-stone-500">使用角色培养页当前选中的角色。</p>
+const currencyIcons={mora:'mora',primogems:'primogem'} as const satisfies Record<RewardCurrency,'mora'|'primogem'>;
+
+type StagesPageProps={category:StageCategoryId;onCategoryChange:(id:StageCategoryId)=>void;onStart:(id:string)=>void;pending:boolean;clearedStages:readonly string[]};
+
+export function StagesPage({category,onCategoryChange,onStart,pending,clearedStages}:StagesPageProps){
+ const activeCategory=stageCategories.find(option=>option.id===category)??stageCategories[0];
+ const availableStages=stages.filter(stage=>stage.category===category);
+ const clearedCount=availableStages.filter(stage=>clearedStages.includes(stage.id)).length;
+
+ return <section className="space-y-5">
+  <header data-tutorial-target="stage-intro" className="rounded-3xl border border-emerald-100/15 bg-gradient-to-br from-[#264b41]/95 to-[#142731]/95 px-5 py-7 sm:px-8">
+   <h1 className="font-serif text-4xl text-amber-50">关卡挑战</h1>
+   <p className="mt-3 text-sm leading-7 text-stone-300">选择要获取的奖励。击败本关全部敌人后，可领取通关奖励。</p>
   </header>
-  <div className="grid gap-5 md:grid-cols-3">{stages.map((stage,i)=>
-   <article key={stage.id} className="rounded-2xl border border-white/10 bg-gradient-to-br from-emerald-100/5 to-transparent p-7 transition duration-200 hover:-translate-y-1 hover:border-emerald-100/30 hover:shadow-[0_16px_36px_-18px_rgba(0,0,0,.75)]">
-    <div className="flex items-center justify-between gap-3">
-     <p className="text-xs tracking-widest text-stone-500">挑战 0{i+1}</p>
-     {clearedStages.includes(stage.id)&&<span className="text-xs text-emerald-200">已通关</span>}
-    </div>
-    <div className="py-8 text-5xl text-emerald-100/40">✧</div>
-    <h2 className="font-serif text-2xl text-amber-50">{stage.title}</h2>
-    <p className="mt-4 text-sm text-stone-300">{stage.enemies} 名敌人 · 全部击败通关</p>
-    <p className="mt-5 border-t border-white/10 pt-5 text-sm leading-7 text-amber-100">摩拉 +{stage.mora}<br/>原石 +{stage.primogems}</p>
-    <button disabled={pending} onClick={()=>onStart(stage.id)} className="mt-6 rounded-full bg-amber-100 px-6 py-3 text-sm text-slate-900 disabled:opacity-40">开始挑战 →</button>
-   </article>)}</div>
+  <div className="rounded-3xl border border-white/10 bg-[#16292e]/95 p-4 sm:p-6">
+   <div className="flex flex-wrap gap-2" role="group" aria-label="奖励类别">
+    {stageCategories.map(option=><button key={option.id} type="button" aria-pressed={category===option.id} onClick={()=>onCategoryChange(option.id)}
+     className="rounded-full border border-white/15 px-4 py-2 text-sm text-stone-300 transition hover:border-amber-100/40 aria-pressed:border-amber-100 aria-pressed:bg-amber-100 aria-pressed:text-slate-900">
+     {option.label}
+    </button>)}
+   </div>
+   <div className="my-5 flex flex-wrap items-baseline justify-between gap-2 border-b border-white/10 pb-4">
+    <p className="text-sm text-stone-300">{activeCategory.description}</p>
+    <p className="text-xs tabular-nums text-emerald-200">已通关 {clearedCount} / {availableStages.length}</p>
+   </div>
+   <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    {availableStages.map(stage=>{
+     const cleared=clearedStages.includes(stage.id);
+     return <article key={stage.id} className="flex flex-col rounded-2xl border border-white/10 bg-[#21383b] p-5 transition hover:border-emerald-100/35">
+      <div className="flex items-center justify-between gap-3 text-xs">
+       <span className="rounded-full border border-white/15 px-3 py-1 text-stone-300">{stage.difficulty}</span>
+       {cleared&&<span className="inline-flex items-center gap-1.5 text-emerald-200"><Check size={14} aria-hidden="true"/>已通关</span>}
+      </div>
+      <h2 className="mt-4 font-serif text-2xl text-amber-50">{arenaMaps[stage.mapId].title}</h2>
+      <p className="mt-3 flex items-center gap-2 text-sm text-stone-300"><Swords size={16} aria-hidden="true"/>击败 {stage.enemies} 名敌人</p>
+      <div className="mb-4 mt-5 flex flex-wrap gap-2 border-t border-white/10 pt-4">
+       {stage.rewards.map((reward,index)=><span key={index} className="inline-flex items-center gap-2 rounded-lg bg-slate-950/30 px-3 py-2 text-sm text-amber-100">
+        <CurrencyIcon kind={currencyIcons[reward.currency]} size={18}/>{rewardCurrencyLabels[reward.currency]} +{reward.amount.toLocaleString()}
+       </span>)}
+      </div>
+      <button type="button" disabled={pending} onClick={()=>onStart(stage.id)} aria-label={'开始挑战 '+arenaMaps[stage.mapId].title}
+       className="mt-auto w-full rounded-full bg-[#e8dbc2] px-5 py-2.5 text-sm font-medium text-slate-900 enabled:hover:bg-amber-50 disabled:opacity-40">开始挑战</button>
+     </article>;
+    })}
+   </div>
+  </div>
  </section>;
 }
