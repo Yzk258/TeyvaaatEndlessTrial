@@ -4,7 +4,7 @@
 
 ## 游玩
 
-通过宣传页的「开始游戏」进入浏览器单机版，点击大门后新建存档、继续游戏或导入备份。标题画面选择「下载离线资源」，显示就绪后即可用同一个浏览器从游戏地址断网启动。 [宣传页与游戏发布](site/README.md)
+通过[宣传页](https://yzk258.github.io/TeyvaaatEndlessTrial/)的「开始游戏」进入浏览器单机版，点击大门后新建存档、继续游戏或导入备份。标题画面选择「下载离线资源」，显示就绪后即可用同一个浏览器从游戏地址断网启动。 [宣传页与游戏发布](site/README.md)
 
 进度按浏览器与站点地址保存在本地。主界面可导出 JSON 备份，换设备或换网址时可导入为独立存档。返回标题可以切换存档。
 
@@ -31,15 +31,15 @@ npm run dev
 
 游戏采用 React、TypeScript 和 SVG，战斗模拟通过纯函数更新状态。培养、祈愿与奖励结算在本地计算，相关进度通过 IndexedDB 事务保存。
 
-| 目录 | 内容 |
-| --- | --- |
-| [frontend/src/](frontend/src/) | 页面、战斗模拟与渲染 |
-| [frontend/public/](frontend/public/) | 游戏实际加载的像素素材 |
-| [frontend/src/game/local/](frontend/src/game/local/) | 本地存档、培养、祈愿和结算规则 |
-| [shared/](shared/) | 角色、武器和冒险等共享配置 |
-| [tools/](tools/) | 启动、运维和验证脚本 |
-| [docs/](docs/) | 机制说明、素材记录和工作日志 |
-| [site/](site/) | 宣传页与单机游戏的 GitHub Pages 发布入口 |
+| 目录                                                | 内容                                     |
+| --------------------------------------------------- | ---------------------------------------- |
+| [frontend/src/](frontend/src/)                       | 页面、战斗模拟与渲染                     |
+| [frontend/public/](frontend/public/)                 | 游戏实际加载的像素素材                   |
+| [frontend/src/game/local/](frontend/src/game/local/) | 本地存档、培养、祈愿和结算规则           |
+| [shared/](shared/)                                   | 角色、武器和冒险等共享配置               |
+| [tools/](tools/)                                     | 启动、运维和验证脚本                     |
+| [docs/](docs/)                                       | 机制说明、素材记录和工作日志             |
+| [site/](site/)                                       | 宣传页与单机游戏的 GitHub Pages 发布入口 |
 
 ## 验证
 
