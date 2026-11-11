@@ -19,7 +19,7 @@
 ## 数据字段
 
 - id：唯一且稳定的角色ID，不要修改已有角色ID；玩家所有权用它关联。
-- name、title、color、symbol：显示名称、称号、占位配色与符号。
+- name、title 和 color 分别记录显示名称、称号和角色配色。
 - baseAttack、attackGrowth：1级攻击、每级攻击成长。
 - baseHp、hpGrowth：1级生命、每级生命成长。
 - attackRange：攻击范围（战场坐标单位）。
