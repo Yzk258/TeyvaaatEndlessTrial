@@ -5,8 +5,8 @@ import {CharacterEntries} from './components/CharacterEntries';
 import {WeaponEntries} from './components/WeaponEntries';
 import {CharacterFilterControls} from '../../components/ui/CharacterFilterControls';
 import {CharacterPageControls} from '../../components/ui/CharacterPageControls';
-export function ArchivePage({profile}:{profile:Profile}){
- const page=useArchive(profile);
+export function ArchivePage({profile,favoriteCharacters,pending,onFavorite}:{profile:Profile;favoriteCharacters:readonly string[];pending:boolean;onFavorite:(id:string,favorite:boolean)=>void}){
+ const page=useArchive(profile,favoriteCharacters);
  const empty=page.tab==='characters'?page.characters.length+page.characterReferences.length===0:page.weapons.length===0;
  return <section className="space-y-7">
   <header><p className="text-xs tracking-[.3em] text-amber-100/50">TEYVAT ARCHIVE</p><h1 className="mt-4 font-serif text-4xl text-amber-50">图鉴</h1><p className="mt-4 text-sm leading-7 text-stone-400">收录当前版本全部角色与武器。未解锁角色以黑色剪影显示，仍可查看基础属性与招式说明。</p><p className="mt-3 text-sm text-amber-100">角色收集 {page.characterCount} / {page.characterTotal}<span className="mx-4 text-stone-600">|</span>武器收集 {page.weaponCount} / {page.weaponTotal}</p></header>
@@ -15,7 +15,10 @@ export function ArchivePage({profile}:{profile:Profile}){
    <CharacterFilterControls value={page.characterFilter} onChange={page.setCharacterFilter}/>
    <p className="text-xs text-stone-400" aria-live="polite">共 {page.matchCount} 位角色</p>
   </div>}
-  {empty?<p className="rounded-2xl border border-white/10 p-10 text-center text-stone-400">没有符合条件的条目，试试其他关键词或解锁状态。</p>:page.tab==='characters'?<CharacterEntries entries={page.characters} references={page.characterReferences}/>:<WeaponEntries entries={page.weapons}/>}
+  {empty?<p className="rounded-2xl border border-white/10 p-10 text-center text-stone-400">没有符合条件的条目，试试其他关键词或解锁状态。</p>:page.tab==='characters'?<CharacterEntries entries={page.characters} references={page.characterReferences} pending={pending} onFavorite={(id,favorite)=>{
+   onFavorite(id,favorite);
+   if(favorite)page.setIndex(0);
+  }}/>:<WeaponEntries entries={page.weapons}/>}
   {page.tab==='characters'&&<CharacterPageControls index={page.pageIndex} count={page.pageCount} onChange={page.setIndex}/>}
  </section>;
 }

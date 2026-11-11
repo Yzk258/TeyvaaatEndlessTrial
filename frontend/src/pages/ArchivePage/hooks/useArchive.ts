@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import {characters} from '../../../objects/Character';
+import {characterListEntries} from '../../../objects/CharacterList';
 import {weapons} from '../../../objects/Weapon';
 import {elementLabels} from '../../../objects/Element';
 import {allCharacterFilters,characterPageSize,characterRegion,matchesCharacterFilter,regionLabels,type CharacterFilter} from '../../../objects/CharacterFilter';
@@ -11,7 +12,7 @@ const references:Readonly<Record<string,{readonly name:string;readonly archiveOn
 const referenceEntries=Object.entries(references).flatMap(([id,reference])=>
  reference.archiveOnly?[{id,name:reference.name,element:reference.element}]:[]
 );
-export function useArchive(profile:Profile){
+export function useArchive(profile:Profile,favoriteCharacters:readonly string[]){
  const [tab,setTab]=useState<'characters'|'weapons'>('characters');
  const [search,setSearch]=useState('');
  const [filter,setFilter]=useState<ArchiveFilter>('all');
@@ -19,7 +20,7 @@ export function useArchive(profile:Profile){
  const [index,setIndex]=useState(0);
  const query=search.trim().toLowerCase();
  const visible=(unlocked:boolean,text:string)=>(filter==='all'||(filter==='unlocked'?unlocked:!unlocked))&&text.toLowerCase().includes(query);
- const characterEntries=characters.map(definition=>({definition,owned:profile.characters.find(c=>c.id===definition.id)}));
+ const characterEntries=characterListEntries(profile.characters,favoriteCharacters);
  const weaponEntries=weapons.map(definition=>({definition,owned:profile.weapons.find(w=>w.id===definition.id)}));
  const matches=characterEntries.filter(({definition:c,owned})=>
   matchesCharacterFilter(c.id,c.element,characterFilter)&&

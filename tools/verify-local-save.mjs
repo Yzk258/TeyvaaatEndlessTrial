@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import {fileURLToPath} from 'node:url';
 import {build} from '../frontend/node_modules/vite/dist/node/index.js';
 
-async function loadModule(name){
+async function loadModule(name,directory='game/local'){
  const root=fileURLToPath(new URL('../frontend/',import.meta.url));
- const entry=fileURLToPath(new URL('../frontend/src/game/local/'+name+'.ts',import.meta.url));
+ const entry=fileURLToPath(new URL('../frontend/src/'+directory+'/'+name+'.ts',import.meta.url));
  const [bundle]=await build({root,configFile:false,logLevel:'silent',
   build:{write:false,lib:{entry,formats:['es'],fileName:name}}});
  const code=bundle.output.find(item=>item.type==='chunk').code;
@@ -12,7 +12,8 @@ async function loadModule(name){
 }
 
 const {createSave,readSaveData}=await loadModule('LocalSave');
-const {startTrial,settleTrial,trialReward,exchangeFate,levelUp,equipWeapon,performWish,performWishes,selectCharacter}=await loadModule('progression');
+const {startTrial,settleTrial,trialReward,exchangeFate,levelUp,equipWeapon,performWish,performWishes,selectCharacter,setCharacterFavorite}=await loadModule('progression');
+const {characterListEntries}=await loadModule('CharacterList','objects');
 const initial=createSave('旅行者');
 const another=createSave('另一份存档');
 assert.notEqual(initial.id,another.id);
@@ -21,6 +22,22 @@ assert.throws(()=>readSaveData({...initial,version:2}),/版本/);
 assert.throws(()=>readSaveData({...initial,profile:{...initial.profile,mora:-1}}),/格式/);
 assert.equal(readSaveData({...initial,selected:'unavailable'}).selected,'amber');
 assert.throws(()=>selectCharacter(initial,'unavailable'),/尚未拥有/);
+
+const {favoriteCharacters:initialFavorites,...oldSave}=initial;
+assert.deepEqual(readSaveData(oldSave).favoriteCharacters,initialFavorites);
+const withOwned={...initial,profile:{...initial.profile,characters:[
+ ...initial.profile.characters,{id:'hu-tao',level:1,copies:1},{id:'furina',level:1,copies:1}
+]}};
+const savedFavorites=setCharacterFavorite(setCharacterFavorite(withOwned,'hu-tao',true),'furina',true);
+assert.deepEqual(readSaveData(JSON.parse(JSON.stringify(savedFavorites))).favoriteCharacters,['furina','hu-tao']);
+assert.equal(savedFavorites.selected,initial.selected);
+assert.equal(setCharacterFavorite(savedFavorites,'furina',true),savedFavorites);
+assert.throws(()=>setCharacterFavorite(withOwned,'lisa',true),/尚未拥有/);
+const ranked=characterListEntries(savedFavorites.profile.characters,savedFavorites.favoriteCharacters);
+assert.deepEqual(ranked.slice(0,3).map(entry=>entry.definition.id),['furina','hu-tao','amber']);
+assert(ranked.slice(3).every(entry=>!entry.owned&&!entry.favorite));
+const removed=setCharacterFavorite(savedFavorites,'hu-tao',false);
+assert.deepEqual(characterListEntries(removed.profile.characters,removed.favoriteCharacters).slice(0,3).map(entry=>entry.definition.id),['furina','amber','hu-tao']);
 
 const trial=startTrial(initial,{kind:'stage',stageId:'forest'});
 const cleared=settleTrial(initial,trial,trial.stage.enemies,60);

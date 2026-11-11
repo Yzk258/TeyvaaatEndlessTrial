@@ -34,7 +34,7 @@ export function App(){
  },[]);
  if(!entered||!a.save)return <OpeningPage save={a.save} saves={a.saves} loading={a.loading} pending={a.pending} notice={a.notice} error={a.saveError} onEnter={enter} onRetry={a.reloadSaves} onOpen={a.onOpen} onCreate={a.onCreate} onImport={a.onImport}/>;
  if(presentation.battleVisible&&a.run)return <BattlePage key={a.run.runId} stage={a.run.stage} adventure={a.run.adventure??null} seed={a.run.seed} level={a.run.level} equippedWeapon={a.run.equippedWeapon} character={a.run.character} onSettle={a.onSettle} onAbandon={a.onAbandon} pending={a.pending} notice={a.notice}/>;
- const {profile,nickname,clearedStages}=a.save;
+ const {profile,nickname,clearedStages,favoriteCharacters}=a.save;
  return <div className="relative isolate animate-opening-main motion-reduce:animate-none min-h-screen font-sans text-stone-200 selection:bg-amber-100/30">
   <MenuMapBackground/>
   <div inert={presentation.transitioning||tutorialVisible} className={'transition-opacity duration-[350ms] motion-reduce:transition-none '+(presentation.transitioning?'pointer-events-none opacity-0':'opacity-100')}>
@@ -60,10 +60,10 @@ export function App(){
    {a.notice&&<div role="status" className="mb-6 rounded-xl border border-amber-100/20 bg-amber-100/5 px-5 py-3 text-sm text-amber-100">{a.notice}</div>}
     <div key={navigation.current} className="animate-page-enter motion-reduce:animate-none">{
      navigation.current==='overview'?<OverviewPage profile={profile} nickname={nickname} selected={a.selected}/>
-   :navigation.current==='archive'?<ArchivePage profile={profile}/>
+   :navigation.current==='archive'?<ArchivePage profile={profile} favoriteCharacters={favoriteCharacters} pending={a.pending} onFavorite={a.onFavorite}/>
    :navigation.current==='stages'?<StagesPage onStart={a.onStartStage} pending={a.pending} clearedStages={clearedStages}/>
    :navigation.current==='weapons'?<WeaponsPage profile={profile} selected={a.selected} onLevelWeapon={a.onLevelWeapon} onEquipWeapon={a.onEquipWeapon} pending={a.pending}/>
-   :navigation.current==='characters'?<CharacterPage {...a} profile={profile}/>
+   :navigation.current==='characters'?<CharacterPage {...a} profile={profile} favoriteCharacters={favoriteCharacters}/>
      :navigation.current==='wishes'?<WishPage weaponResult={a.weaponResult} profile={profile} onWish={a.onWish} onExchangeFates={a.onExchangeFates} result={a.result} pending={a.pending}/>
      :navigation.current==='activities'?<ActivitiesPage claimed={a.save.checkIns} pending={a.pending} onClaim={a.onCheckIn} onReset={a.onResetCheckIns}/>
     :<HomePage {...a} profile={profile}/>}</div>

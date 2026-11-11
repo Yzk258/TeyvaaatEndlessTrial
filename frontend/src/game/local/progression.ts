@@ -17,6 +17,14 @@ export function selectCharacter(save:LocalSave,id:string):LocalSave{
  return {...save,selected:id};
 }
 
+export function setCharacterFavorite(save:LocalSave,id:string,favorite:boolean):LocalSave{
+ if(!save.profile.characters.some(character=>character.id===id)||!characters.some(character=>character.id===id)){
+  throw new Error('尚未拥有该角色');
+ }
+ if(save.favoriteCharacters.includes(id)===favorite)return save;
+ return {...save,favoriteCharacters:favorite?[id,...save.favoriteCharacters]:save.favoriteCharacters.filter(entry=>entry!==id)};
+}
+
 export function levelUp(profile:Profile,kind:'character'|'weapon',id:string):Profile{
  const definition=(kind==='character'?characters:weapons).find(entry=>entry.id===id);
  const key=kind==='character'?'characters':'weapons';

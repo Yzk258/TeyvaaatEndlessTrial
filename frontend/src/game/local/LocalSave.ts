@@ -8,6 +8,7 @@ export type LocalSave={
  readonly nickname:string;
  readonly updatedAt:number;
  readonly selected:CharacterId;
+ readonly favoriteCharacters:readonly CharacterId[];
  readonly profile:Profile;
  readonly clearedStages:readonly string[];
  readonly results:readonly TrialResult[];
@@ -20,7 +21,7 @@ export function createSave(nickname:string):LocalSave{
  const name=nickname.trim();
  if(name.length<1||name.length>30)throw new Error('存档名称需为 1 至 30 个字符');
  return {
-  version:1,id:crypto.randomUUID(),nickname:name,updatedAt:Date.now(),selected:starterCharacter,
+  version:1,id:crypto.randomUUID(),nickname:name,updatedAt:Date.now(),selected:starterCharacter,favoriteCharacters:[],
   profile:{
    primogems:1600,mora:5000,intertwinedFates:10,characters:[{id:starterCharacter,level:1,copies:1}],
    weapons:[],equipment:[],runs:0,pity:0,fourStarPity:0,weaponPity:0,weaponFourStarPity:0
@@ -62,9 +63,11 @@ export function readSaveData(value:unknown):LocalSave{
  if(!record(value)||value.version!==1)throw new Error('不支持此存档版本');
  const {nickname,selected,profile,clearedStages,results}=value;
  const checkIns=value.checkIns??0;
+ const favoriteCharacters=value.favoriteCharacters??[];
  if(!id(value.id)||typeof nickname!=='string'||!nickname.trim()||nickname.length>30||
   !count(value.updatedAt)||!id(selected)||!validProfile(profile)||
   !Array.isArray(clearedStages)||!clearedStages.every(id)||
+  !Array.isArray(favoriteCharacters)||!favoriteCharacters.every(id)||
   !count(checkIns)||checkIns>7||
   !Array.isArray(results)||!results.every(result=>record(result)&&id(result.runId)&&count(result.kills)&&count(result.ticks))||
   new Set(results.map(result=>result.runId)).size!==results.length){
@@ -73,5 +76,7 @@ export function readSaveData(value:unknown):LocalSave{
  const available=characters.filter(character=>profile.characters.some(entry=>entry.id===character.id));
  const active=available.find(character=>character.id===selected)
   ??available.find(character=>character.id===starterCharacter)??available[0];
- return {version:1,id:value.id,nickname,updatedAt:value.updatedAt,selected:active.id,profile,clearedStages,results,checkIns};
+ const ownedIds=new Set(profile.characters.map(entry=>entry.id));
+ const favorites=[...new Set(favoriteCharacters.filter(id=>ownedIds.has(id)))];
+ return {version:1,id:value.id,nickname,updatedAt:value.updatedAt,selected:active.id,favoriteCharacters:favorites,profile,clearedStages,results,checkIns};
 }

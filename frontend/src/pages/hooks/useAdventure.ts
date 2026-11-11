@@ -5,7 +5,7 @@ import type {WishBanner,WishCount,WishPulls} from '../../objects/WishReward';
 import type {WishReveal} from '../WishPage/objects/WishReveal';
 import {createSave,starterCharacter,type LocalSave} from '../../game/local/LocalSave';
 import {addSave,downloadSave,importSave,listSaves,loadSave,updateSave} from '../../game/local/saveStore';
-import {equipWeapon,exchangeFate,levelUp,performWishes,selectCharacter,settleTrial,startTrial,trialReward} from '../../game/local/progression';
+import {equipWeapon,exchangeFate,levelUp,performWishes,selectCharacter,setCharacterFavorite,settleTrial,startTrial,trialReward} from '../../game/local/progression';
 
 export function useAdventure(){
  const [saves,setSaves]=useState<readonly LocalSave[]>([]);
@@ -65,6 +65,7 @@ export function useAdventure(){
  }
 
  const onSelect=(id:string)=>changeProgress(current=>selectCharacter(current,id));
+ const onFavorite=(id:string,favorite:boolean)=>changeProgress(current=>setCharacterFavorite(current,id,favorite));
  const onLevel=()=>{if(save)return changeProgress(current=>({...current,profile:levelUp(current.profile,'character',save.selected)}),'角色已提升一级');};
  const onLevelWeapon=(id:string)=>changeProgress(current=>({...current,profile:levelUp(current.profile,'weapon',id)}),'武器已升级，词条已提升');
  const onEquipWeapon=(characterId:string,weaponId:string|null)=>changeProgress(
@@ -126,7 +127,7 @@ export function useAdventure(){
 
  return {
   save,saves,loading,saveError,reloadSaves,onOpen,onCreate,onImport,onExport,onReturn,
-  selected:save?.selected??starterCharacter,onSelect,pending,notice,run,
+  selected:save?.selected??starterCharacter,onSelect,onFavorite,pending,notice,run,
   result,weaponResult,onLevel,onLevelWeapon,onEquipWeapon,onExchangeFates,onCheckIn,onResetCheckIns,
   onWish,wishReveal,closeWishReveal:()=>setWishReveal(null),
   onStart,onStartStage,onSettle,onAbandon,exitMessage,closeExitMessage:()=>setExitMessage(null)
