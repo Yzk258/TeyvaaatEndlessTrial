@@ -1,5 +1,13 @@
 # 提瓦特：无尽试炼（暂定）
 
+![提瓦特：无尽试炼横幅，胡桃在像素风的湖畔遗迹迎战丘丘人与史莱姆](.github/teyvat-banner.jpg)
+
+![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-5B47C2?style=flat-square&logo=vite&logoColor=white)
+![SVG](https://img.shields.io/badge/SVG-9A5800?style=flat-square&logo=svg&logoColor=white)
+![IndexedDB](https://img.shields.io/badge/IndexedDB-376C58?style=flat-square)
+
 以《原神》角色和世界观为主题的 2D 像素生存游戏。选择角色和装备进入试炼，在敌潮中走位、自动攻击并选择局内强化。结算后可用获得的资源培养角色和武器，或用于祈愿。
 
 ## 游玩
