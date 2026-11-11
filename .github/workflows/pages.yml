@@ -9,9 +9,6 @@ on:
       - 'frontend/**'
       - 'shared/**'
       - 'package.json'
-      - 'docs/assets/battle-feedback-preview.png'
-      - 'docs/assets/terrain-grid.png'
-      - 'docs/assets/character-development-preview.png'
   workflow_dispatch:
 
 permissions:

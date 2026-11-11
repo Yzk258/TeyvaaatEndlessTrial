@@ -52,4 +52,4 @@ HUD显示当前攻击、射程、攻速、移速、每轮攻击次数及摩拉�
 
 npm run build 通过；node tools/preview-progression.mjs 使用实际页面组件生成截图预览，已检查半身取景、原图占位、强化布局与粒子关键帧。
 
-[培养页预览](assets/character-development-preview.png) / [粒子与升级预览](assets/progression-loot-preview.png)
+[培养页实机截图](../site/previews/training.webp) / [粒子与升级预览](assets/progression-loot-preview.png)

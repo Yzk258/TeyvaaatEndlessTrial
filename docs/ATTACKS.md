@@ -48,7 +48,7 @@ BattleScene 负责战场图层，BattleCharacter 负责角色姿态，AttackVisu
 
 当前走动是基于已有像素头像的姿态变换与简化脚步，不是完整八方向序列帧。TODO(asset-character-animation)：后续可接入独立的移动／攻击序列帧，继续消费相同的状态与出手信息。
 
-[关键帧预览](assets/battle-feedback-preview.html) / [预览图片](assets/battle-feedback-preview.png)。预览使用实际战斗组件渲染，生成命令为 node tools/preview-battle-feedback.mjs。
+[关卡实战截图](../site/previews/trial.webp) / [机制关键帧](assets/battle-feedback-preview.html)。关键帧由 `node tools/preview-battle-feedback.mjs` 渲染。
 
 ## 配置例子
 

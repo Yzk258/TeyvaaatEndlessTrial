@@ -28,7 +28,7 @@ MapTerrain 先绘制全部地面，再按世界纵坐标绘制树、岩石与草
 - node tools/verify-battle.mjs：实际地图移动、敌人生成与绕障、战斗机制回归。
 - npm run build：类型检查与生产构建。
 
-多种子预览：docs/assets/terrain-grid.png；对应可缩放预览为 docs/assets/terrain-grid.html。
+[遗迹探索实机截图](../site/previews/ruins.webp) / [多种子地图测试](assets/terrain-grid.html)
 
 ## 像素贴图版本（2026-11-09）
 

@@ -9,14 +9,12 @@ const files = {
   'mark.svg': 'mark.svg',
   'assets/sky-gate.png': '../frontend/public/backgrounds/sky-gate-pixel-v2.png',
   'assets/hu-tao.png': '../frontend/public/characters/pixel/hu-tao-battle-chibi.png',
-  'assets/battle.png': '../docs/assets/battle-feedback-preview.png',
-  'assets/terrain.png': '../docs/assets/terrain-grid.png',
-  'assets/roster.png': '../docs/assets/character-development-preview.png',
 };
 
 await mkdir(new URL('assets/', output), { recursive: true });
 await Promise.all([
   cp(new URL('../frontend/dist/', site), new URL('game/', output), {recursive:true}),
+  cp(new URL('previews/', site), new URL('previews/', output), {recursive:true}),
   ...Object.entries(files).map(([target, source]) =>
     copyFile(new URL(source, site), new URL(target, output)),
   ),
