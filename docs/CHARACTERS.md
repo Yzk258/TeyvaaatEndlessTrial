@@ -2,7 +2,7 @@
 
 攻击系统已升级：角色额外配置 attackPattern（类型化命中机制）和 attackVisual（表现），现支持投射物、近战扇形、目标范围。实际角色名单以 shared/characters.json 为准；旧版“远程即时命中/近战全范围”描述为历史方案，实际以 [攻击系统说明](ATTACKS.md) 为准。
 
-安柏、芭芭拉、丽莎、凯亚、班尼特和迪卢克的像素立绘由 shared/character-portraits.json 登记。培养页使用半身照，其余角色在培养页使用已保存的参考图占位，在其他页面显示待设计文字。参考图、生成提示词及预览见 [立绘修订](CHARACTER-PORTRAITS.md)。替换外观不需要更改角色数值配置。
+展示立绘登记在 `shared/character-display-portraits.json`，战斗立绘登记在 `shared/character-battle-portraits.json`。缺少展示立绘时，允许原图占位的页面会读取 `shared/character-references.json`，没有可用素材时显示「立绘待设计」。替换外观不需要更改角色数值配置。
 
 角色定义统一保存在 shared/characters.json，由游戏构建读取并校验。发布配置变更时重新构建前端。
 

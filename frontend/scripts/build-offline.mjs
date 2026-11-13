@@ -4,8 +4,8 @@ import {copyFile,mkdir,readdir,readFile,writeFile} from 'node:fs/promises';
 const frontend=new URL('../',import.meta.url);
 const dist=new URL('dist/',frontend);
 const readConfig=async name=>JSON.parse(await readFile(new URL('../shared/'+name+'.json',frontend),'utf8'));
-const [portraits,references,display,battle,weapons,enemies]=await Promise.all([
- 'character-portraits','character-references','character-display-portraits',
+const [references,display,battle,weapons,enemies]=await Promise.all([
+ 'character-references','character-display-portraits',
  'character-battle-portraits','weapon-appearance','enemy-appearance'
 ].map(readConfig));
 const artifactIcons=(await readdir(new URL('public/artifacts/',frontend),{withFileTypes:true}))
@@ -16,7 +16,6 @@ const publicFiles=[...new Set([
  '/terrain/ground-v2.png','/terrain/objects-v2.png','/terrain/ruins-v2.png','/terrain/waypoint-v2.png',
  '/currency/mora.png','/currency/primogem.png','/currency/fate.png',
  ...artifactIcons,
- ...Object.values(portraits).flatMap(entry=>[entry.src,entry.thumbnail].filter(Boolean)),
  ...Object.values(references).map(entry=>entry.thumbnail??entry.src),
  ...[...display,...battle,...Object.values(weapons),...Object.values(enemies.sheets)].map(entry=>entry.src)
 ].map(path=>path.replace(/^\//,'')))];

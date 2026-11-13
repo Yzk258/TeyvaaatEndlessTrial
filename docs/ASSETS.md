@@ -49,11 +49,11 @@ lower-right 炽热骗骗花 (pyro-whopperflower), reference 4: Bright russet-ora
 
 ## 角色像素外观
 
-安柏、芭芭拉、丽莎、凯亚、班尼特、迪卢克已按用户提供的原作参考图重做透明底像素立绘，图片位于 frontend/public/characters/pixel/，由 shared/character-portraits.json 索引。培养页为半身取景，未设计角色使用 frontend/public/characters/references/ 中的原图占位；其余页面显示待设计文字，旧网格脸不再作为角色立绘展示。培养、图鉴、祈愿和战场复用 CharacterPortrait，美术与数值、判定分离。
+培养、图鉴与祈愿使用 `shared/character-display-portraits.json` 登记的展示图集，战斗使用 `shared/character-battle-portraits.json` 登记的 Q 版图集。需要原图占位的页面读取 `shared/character-references.json`。
 
-新预览见 [character-portraits-v2-preview.png](assets/character-portraits-v2-preview.png)，参考原图、逐张提示词及接入方式见 [立绘修订](CHARACTER-PORTRAITS.md)。assets/characters-preview.png 与 character-roster-preview.png 仅保留为旧网格版本记录。
+早期立绘的参考原图、提示词和接入记录见 [立绘修订](prompt_log/CHARACTER-PORTRAITS.md)。
 
-攻击与动画：已接入四种配置化攻击表现、角色走动／出手姿态、怪物受击闪白、抖动、伤害数字与击破粒子，使用SVG与已有像素素材。当前角色动作是姿态变换与简化脚步；完整多方向序列帧仍待补充。设计及预览见 [ATTACKS.md](ATTACKS.md)。
+攻击与动画使用 SVG 和像素素材。角色通过位移、缩放和转向表现走动与出手，怪物受击时显示闪白、抖动、伤害数字与击破粒子。 [攻击系统说明](ATTACKS.md)
 
 角色与敌怪新版像素图由内置 imagegen 根据用户保存的参考图生成。地图使用 SVG 与像素地形素材。原作角色设计与用户提供的参考图保留原有归属。
 

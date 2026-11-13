@@ -63,7 +63,8 @@ export function stepBattle(s:BattleState,a:BattleAction):BattleState {
  const resolved=resolveAttacks(s,candidates,x,y,facing,tick,terrain);
  const defeated=resolved.enemies.filter(e=>e.hp<=0);
  const artifactLoot=adventure&&s.adventure?createArtifactLoot(defeated,s.worldSeed):[];
- const loot=stepLoot([...s.loot,...createEnemyLoot(defeated,s.kills,s.targetEnemies,s.stageMora,s.adventure?.rules.moraPerKill??10),...artifactLoot],x,y);
+ const moraPerKill=s.adventure?s.adventure.rules.moraPerKill*s.adventure.difficulty.rewardMultiplier:10;
+ const loot=stepLoot([...s.loot,...createEnemyLoot(defeated,s.kills,s.targetEnemies,s.stageMora,moraPerKill),...artifactLoot],x,y);
  const progress=gainExperience(s.level,s.experience,adventure?loot.experience:0);
  const enemyAttacks=resolveEnemyAttacks(resolved.enemies.filter(e=>e.hp>0),s.enemyProjectiles??[],x,y,tick,terrain);
  const kills=s.kills+defeated.length;

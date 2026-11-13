@@ -16,10 +16,10 @@
   "killBlock": 50,
   "primogemsPerKillBlock": 2,
   "difficulties": {
-    "level20": { "level": 20, "healthMultiplier": 1, "eliteHealthMultiplier": 1 },
-    "level40": { "level": 40, "healthMultiplier": 3.04, "eliteHealthMultiplier": 3.34 },
-    "level60": { "level": 60, "healthMultiplier": 9.47, "eliteHealthMultiplier": 10.41 },
-    "level80": { "level": 80, "healthMultiplier": 20.97, "eliteHealthMultiplier": 27.77 },
-    "level100": { "level": 100, "healthMultiplier": 41.53, "eliteHealthMultiplier": 65.16 }
+    "level20": { "level": 20, "healthMultiplier": 1, "eliteHealthMultiplier": 1, "rewardMultiplier": 1 },
+    "level40": { "level": 40, "healthMultiplier": 3.04, "eliteHealthMultiplier": 3.34, "rewardMultiplier": 2 },
+    "level60": { "level": 60, "healthMultiplier": 9.47, "eliteHealthMultiplier": 10.41, "rewardMultiplier": 3 },
+    "level80": { "level": 80, "healthMultiplier": 20.97, "eliteHealthMultiplier": 27.77, "rewardMultiplier": 4 },
+    "level100": { "level": 100, "healthMultiplier": 41.53, "eliteHealthMultiplier": 65.16, "rewardMultiplier": 5 }
   }
 }

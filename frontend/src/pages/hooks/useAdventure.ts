@@ -1,5 +1,5 @@
 import {useCallback,useEffect,useRef,useState} from 'react';
-import type {AdventureDifficultyId,AdventureSettings} from '../../objects/AdventureSettings';
+import type {AdventureSettings} from '../../objects/AdventureSettings';
 import type {RunStart} from '../../objects/Profile';
 import type {ArtifactSlot} from '../../objects/Artifact';
 import {equipArtifact,levelUpArtifact} from '../../game/local/artifactProgression';
@@ -125,7 +125,7 @@ export function useAdventure(){
   });
  }
  const onStart=(settings:AdventureSettings)=>begin({kind:'adventure',settings});
- const onStartStage=(stageId:string,difficulty:AdventureDifficultyId)=>begin({kind:'stage',stageId,difficulty});
+ const onStartStage=(stageId:string)=>begin({kind:'stage',stageId});
  const onAbandon=()=>{
   if(busy.current||!run?.stage)return;
   setRun(null);

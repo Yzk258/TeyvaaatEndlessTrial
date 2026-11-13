@@ -14,6 +14,7 @@ async function loadModule(name,directory='game/local'){
 const {createSave,readSaveData}=await loadModule('LocalSave');
 const {startTrial,settleTrial,trialRewards,levelUp,equipWeapon,performWish,performWishes,requestWishes,selectCharacter,setCharacterFavorite}=await loadModule('progression');
 const {characterListEntries}=await loadModule('CharacterList','objects');
+const {stages}=await loadModule('Stage','objects');
 const {equipArtifact,levelUpArtifact}=await loadModule('artifactProgression');
 const {equippedCharacterStats}=await loadModule('artifactStats','game/functions');
 const initial=createSave('旅行者');
@@ -92,10 +93,22 @@ assert.deepEqual(characterListEntries(removed.profile.characters,removed.favorit
 const trial=startTrial(initial,{kind:'stage',stageId:'forest'});
 assert.equal(trial.map.layout,'arena');
 assert.equal(trial.stageDifficulty.level,20);
-const highStage=startTrial(initial,{kind:'stage',stageId:'forest',difficulty:'level100'});
+const highStage=startTrial(initial,{kind:'stage',stageId:'mora-level100'});
 assert.equal(highStage.stageDifficulty.healthMultiplier,41.53);
 assert.equal(highStage.stageDifficulty.eliteHealthMultiplier,65.16);
-assert.deepEqual(highStage.stage.rewards,trial.stage.rewards);
+assert.deepEqual(highStage.stage.rewards,[{kind:'currency',currency:'mora',amount:3000}]);
+for(const [category,expected] of [['mora',[300,600,1000,1800,3000]],['primogems',[40,80,120,180,260]]]){
+ const categoryStages=stages.filter(stage=>stage.category===category);
+ assert.deepEqual(categoryStages.map(stage=>stage.difficulty),['level20','level40','level60','level80','level100']);
+ for(const [index,stage] of categoryStages.entries()){
+  const run=startTrial(initial,{kind:'stage',stageId:stage.id});
+  assert.equal(run.stageDifficulty.level,(index+1)*20);
+  assert.deepEqual(trialRewards(run,stage.enemies-1,60),[]);
+  const cleared=settleTrial(initial,run,stage.enemies,60);
+  assert.equal(cleared.profile[category]-initial.profile[category],expected[index]);
+  assert.deepEqual(cleared.clearedStages,[stage.id]);
+ }
+}
 const cleared=settleTrial(initial,trial,trial.stage.enemies,60);
 assert.equal(cleared.profile.mora,initial.profile.mora+300);
 assert.equal(cleared.profile.primogems,initial.profile.primogems);
@@ -117,7 +130,7 @@ assert.equal(endless.map.layout,'endless');
 assert.equal(endless.adventure.difficulty.healthMultiplier,3.04);
 assert.equal(endless.adventure.difficulty.eliteHealthMultiplier,3.34);
 assert.throws(()=>startTrial(cleared,{kind:'adventure',settings:{difficulty:'missing'}}),/有效的战斗难度/);
-assert.throws(()=>startTrial(cleared,{kind:'stage',stageId:'forest',difficulty:'missing'}),/有效的战斗难度/);
+assert.throws(()=>startTrial(cleared,{kind:'stage',stageId:'missing'}),/关卡不存在/);
 const withdrawn=settleTrial(cleared,endless,3,600);
 const drops=['beginner-flower','beginner-flower'];
 const rewarded=settleTrial(cleared,endless,80,11400,drops);
@@ -129,9 +142,9 @@ assert.equal(settleTrial(rewarded,endless,80,11400,drops),rewarded);
 assert.throws(()=>settleTrial(rewarded,endless,80,11400,['beginner-sands']),/已结算/);
 assert.throws(()=>settleTrial(cleared,endless,80,11400,['missing']),/战果无效/);
 assert.throws(()=>settleTrial(cleared,trial,trial.stage.enemies,60,drops),/战果无效/);
-assert.deepEqual(trialRewards(endless,3,600),[{kind:'currency',currency:'mora',amount:70},{kind:'currency',currency:'primogems',amount:3}]);
-assert.equal(withdrawn.profile.mora-cleared.profile.mora,70);
-assert.equal(withdrawn.profile.primogems-cleared.profile.primogems,3);
+assert.deepEqual(trialRewards(endless,3,600),[{kind:'currency',currency:'mora',amount:140},{kind:'currency',currency:'primogems',amount:6}]);
+assert.equal(withdrawn.profile.mora-cleared.profile.mora,140);
+assert.equal(withdrawn.profile.primogems-cleared.profile.primogems,6);
 assert.deepEqual(readSaveData(JSON.parse(JSON.stringify(withdrawn))),withdrawn);
 assert.equal(another.profile.runs,0);
 

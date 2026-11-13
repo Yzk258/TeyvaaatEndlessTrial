@@ -11,6 +11,7 @@ export function adventureDifficulty(plan:AdventurePlan,ticks:number){
 }
 export function adventureReward(plan:AdventurePlan,kills:number,ticks:number){
  const r=plan.rules,blocks=Math.floor(ticks/(20*r.timeBlockSeconds));
- return {mora:blocks*r.moraPerTimeBlock+kills*r.moraPerKill,
-  primogems:blocks*r.primogemsPerTimeBlock+Math.floor(kills/r.killBlock)*r.primogemsPerKillBlock};
+ const multiplier=plan.difficulty.rewardMultiplier;
+ return {mora:(blocks*r.moraPerTimeBlock+kills*r.moraPerKill)*multiplier,
+  primogems:(blocks*r.primogemsPerTimeBlock+Math.floor(kills/r.killBlock)*r.primogemsPerKillBlock)*multiplier};
 }

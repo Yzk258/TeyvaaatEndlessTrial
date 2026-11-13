@@ -9,7 +9,6 @@ export function characterPose(motion:CharacterMotion,facing:number,cue:AttackCue
  return {
   bob:step===0?0:-Math.round(Math.abs(step)*2),tilt:step*2-Math.cos(angle)*pulse*5,
   scaleX:(Math.cos(angle)<-0.1?-1:1)*(1-pulse*.04),scaleY:1+pulse*.05,
-  recoilX:-Math.cos(angle)*pulse*3,recoilY:-Math.sin(angle)*pulse*2,
-  leftFoot:Math.round(step*2),rightFoot:-Math.round(step*2)
+  recoilX:-Math.cos(angle)*pulse*3,recoilY:-Math.sin(angle)*pulse*2
  };
 }

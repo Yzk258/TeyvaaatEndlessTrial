@@ -17,7 +17,7 @@ export function BattleCharacter({state:s,character,reducedMotion}:{state:BattleS
   <g transform={'translate('+(pose.recoilX+hitX)+' '+(pose.recoilY+pose.bob+hitY)+') rotate('+(pose.tilt+hitX*.6)+') scale('+pose.scaleX+' '+pose.scaleY+')'}
    filter={flash?'url(#battle-hit-flash)':undefined}>
    <BattlePortrait characterId={character.id} label={character.name} x={-23} y={-27} size={46}
-    fallback={<CharacterPortrait characterId={character.id} label={character.name} x={-20} y={-35} width={40} height={55} walkOffset={pose.leftFoot} usage="battle"/>}/>
+    fallback={<CharacterPortrait characterId={character.id} label={character.name} x={-20} y={-35} width={40} height={55}/>}/>
   </g>
  </g>;
 }

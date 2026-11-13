@@ -29,7 +29,6 @@ export function App(){
  const presentation=useBattlePresentation(a.run?.runId??null);
  const [entered,setEntered]=useState(false);
  const [adventureDifficulty,setAdventureDifficulty]=useState<AdventureDifficultyId>(defaultDifficultyId);
- const [stageDifficulty,setStageDifficulty]=useState<AdventureDifficultyId>(defaultDifficultyId);
  const [stageCategory,setStageCategory]=useState<StageCategoryId>(stageCategories[0].id);
  const enter=useCallback(()=>setEntered(true),[]);
  const [tutorialOpen,setTutorialOpen]=useState(false);
@@ -73,8 +72,7 @@ export function App(){
    :navigation.current==='archive'?<ArchivePage profile={profile} favoriteCharacters={favoriteCharacters} pending={a.pending} onFavorite={a.onFavorite}/>
    :navigation.current==='bag'?<BagPage profile={profile}/>
    :navigation.current==='artifacts'?<ArtifactsPage profile={profile} pending={a.pending} onLevelArtifact={a.onLevelArtifact}/>
-   :navigation.current==='stages'?<StagesPage category={stageCategory} onCategoryChange={setStageCategory} difficulty={stageDifficulty}
-    onDifficultyChange={setStageDifficulty} onStart={a.onStartStage} pending={a.pending} clearedStages={clearedStages}/>
+   :navigation.current==='stages'?<StagesPage category={stageCategory} onCategoryChange={setStageCategory} onStart={a.onStartStage} pending={a.pending} clearedStages={clearedStages}/>
    :navigation.current==='weapons'?<WeaponsPage profile={profile} onLevelWeapon={a.onLevelWeapon} pending={a.pending}/>
    :navigation.current==='characters'?<CharacterPage profile={profile} selected={a.selected} favoriteCharacters={favoriteCharacters} pending={a.pending}
     onSelect={a.onSelect} onFavorite={a.onFavorite} onLevel={a.onLevel} onEquipWeapon={a.onEquipWeapon} onEquipArtifact={a.onEquipArtifact}/>

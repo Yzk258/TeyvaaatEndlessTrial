@@ -373,7 +373,10 @@ for(const difficulty of Object.values(adventureRules.difficulties)){
  const eliteTick=9*adventureRules.stepSeconds*20;
  const eliteWave=stepBattle({...initial,adventure:plan,tick:eliteTick-1,combatTicks:eliteTick-1,power:0},{kind:'tick',keys:[]});
  assert.equal(eliteWave.enemies.find(e=>e.kind==='elite').hp,Math.ceil(enemyDefinitions.elite.hp*difficulty.eliteHealthMultiplier*3.25));
- assert.deepEqual(adventureReward(plan,50,2400),{mora:660,primogems:14});
+ const rewardMultiplier=difficulty.level/20;
+ assert.deepEqual(adventureReward(plan,50,2400),{mora:660*rewardMultiplier,primogems:14*rewardMultiplier});
+ const rewardKill=stepBattle({...kill,adventure:plan},{kind:'tick',keys:[]});
+ assert.equal(rewardKill.loot.filter(p=>p.kind==='mora').reduce((sum,p)=>sum+p.value,0),10*rewardMultiplier);
 }
 const waves=[0,600,1200,3600,360000].map(t=>adventureDifficulty(endlessPlan,t));
 assert.deepEqual(waves.map(d=>d.wave),[1,2,3,7,601]);

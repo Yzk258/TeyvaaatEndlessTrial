@@ -1,4 +1,5 @@
 import type {arenaMaps} from './BattleMap';
+import type {AdventureDifficultyId} from './AdventureSettings';
 import type {TrialReward} from './TrialReward';
 
 export const stageCategories=[
@@ -11,15 +12,20 @@ export type Stage={
  readonly id:string;
  readonly category:StageCategoryId;
  readonly mapId:keyof typeof arenaMaps;
+ readonly difficulty:AdventureDifficultyId;
  readonly enemies:number;
  readonly rewards:readonly TrialReward[];
 };
 
 export const stages:readonly Stage[]=[
- {id:'forest',category:'mora',mapId:'forest',enemies:15,rewards:[{kind:'currency',currency:'mora',amount:300}]},
- {id:'valley',category:'mora',mapId:'valley',enemies:30,rewards:[{kind:'currency',currency:'mora',amount:600}]},
- {id:'ruins',category:'mora',mapId:'ruins',enemies:50,rewards:[{kind:'currency',currency:'mora',amount:1000}]},
- {id:'forest-primogems',category:'primogems',mapId:'forest',enemies:15,rewards:[{kind:'currency',currency:'primogems',amount:40}]},
- {id:'valley-primogems',category:'primogems',mapId:'valley',enemies:30,rewards:[{kind:'currency',currency:'primogems',amount:80}]},
- {id:'ruins-primogems',category:'primogems',mapId:'ruins',enemies:50,rewards:[{kind:'currency',currency:'primogems',amount:120}]}
+ {id:'forest',category:'mora',mapId:'forest',difficulty:'level20',enemies:15,rewards:[{kind:'currency',currency:'mora',amount:300}]},
+ {id:'valley',category:'mora',mapId:'valley',difficulty:'level40',enemies:30,rewards:[{kind:'currency',currency:'mora',amount:600}]},
+ {id:'ruins',category:'mora',mapId:'ruins',difficulty:'level60',enemies:50,rewards:[{kind:'currency',currency:'mora',amount:1000}]},
+ {id:'mora-level80',category:'mora',mapId:'valley',difficulty:'level80',enemies:60,rewards:[{kind:'currency',currency:'mora',amount:1800}]},
+ {id:'mora-level100',category:'mora',mapId:'ruins',difficulty:'level100',enemies:75,rewards:[{kind:'currency',currency:'mora',amount:3000}]},
+ {id:'forest-primogems',category:'primogems',mapId:'forest',difficulty:'level20',enemies:15,rewards:[{kind:'currency',currency:'primogems',amount:40}]},
+ {id:'valley-primogems',category:'primogems',mapId:'valley',difficulty:'level40',enemies:30,rewards:[{kind:'currency',currency:'primogems',amount:80}]},
+ {id:'ruins-primogems',category:'primogems',mapId:'ruins',difficulty:'level60',enemies:50,rewards:[{kind:'currency',currency:'primogems',amount:120}]},
+ {id:'primogems-level80',category:'primogems',mapId:'valley',difficulty:'level80',enemies:60,rewards:[{kind:'currency',currency:'primogems',amount:180}]},
+ {id:'primogems-level100',category:'primogems',mapId:'ruins',difficulty:'level100',enemies:75,rewards:[{kind:'currency',currency:'primogems',amount:260}]}
 ];
