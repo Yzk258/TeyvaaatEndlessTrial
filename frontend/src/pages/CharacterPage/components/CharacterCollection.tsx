@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {CharacterPortrait,hasDisplayPortrait} from '../../../components/ui/CharacterPortrait';
+import {CharacterPortrait} from '../../../components/ui/CharacterPortrait';
 import {RarityBadge} from '../../../components/ui/RarityBadge';
 import {CharacterFilterControls} from '../../../components/ui/CharacterFilterControls';
 import {CharacterPageControls} from '../../../components/ui/CharacterPageControls';
@@ -8,7 +8,7 @@ import type {CharacterId} from '../../../objects/Character';
 import {characterListEntries} from '../../../objects/CharacterList';
 import type {Profile} from '../../../objects/Profile';
 import {elementLabels} from '../../../objects/Element';
-import {allCharacterFilters,characterPageSize,characterRegion,matchesCharacterFilter,regionLabels} from '../../../objects/CharacterFilter';
+import {allCharacterFilters,characterPageSize,matchesCharacterFilter} from '../../../objects/CharacterFilter';
 export type CharacterCollectionProps={
  profile:Profile;
  selected:CharacterId;
@@ -39,7 +39,7 @@ export function CharacterCollection({profile,selected,favoriteCharacters,pending
      <div className="flex justify-between gap-2 text-xs text-stone-400"><span>{elementLabels[character.element]}</span><span>{owned?'Lv.'+owned.level:'未获得'}</span></div>
      <CharacterPortrait characterId={character.id} label={character.name+'半身立绘'} framing="bust" allowReference silhouette={!owned} className="my-3 h-32 w-full"/>
      <RarityBadge rarity={character.rarity}/><h3 className="mt-2 font-serif text-xl text-amber-50">{character.name}</h3>
-     <p className={'mt-2 text-[11px] text-stone-400 '+(owned?'min-h-8 pr-9':'')}>{regionLabels[characterRegion(character.id)]} · {hasDisplayPortrait(character.id)?'像素立绘':'原图占位'}</p>
+     <p className={'mt-2 text-[11px] text-stone-400 '+(owned?'min-h-8 pr-9':'')}>{character.title}</p>
     </button>
     {owned&&<CharacterFavoriteButton name={character.name} favorite={favorite} disabled={pending} onClick={()=>{
      onFavorite(character.id,!favorite);

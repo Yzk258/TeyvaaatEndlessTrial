@@ -1,7 +1,7 @@
 import {adventureDifficulty,adventureReward,eliteWaveInterval} from '../../../game/functions/adventureProgress';
 import type {BattleState} from '../../../game/objects/BattleState';
 import {experienceRequired} from '../../../game/functions/stepBattle';
-export function BattleHUD({state:s,title,stageRewardText,pending,confirmExit,notice,onPause,onExit}:{state:BattleState;title:string;stageRewardText?:string;pending:boolean;confirmExit:boolean;notice?:string;onPause:()=>void;onExit:()=>void}){
+export function BattleHUD({state:s,title,stageRewardText,pending,confirmExit,onPause,onExit}:{state:BattleState;title:string;stageRewardText?:string;pending:boolean;confirmExit:boolean;onPause:()=>void;onExit:()=>void}){
  const difficulty=s.adventure?adventureDifficulty(s.adventure,s.combatTicks):null;
  const reward=s.adventure?adventureReward(s.adventure,s.kills,s.combatTicks):null;
  return <header className="absolute inset-x-3 top-3 z-10 mx-auto max-w-5xl rounded-2xl border border-white/10 bg-[#101e25]/85 p-3 text-stone-200 shadow-lg backdrop-blur-sm sm:inset-x-5 sm:top-4 sm:p-4">
@@ -14,6 +14,5 @@ export function BattleHUD({state:s,title,stageRewardText,pending,confirmExit,not
   </div>
   {difficulty&&reward&&<div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 border-t border-white/10 pt-2 text-[11px] text-stone-300"><span className="text-rose-100">敌潮 {difficulty.wave} · 生命 ×{difficulty.health.toFixed(2)} · 伤害 ×{difficulty.damage.toFixed(2)}</span><span>场上 {s.enemies.length} / {difficulty.limit} · 每 {(difficulty.interval/20).toFixed(2)} 秒刷 {difficulty.count} 只</span><span className="text-amber-100">预计结算 摩拉 {reward.mora} · 原石 {reward.primogems}</span></div>}
   {s.adventure&&<p className="mt-1 text-[11px] text-amber-200">{s.enemies.some(enemy=>enemy.kind==='elite')?'精英在场 · 丘丘岩盔王':'下次精英 · 第 '+((s.lastEliteWave??0)+eliteWaveInterval)+' 波'}</p>}
-  {notice&&<p role="alert" className="mt-2 text-xs text-amber-100">{notice}</p>}
  </header>;
 }

@@ -37,8 +37,10 @@ export function App(){
   setTutorialOpen(false);
   requestAnimationFrame(()=>tutorialButton.current?.focus({preventScroll:true}));
  },[]);
- if(!entered||!a.save)return <OpeningPage save={a.save} saves={a.saves} loading={a.loading} pending={a.pending} notice={a.notice} error={a.saveError} onEnter={enter} onRetry={a.reloadSaves} onOpen={a.onOpen} onCreate={a.onCreate} onImport={a.onImport}/>;
- if(presentation.battleVisible&&a.run)return <BattlePage key={a.run.runId} run={a.run} onSettle={a.onSettle} onAbandon={a.onAbandon} pending={a.pending} notice={a.notice}/>;
+ if(!entered||!a.save)return <OpeningPage save={a.save} saves={a.saves} loading={a.loading} pending={a.pending} notice={a.openingNotice} error={a.saveError} onEnter={enter} onRetry={a.reloadSaves} onOpen={a.onOpen} onCreate={a.onCreate} onImport={a.onImport}/>;
+ const toast=a.toast&&<div role={a.toast.kind==='error'?'alert':'status'}
+  className={'pointer-events-none fixed inset-x-4 bottom-5 z-50 mx-auto w-fit max-w-[calc(100%-2rem)] animate-page-enter rounded-xl border bg-[#182a31]/95 px-5 py-3 text-sm shadow-lg motion-reduce:animate-none sm:left-auto sm:right-6 '+(a.toast.kind==='error'?'border-rose-100/25 text-rose-100':'border-amber-100/25 text-amber-100')}>{a.toast.text}</div>;
+ if(presentation.battleVisible&&a.run)return <><BattlePage key={a.run.runId} run={a.run} onSettle={a.onSettle} onAbandon={a.onAbandon} pending={a.pending}/>{toast}</>;
  const {profile,nickname,clearedStages,favoriteCharacters}=a.save;
  const exchange=a.wishExchange;
  const exchangeMessage=exchange?`还缺 ${exchange.missingFates} 个纠缠之缘，兑换需要 ${exchange.primogemCost} 原石。`:'';
@@ -64,7 +66,6 @@ export function App(){
     </div>
    </header>
    <MainNavigation navigation={navigation} compact/>
-   {a.notice&&<div role="status" className="mb-6 rounded-xl border border-amber-100/20 bg-amber-100/5 px-5 py-3 text-sm text-amber-100">{a.notice}</div>}
     <div key={navigation.current} className="animate-page-enter motion-reduce:animate-none">{
      navigation.current==='overview'?<OverviewPage profile={profile} nickname={nickname} selected={a.selected}/>
    :navigation.current==='archive'?<ArchivePage profile={profile} favoriteCharacters={favoriteCharacters} pending={a.pending} onFavorite={a.onFavorite}/>
@@ -77,7 +78,7 @@ export function App(){
     :<HomePage profile={profile} selected={a.selected} difficulty={adventureDifficulty} onDifficultyChange={setAdventureDifficulty} onStart={a.onStart} pending={a.pending}/>}</div>
    </main>
   </div>
-  {a.toast&&<div role="status" className="pointer-events-none fixed inset-x-4 bottom-5 z-30 mx-auto w-fit max-w-[calc(100%-2rem)] animate-page-enter rounded-xl border border-amber-100/25 bg-[#182a31]/95 px-5 py-3 text-sm text-amber-100 shadow-lg motion-reduce:animate-none sm:left-auto sm:right-6">{a.toast}</div>}
+  {toast}
   {tutorialVisible&&<TutorialGuide currentPage={navigation.current} goTo={navigation.replacePage} onClose={closeTutorial}/>}
   {exchange&&(profile.primogems>=exchange.primogemCost?
    <ConfirmDialog title="兑换纠缠之缘" message={exchangeMessage+'是否兑换后继续祈愿？'} confirmLabel="兑换并祈愿" pending={a.pending} onConfirm={a.confirmWishExchange} onCancel={a.cancelWishExchange}/>:

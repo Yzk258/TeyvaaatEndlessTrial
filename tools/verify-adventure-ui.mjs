@@ -46,11 +46,11 @@ await click('新游戏');
 await waitFor(`document.body.textContent.includes('选择无尽难度')`);
 assert.equal(await evaluate(`document.body.textContent.includes('限时冒险')`),false);
 await screenshot('adventure-difficulties');
-for(const [id,label,health] of [['normal','普通','1.00'],['hard','困难','1.35'],['extreme','极限','1.70']]){
+for(const [id,label,multiplier] of [['normal','普通','1.00'],['hard','困难','2.00'],['extreme','极限','4.00']]){
  await evaluate(`document.querySelector('input[name="adventure-difficulty"][value="${id}"]').click()`);
  await click('开始无尽冒险');
  await waitFor(`document.body.textContent.includes(${JSON.stringify('低语森林 · 无尽 · '+label)})`);
- assert.ok(await evaluate(`document.body.textContent.includes(${JSON.stringify('生命 ×'+health)})`));
+ assert.ok(await evaluate(`document.body.textContent.includes(${JSON.stringify('生命 ×'+multiplier+' · 伤害 ×'+multiplier)})`));
  await click('退出');
  await waitFor(`document.body.textContent.includes('现在撤离并结算？')`);
  await click('撤离并领取奖励');

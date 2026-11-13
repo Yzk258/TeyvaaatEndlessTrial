@@ -17,7 +17,7 @@
   "primogemsPerKillBlock": 2,
   "difficulties": {
     "normal": { "label": "普通", "healthMultiplier": 1, "damageMultiplier": 1 },
-    "hard": { "label": "困难", "healthMultiplier": 1.35, "damageMultiplier": 1.2 },
-    "extreme": { "label": "极限", "healthMultiplier": 1.7, "damageMultiplier": 1.45 }
+    "hard": { "label": "困难", "healthMultiplier": 2, "damageMultiplier": 2 },
+    "extreme": { "label": "极限", "healthMultiplier": 4, "damageMultiplier": 4 }
   }
 }

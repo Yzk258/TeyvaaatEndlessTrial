@@ -9,7 +9,7 @@ import {addSave,downloadSave,importSave,listSaves,loadSave,updateSave} from '../
 import {equipWeapon,levelUp,requestWishes,selectCharacter,setCharacterFavorite,settleTrial,startTrial,trialRewards} from '../../game/local/progression';
 
 type WishExchange={banner:WishBanner;count:WishCount;missingFates:number;primogemCost:number};
-type Notice={readonly text:string;readonly kind:'inline'|'toast'};
+type Notice={readonly text:string;readonly kind:'status'|'error'|'opening'};
 
 export function useAdventure(){
  const [saves,setSaves]=useState<readonly LocalSave[]>([]);
@@ -27,8 +27,8 @@ export function useAdventure(){
  const busy=useRef(false);
 
  useEffect(()=>{
-  if(notice?.kind!=='toast')return;
-  const timer=window.setTimeout(()=>setNotice(current=>current===notice?null:current),3000);
+  if(!notice||notice.kind==='opening')return;
+  const timer=window.setTimeout(()=>setNotice(current=>current===notice?null:current),notice.kind==='error'?5000:3000);
   return ()=>window.clearTimeout(timer);
  },[notice]);
 
@@ -41,19 +41,19 @@ export function useAdventure(){
  },[]);
  useEffect(()=>{void reloadSaves();},[reloadSaves]);
 
- async function perform(work:()=>Promise<void>){
+ async function perform(work:()=>Promise<void>,errorKind:'error'|'opening'='error'){
   if(busy.current)return;
   busy.current=true;
   setPending(true);
   setNotice(null);
   try{await work();}
-  catch(error){setNotice({text:error instanceof Error?error.message:'无法完成本次操作',kind:'inline'});}
+  catch(error){setNotice({text:error instanceof Error?error.message:'无法完成本次操作',kind:errorKind});}
   finally{busy.current=false;setPending(false);}
  }
 
- const onOpen=(id:string)=>perform(async()=>setSave(await loadSave(id)));
- const onCreate=(nickname:string)=>perform(async()=>setSave(await addSave(createSave(nickname))));
- const onImport=(file:File)=>perform(async()=>setSave(await importSave(file)));
+ const onOpen=(id:string)=>perform(async()=>setSave(await loadSave(id)),'opening');
+ const onCreate=(nickname:string)=>perform(async()=>setSave(await addSave(createSave(nickname))),'opening');
+ const onImport=(file:File)=>perform(async()=>setSave(await importSave(file)),'opening');
  const onExport=()=>perform(async()=>{if(save)downloadSave(await loadSave(save.id));});
  const onReturn=()=>{
   if(busy.current||run)return false;
@@ -68,21 +68,21 @@ export function useAdventure(){
   return true;
  };
 
- function changeProgress(change:(current:LocalSave)=>LocalSave,success?:Notice){
+ function changeProgress(change:(current:LocalSave)=>LocalSave,success?:string){
   return perform(async()=>{
    if(!save)return;
    setSave(await updateSave(save.id,change));
-   if(success)setNotice(success);
+   if(success)setNotice({text:success,kind:'status'});
   });
  }
 
  const onSelect=(id:string)=>changeProgress(current=>selectCharacter(current,id));
  const onFavorite=(id:string,favorite:boolean)=>changeProgress(current=>setCharacterFavorite(current,id,favorite));
- const onLevel=()=>{if(save)return changeProgress(current=>({...current,profile:levelUp(current.profile,'character',save.selected)}),{text:'角色已提升一级',kind:'inline'});};
- const onLevelWeapon=(weaponInstanceId:string)=>changeProgress(current=>({...current,profile:levelUp(current.profile,'weapon',weaponInstanceId)}),{text:'武器已升级，词条已提升',kind:'inline'});
+ const onLevel=()=>{if(save)return changeProgress(current=>({...current,profile:levelUp(current.profile,'character',save.selected)}),'角色已提升一级');};
+ const onLevelWeapon=(weaponInstanceId:string)=>changeProgress(current=>({...current,profile:levelUp(current.profile,'weapon',weaponInstanceId)}),'武器已升级，词条已提升');
  const onEquipWeapon=(characterId:string,weaponInstanceId:string|null)=>changeProgress(
   current=>({...current,profile:equipWeapon(current.profile,characterId,weaponInstanceId)}),
-  {text:weaponInstanceId?'武器已装备，下次开局生效':'武器已卸下',kind:'toast'}
+  weaponInstanceId?'武器已装备，下次开局生效':'武器已卸下'
  );
  const onCheckIn=()=>changeProgress(current=>current.checkIns<7?{...current,checkIns:current.checkIns+1}:current);
  const onResetCheckIns=()=>changeProgress(current=>({...current,checkIns:0}));
@@ -140,13 +140,13 @@ export function useAdventure(){
   setRun(null);
   window.location.hash=run.stage?'#/stages':'#/camp';
   if(withdrawing)setExitMessage(message);
-  else setNotice({text:message,kind:'inline'});
+  else setNotice({text:message,kind:'status'});
  });
 
  return {
   save,saves,loading,saveError,reloadSaves,onOpen,onCreate,onImport,onExport,onReturn,
   selected:save?.selected??starterCharacter,onSelect,onFavorite,pending,run,
-  notice:notice?.kind==='inline'?notice.text:'',toast:notice?.kind==='toast'?notice.text:'',
+  openingNotice:notice?.kind==='opening'?notice.text:'',toast:notice?.kind==='opening'?null:notice,
   result,weaponResult,onLevel,onLevelWeapon,onEquipWeapon,onCheckIn,onResetCheckIns,
   onWish,wishReveal,closeWishReveal:()=>setWishReveal(null),wishExchange,confirmWishExchange,cancelWishExchange:()=>setWishExchange(null),
   onStart,onStartStage,onSettle,onAbandon,exitMessage,closeExitMessage:()=>setExitMessage(null)

@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {characters} from '../../../objects/Character';
 import {characterListEntries} from '../../../objects/CharacterList';
 import {weapons} from '../../../objects/Weapon';
-import {groupOwnedWeapons} from '../../../game/functions/weaponInventory';
+import {groupOwnedWeapons,weaponDefinitionsByOwnership} from '../../../game/functions/weaponInventory';
 import {elementLabels} from '../../../objects/Element';
 import {allCharacterFilters,characterPageSize,characterRegion,matchesCharacterFilter,regionLabels,type CharacterFilter} from '../../../objects/CharacterFilter';
 import {weaponLabels} from '../../../objects/WeaponType';
@@ -23,7 +23,7 @@ export function useArchive(profile:Profile,favoriteCharacters:readonly string[])
  const visible=(unlocked:boolean,text:string)=>(filter==='all'||(filter==='unlocked'?unlocked:!unlocked))&&text.toLowerCase().includes(query);
  const characterEntries=characterListEntries(profile.characters,favoriteCharacters);
  const weaponGroups=groupOwnedWeapons(profile.weapons);
- const weaponEntries=weapons.map(definition=>({definition,quantity:weaponGroups.get(definition.id)?.length??0}));
+ const weaponEntries=weaponDefinitionsByOwnership(weaponGroups).map(definition=>({definition,quantity:weaponGroups.get(definition.id)?.length??0}));
  const matches=characterEntries.filter(({definition:c,owned})=>
   matchesCharacterFilter(c.id,c.element,characterFilter)&&
   visible(!!owned,[c.name,c.title,elementLabels[c.element],weaponLabels[c.weapon],regionLabels[characterRegion(c.id)]].join(' '))

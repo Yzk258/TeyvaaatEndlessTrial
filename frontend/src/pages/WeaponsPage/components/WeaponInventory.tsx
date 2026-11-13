@@ -1,16 +1,17 @@
 import {RarityBadge} from '../../../components/ui/RarityBadge';
 import {WeaponCardArt} from './WeaponCardArt';
 import type {Character} from '../../../objects/Character';
-import {weapons,statLabels,type OwnedWeapon} from '../../../objects/Weapon';
+import {statLabels,type OwnedWeapon} from '../../../objects/Weapon';
 import {weaponLabels} from '../../../objects/WeaponType';
 import {formatWeaponStat} from '../../../game/functions/weaponStats';
+import {weaponDefinitionsByOwnership} from '../../../game/functions/weaponInventory';
 
 export function WeaponInventory({groups,owners,selectedId,onSelect}:{
  groups:ReadonlyMap<string,readonly OwnedWeapon[]>;owners:ReadonlyMap<string,Character|undefined>;
  selectedId:string|undefined;onSelect:(weaponInstanceId:string)=>void;
 }){
  return <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-6">
-  {weapons.map(weapon=>{
+  {weaponDefinitionsByOwnership(groups).map(weapon=>{
    const instances=groups.get(weapon.id)??[];
    const item=instances.find(entry=>entry.id===selectedId)??instances[0];
    const equippedBy=item?owners.get(item.id):undefined;

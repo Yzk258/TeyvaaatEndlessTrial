@@ -1,6 +1,6 @@
 import type {Character} from '../../objects/Character';
 import type {Profile} from '../../objects/Profile';
-import {weapons,type OwnedWeapon,type WeaponLoadout} from '../../objects/Weapon';
+import {weapons,type OwnedWeapon,type Weapon,type WeaponLoadout} from '../../objects/Weapon';
 
 export function groupOwnedWeapons(items:readonly OwnedWeapon[]):ReadonlyMap<string,readonly OwnedWeapon[]>{
  const groups=new Map<string,OwnedWeapon[]>();
@@ -10,6 +10,11 @@ export function groupOwnedWeapons(items:readonly OwnedWeapon[]):ReadonlyMap<stri
   else groups.set(item.weaponId,[item]);
  }
  return groups;
+}
+
+export function weaponDefinitionsByOwnership(groups:ReadonlyMap<string,readonly OwnedWeapon[]>):readonly Weapon[]{
+ const owned=(weapon:Weapon)=>Number((groups.get(weapon.id)?.length??0)>0);
+ return weapons.toSorted((first,second)=>owned(second)-owned(first));
 }
 
 export function equippedWeaponLoadout(profile:Profile,character:Character):WeaponLoadout|null{

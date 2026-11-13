@@ -9,7 +9,7 @@ import {BattleScene} from './components/BattleScene';
 import {useReducedBattleMotion} from './hooks/useReducedBattleMotion';
 import {BattleHUD} from './components/BattleHUD';
 
-export function BattlePage({run,onSettle,onAbandon,pending,notice}:{run:RunStart;onSettle:(kills:number,ticks:number,withdrawing?:boolean)=>void;onAbandon:()=>void;pending:boolean;notice?:string}){
+export function BattlePage({run,onSettle,onAbandon,pending}:{run:RunStart;onSettle:(kills:number,ticks:number,withdrawing?:boolean)=>void;onAbandon:()=>void;pending:boolean}){
  const {stage,adventure,character,map}=run;
  const [confirmExit,setConfirmExit]=useState(false);
  const {state:s,dispatch,pause,resume}=useBattle(run);
@@ -19,7 +19,7 @@ export function BattlePage({run,onSettle,onAbandon,pending,notice}:{run:RunStart
  const stageRewardText=stage?.rewards.map(reward=>`${rewardCurrencyLabels[reward.currency]} +${reward.amount}`).join(' · ');
  return <section className="fixed inset-0 z-40 h-dvh w-screen overflow-hidden bg-[#263d30] text-stone-200">
  <BattleScene state={s} character={character} bounded={map.layout==='arena'} reducedMotion={reducedMotion}/>
- <BattleHUD state={s} title={title} stageRewardText={stageRewardText} pending={pending} confirmExit={confirmExit} notice={notice} onPause={s.phase==='paused'?resume:pause} onExit={()=>{pause();setConfirmExit(true);}}/>
+ <BattleHUD state={s} title={title} stageRewardText={stageRewardText} pending={pending} confirmExit={confirmExit} onPause={s.phase==='paused'?resume:pause} onExit={()=>{pause();setConfirmExit(true);}}/>
  <div className="absolute inset-0 z-20 pointer-events-none [&>div]:pointer-events-auto">
   {s.phase==='collecting'&&<div role="status" className="absolute inset-x-0 bottom-12 text-center text-sm text-amber-100">正在吸收掉落…</div>}
   {s.phase==='countdown'&&!confirmExit&&<div role="status" aria-live="polite" className="absolute inset-0 grid place-content-center gap-5 bg-slate-950/75 text-center">
