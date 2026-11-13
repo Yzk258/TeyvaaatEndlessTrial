@@ -1,6 +1,8 @@
 import {useCallback,useEffect,useRef,useState} from 'react';
 import type {AdventureSettings} from '../../objects/AdventureSettings';
 import type {RunStart} from '../../objects/Profile';
+import type {ArtifactSlot} from '../../objects/Artifact';
+import {equipArtifact,levelUpArtifact} from '../../game/local/artifactProgression';
 import {rewardCurrencyLabels} from '../../objects/TrialReward';
 import type {WishBanner,WishCount,WishPulls} from '../../objects/WishReward';
 import type {WishReveal} from '../WishPage/objects/WishReveal';
@@ -80,6 +82,9 @@ export function useAdventure(){
  const onFavorite=(id:string,favorite:boolean)=>changeProgress(current=>setCharacterFavorite(current,id,favorite));
  const onLevel=()=>{if(save)return changeProgress(current=>({...current,profile:levelUp(current.profile,'character',save.selected)}),'角色已提升一级');};
  const onLevelWeapon=(weaponInstanceId:string)=>changeProgress(current=>({...current,profile:levelUp(current.profile,'weapon',weaponInstanceId)}),'武器已升级，词条已提升');
+ const onLevelArtifact=(id:string)=>changeProgress(current=>({...current,profile:levelUpArtifact(current.profile,id)}),'圣遗物已强化');
+ const onEquipArtifact=(characterId:string,slot:ArtifactSlot,id:string|null)=>changeProgress(
+  current=>({...current,profile:equipArtifact(current.profile,characterId,slot,id)}),id?'圣遗物已装备':'圣遗物已卸下');
  const onEquipWeapon=(characterId:string,weaponInstanceId:string|null)=>changeProgress(
   current=>({...current,profile:equipWeapon(current.profile,characterId,weaponInstanceId)}),
   weaponInstanceId?'武器已装备，下次开局生效':'武器已卸下'
@@ -129,13 +134,13 @@ export function useAdventure(){
   window.location.hash='#/stages';
   setExitMessage('已放弃本次试炼，未发放奖励');
  };
- const onSettle=(kills:number,ticks:number,withdrawing=false)=>perform(async()=>{
+ const onSettle=(kills:number,ticks:number,withdrawing=false,artifactDrops:readonly string[]=[])=>perform(async()=>{
   if(!save||!run)return;
-  const next=await updateSave(save.id,current=>settleTrial(current,run,kills,ticks));
+  const next=await updateSave(save.id,current=>settleTrial(current,run,kills,ticks,artifactDrops));
   const gains=trialRewards(run,kills,ticks).map(reward=>`${rewardCurrencyLabels[reward.currency]} +${reward.amount}`).join('，');
   const message=run.stage
    ?kills===run.stage.enemies?'关卡通关！'+gains:'挑战失败，本次未获得通关奖励'
-   :'本次冒险已结算：'+gains;
+   :'本次冒险已结算：'+gains+(artifactDrops.length?`，圣遗物 +${artifactDrops.length}`:'');
   setSave(next);
   setRun(null);
   window.location.hash=run.stage?'#/stages':'#/camp';
@@ -147,7 +152,7 @@ export function useAdventure(){
   save,saves,loading,saveError,reloadSaves,onOpen,onCreate,onImport,onExport,onReturn,
   selected:save?.selected??starterCharacter,onSelect,onFavorite,pending,run,
   openingNotice:notice?.kind==='opening'?notice.text:'',toast:notice?.kind==='opening'?null:notice,
-  result,weaponResult,onLevel,onLevelWeapon,onEquipWeapon,onCheckIn,onResetCheckIns,
+  result,weaponResult,onLevel,onLevelWeapon,onEquipWeapon,onLevelArtifact,onEquipArtifact,onCheckIn,onResetCheckIns,
   onWish,wishReveal,closeWishReveal:()=>setWishReveal(null),wishExchange,confirmWishExchange,cancelWishExchange:()=>setWishExchange(null),
   onStart,onStartStage,onSettle,onAbandon,exitMessage,closeExitMessage:()=>setExitMessage(null)
  };

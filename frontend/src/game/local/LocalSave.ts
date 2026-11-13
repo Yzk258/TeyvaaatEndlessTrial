@@ -1,8 +1,9 @@
 import {characters,type CharacterId} from '../../objects/Character';
 import type {Profile} from '../../objects/Profile';
 import type {OwnedWeapon} from '../../objects/Weapon';
+import {artifacts,artifactRarities,beginnerArtifacts,type ArtifactSlot,type OwnedArtifact} from '../../objects/Artifact';
 
-export type TrialResult={readonly runId:string;readonly kills:number;readonly ticks:number};
+export type TrialResult={readonly runId:string;readonly kills:number;readonly ticks:number;readonly artifactDrops?:readonly string[]};
 export type LocalSave={
  readonly version:2;
  readonly id:string;
@@ -17,6 +18,7 @@ export type LocalSave={
 };
 
 export const starterCharacter:CharacterId='amber';
+const starterArtifacts=()=>beginnerArtifacts.map((item):OwnedArtifact=>({id:'starter-'+item.id,artifactId:item.id,level:0}));
 
 export function createSave(nickname:string):LocalSave{
  const name=nickname.trim();
@@ -25,7 +27,7 @@ export function createSave(nickname:string):LocalSave{
   version:2,id:crypto.randomUUID(),nickname:name,updatedAt:Date.now(),selected:starterCharacter,favoriteCharacters:[],
   profile:{
    primogems:1600,mora:5000,intertwinedFates:10,characters:[{id:starterCharacter,level:1,copies:1}],
-   weapons:[],equipment:[],runs:0,pity:0,fourStarPity:0,weaponPity:0,weaponFourStarPity:0
+   weapons:[],equipment:[],runs:0,pity:0,fourStarPity:0,weaponPity:0,weaponFourStarPity:0,artifacts:starterArtifacts(),artifactEquipment:[]
   },
   clearedStages:[],results:[],checkIns:0
  };
@@ -45,6 +47,31 @@ function countedItem(value:unknown):value is {id:string;level:number;copies:numb
 }
 function ownedWeapon(value:unknown):value is OwnedWeapon{
  return record(value)&&id(value.id)&&id(value.weaponId)&&count(value.level,1);
+}
+
+function ownedArtifact(value:unknown):value is OwnedArtifact{
+ if(!record(value)||!id(value.id)||!count(value.level))return false;
+ const definition=artifacts.find(item=>item.id===value.artifactId);
+ return !!definition&&value.level<=artifactRarities[definition.rarity].maxLevel;
+}
+
+function validArtifactEquipment(value:unknown,inventory:readonly OwnedArtifact[],characterIds:ReadonlySet<string>):boolean{
+ if(!Array.isArray(value))return false;
+ const items=new Map(inventory.map(item=>[item.id,item.artifactId]));
+ const assigned=new Set<string>();
+ const slotsByCharacter=new Map<string,Set<ArtifactSlot>>();
+ return value.every(entry=>{
+  if(!record(entry)||!id(entry.characterId)||!characterIds.has(entry.characterId)||!id(entry.artifactInstanceId)||assigned.has(entry.artifactInstanceId))return false;
+  const artifactId=items.get(entry.artifactInstanceId);
+  const definition=artifacts.find(item=>item.id===artifactId);
+  if(!definition)return false;
+  const slots=slotsByCharacter.get(entry.characterId)??new Set<ArtifactSlot>();
+  if(slots.has(definition.slot))return false;
+  assigned.add(entry.artifactInstanceId);
+  slots.add(definition.slot);
+  slotsByCharacter.set(entry.characterId,slots);
+  return true;
+ });
 }
 
 function migrateLegacyProfile(value:unknown):unknown{
@@ -78,6 +105,8 @@ function validProfile(value:unknown):value is Profile{
   id(entry.weaponInstanceId)&&weaponIds.has(entry.weaponInstanceId)))return false;
  if(new Set(equipment.map(entry=>entry.characterId)).size!==equipment.length||
   new Set(equipment.map(entry=>entry.weaponInstanceId)).size!==equipment.length)return false;
+ if(!Array.isArray(value.artifacts)||!value.artifacts.every(ownedArtifact)||
+  new Set(value.artifacts.map(item=>item.id)).size!==value.artifacts.length||!validArtifactEquipment(value.artifactEquipment,value.artifacts,characterIds))return false;
  return ['primogems','mora','intertwinedFates','runs','pity','fourStarPity','weaponPity','weaponFourStarPity']
   .every(key=>count(value[key]));
 }
@@ -85,7 +114,9 @@ function validProfile(value:unknown):value is Profile{
 export function readSaveData(value:unknown):LocalSave{
  if(!record(value)||(value.version!==1&&value.version!==2))throw new Error('不支持此存档版本');
  const {nickname,selected,clearedStages,results}=value;
- const profile=value.version===1?migrateLegacyProfile(value.profile):value.profile;
+ const migrated=value.version===1?migrateLegacyProfile(value.profile):value.profile;
+ const profile=record(migrated)&&!Object.hasOwn(migrated,'artifacts')&&!Object.hasOwn(migrated,'artifactEquipment')
+  ?{...migrated,artifacts:starterArtifacts(),artifactEquipment:[]}:migrated;
  const checkIns=value.checkIns??0;
  const favoriteCharacters=value.favoriteCharacters??[];
  if(!id(value.id)||typeof nickname!=='string'||!nickname.trim()||nickname.length>30||
@@ -93,7 +124,8 @@ export function readSaveData(value:unknown):LocalSave{
   !Array.isArray(clearedStages)||!clearedStages.every(id)||
   !Array.isArray(favoriteCharacters)||!favoriteCharacters.every(id)||
   !count(checkIns)||checkIns>7||
-  !Array.isArray(results)||!results.every(result=>record(result)&&id(result.runId)&&count(result.kills)&&count(result.ticks))||
+  !Array.isArray(results)||!results.every(result=>record(result)&&id(result.runId)&&count(result.kills)&&count(result.ticks)&&
+   (result.artifactDrops===undefined||(Array.isArray(result.artifactDrops)&&result.artifactDrops.length<=result.kills&&result.artifactDrops.every(artifactId=>id(artifactId)))))||
   new Set(results.map(result=>result.runId)).size!==results.length){
   throw new Error('存档数据不完整或格式有误');
  }

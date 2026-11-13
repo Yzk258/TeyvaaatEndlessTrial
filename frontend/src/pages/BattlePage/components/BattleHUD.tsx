@@ -10,6 +10,7 @@ export function BattleHUD({state:s,title,stageRewardText,pending,confirmExit,onP
   <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-stone-300">
    {s.stageMora!==0&&<span className="text-amber-100">{s.stageMora===null?'掉落摩拉 '+s.collectedMora+' · 结算领取':'已收集摩拉 '+s.collectedMora+' / '+s.stageMora}</span>}
    {stageRewardText&&<span className="text-amber-100">通关奖励 {stageRewardText}</span>}
+   {s.artifactDrops.length>0&&<span className="text-emerald-200">圣遗物掉落 {s.artifactDrops.length} 件</span>}
    <span>射程 {s.attackRange}</span><span>攻速 {(20/s.attackIntervalTicks).toFixed(1)}次/秒</span><span>移速 {s.moveSpeed}</span><span>每轮 {s.extraAttacks+1}次攻击</span>
   </div>
   {difficulty&&reward&&<div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 border-t border-white/10 pt-2 text-[11px] text-stone-300"><span className="text-rose-100">敌潮 {difficulty.wave} · 生命 ×{difficulty.health.toFixed(2)} · 伤害 ×{difficulty.damage.toFixed(2)}</span><span>场上 {s.enemies.length} / {difficulty.limit} · 每 {(difficulty.interval/20).toFixed(2)} 秒刷 {difficulty.count} 只</span><span className="text-amber-100">预计结算 摩拉 {reward.mora} · 原石 {reward.primogems}</span></div>}

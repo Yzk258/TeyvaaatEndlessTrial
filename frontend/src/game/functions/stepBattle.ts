@@ -3,17 +3,17 @@ import {terrainObstacles} from './terrainObstacles';
 import {moveWithCollision} from './collisionGeometry';
 import {indexObstacles} from './obstacleIndex';
 import {resolveAttacks} from './resolveAttacks';
-import {createEnemyLoot,stepLoot} from './battleLoot';
+import {createArtifactLoot,createEnemyLoot,stepLoot} from './battleLoot';
 import {spawnBattleEnemies} from './spawnBattleEnemies';
 import {moveBattleEnemy,resolveEnemyAttacks} from './enemyAttacks';
 import {applyUpgradeStats,rollUpgradeChoices} from './battleUpgrades';
 import {playerHitTicks,type PlayerHitEffect} from '../objects/HitEffect';
 import type {BattleAction,BattleState} from '../objects/BattleState';
 export const initialBattle=(seed:number):BattleState=>({
- adventure:null,combatTicks:0,loot:[],collectedMora:0,stageMora:null,moveSpeed:6,extraAttacks:0,queuedAttackTicks:[],upgradeSeed:(seed^0x9e3779b9)>>>0,upgradeChoices:[],
+ adventure:null,combatTicks:0,loot:[],artifactDrops:[],collectedMora:0,stageMora:null,moveSpeed:6,extraAttacks:0,queuedAttackTicks:[],upgradeSeed:(seed^0x9e3779b9)>>>0,upgradeChoices:[],
  motion:{moving:false,distance:0},attackCue:null,hits:[],playerHits:[],obstacles:[],collisionChunkX:1,collisionChunkY:0,terrainCollision:false,
  attackPattern:{kind:'area',splashRadius:105},projectiles:[],enemyProjectiles:[],lastEliteWave:0,effects:[],facing:0,countdownTicks:0,weaponTalent:null,attackRange:105,attackIntervalTicks:12,attackStyle:'melee',
- phase:'fighting',targetEnemies:null,tick:0,x:450,y:270,hp:100,maxHp:100,experience:0,pendingUpgrades:0,kills:0,level:1,power:2,enemies:[],worldSeed:seed,seed
+ phase:'fighting',targetEnemies:null,tick:0,x:450,y:270,hp:100,maxHp:100,healOnKillPercent:0,experience:0,pendingUpgrades:0,kills:0,level:1,power:2,enemies:[],worldSeed:seed,seed
 });
 const recentPlayerHits=(hits:readonly PlayerHitEffect[],tick:number)=>hits.filter(hit=>tick-hit.tick<playerHitTicks);
 export const experienceRequired=(level:number):number=>30+15*(level-1);
@@ -62,17 +62,21 @@ export function stepBattle(s:BattleState,a:BattleAction):BattleState {
  const candidates=spawned.enemies.map(e=>moveBattleEnemy(e,x,y,terrain,enemyBounds,speedFactor(e.x,e.y)));
  const resolved=resolveAttacks(s,candidates,x,y,facing,tick,terrain);
  const defeated=resolved.enemies.filter(e=>e.hp<=0);
- const loot=stepLoot([...s.loot,...createEnemyLoot(defeated,s.kills,s.targetEnemies,s.stageMora,s.adventure?.rules.moraPerKill??10)],x,y);
+ const artifactLoot=adventure&&s.adventure?createArtifactLoot(defeated,s.worldSeed):[];
+ const loot=stepLoot([...s.loot,...createEnemyLoot(defeated,s.kills,s.targetEnemies,s.stageMora,s.adventure?.rules.moraPerKill??10),...artifactLoot],x,y);
  const progress=gainExperience(s.level,s.experience,loot.experience);
  const enemyAttacks=resolveEnemyAttacks(resolved.enemies.filter(e=>e.hp>0),s.enemyProjectiles??[],x,y,tick,terrain);
- const kills=s.kills+defeated.length,hp=Math.max(0,s.hp-enemyAttacks.damage);
+ const kills=s.kills+defeated.length;
+ const healedHp=Math.min(s.maxHp,s.hp+Math.round(s.maxHp*s.healOnKillPercent/100)*defeated.length);
+ const hp=Math.max(0,healedHp-enemyAttacks.damage);
  const playerHits=recentPlayerHits(s.playerHits??[],tick);
- if(hp<s.hp)playerHits.push({tick,x,y,angle:enemyAttacks.hitAngle,damage:s.hp-hp});
+ if(hp<healedHp)playerHits.push({tick,x,y,angle:enemyAttacks.hitAngle,damage:healedHp-hp});
  const terminal=hp<=0||s.targetEnemies!==null&&kills>=s.targetEnemies;
  const next:BattleState={...s,motion,attackCue:resolved.attackCue,hits:resolved.hits,playerHits,obstacles,obstacleIndex,collisionChunkX,collisionChunkY,combatTicks,tick,x,y,facing,
   projectiles:terminal?[]:resolved.projectiles,enemyProjectiles:terminal?[]:enemyAttacks.projectiles,lastEliteWave:spawned.lastEliteWave,
   queuedAttackTicks:terminal?[]:resolved.queuedAttackTicks,effects:resolved.effects,hp,kills,enemies:enemyAttacks.enemies,seed,
-  loot:loot.particles,collectedMora:s.collectedMora+loot.mora,level:progress.level,experience:progress.experience,
+  loot:loot.particles,artifactDrops:artifactLoot.length?[...s.artifactDrops,...artifactLoot.map(item=>item.artifactId)]:s.artifactDrops,
+  collectedMora:s.collectedMora+loot.mora,level:progress.level,experience:progress.experience,
   pendingUpgrades:terminal?0:s.pendingUpgrades+progress.upgrades,
   phase:terminal?(loot.particles.length>0?'collecting':'ended'):'fighting'
  };

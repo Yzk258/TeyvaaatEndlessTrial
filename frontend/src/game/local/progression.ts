@@ -11,6 +11,8 @@ import type {TrialReward} from '../../objects/TrialReward';
 import type {WishBanner,WishCount,WishPull,WishPulls,WishReward} from '../../objects/WishReward';
 import {adventureReward} from '../functions/adventureProgress';
 import {equippedWeaponLoadout} from '../functions/weaponInventory';
+import {equippedArtifactLoadout} from '../functions/artifactStats';
+import {beginnerArtifacts} from '../../objects/Artifact';
 import type {LocalSave} from './LocalSave';
 
 export function selectCharacter(save:LocalSave,id:string):LocalSave{
@@ -128,7 +130,7 @@ export function startTrial(save:LocalSave,trial:Trial):RunStart{
  if(!character||!owned)throw new Error('请选择已拥有的角色');
  const loadout={
   runId:crypto.randomUUID(),seed:Math.floor(Math.random()*0x7fffffff),level:owned.level,character,
-  equippedWeapon:equippedWeaponLoadout(save.profile,character)
+  equippedWeapon:equippedWeaponLoadout(save.profile,character),equippedArtifacts:equippedArtifactLoadout(save.profile,character.id)
  };
  if(trial.kind==='stage'){
   const stage=stages.find(entry=>entry.id===trial.stageId);
@@ -148,14 +150,16 @@ export function trialRewards(run:RunStart,kills:number,ticks:number):readonly Tr
  return [{kind:'currency',currency:'mora',amount:mora},{kind:'currency',currency:'primogems',amount:primogems}];
 }
 
-export function settleTrial(save:LocalSave,run:RunStart,kills:number,ticks:number):LocalSave{
+export function settleTrial(save:LocalSave,run:RunStart,kills:number,ticks:number,artifactDrops:readonly string[]=[]):LocalSave{
  if(!Number.isSafeInteger(kills)||kills<0||!Number.isSafeInteger(ticks)||ticks<0||
-  (run.stage&&(kills>run.stage.enemies||ticks===0))){
+  (run.stage&&(kills>run.stage.enemies||ticks===0||artifactDrops.length>0))||
+  artifactDrops.length>kills||artifactDrops.some(id=>!beginnerArtifacts.some(item=>item.id===id))){
   throw new Error('本局战果无效');
  }
  const existing=save.results.find(result=>result.runId===run.runId);
  if(existing){
-  if(existing.kills!==kills||existing.ticks!==ticks)throw new Error('该试炼已结算');
+  const previousDrops=existing.artifactDrops??[];
+  if(existing.kills!==kills||existing.ticks!==ticks||previousDrops.length!==artifactDrops.length||previousDrops.some((id,index)=>id!==artifactDrops[index]))throw new Error('该试炼已结算');
   return save;
  }
  const profile=trialRewards(run,kills,ticks).reduce<Profile>((current,reward)=>{
@@ -163,10 +167,12 @@ export function settleTrial(save:LocalSave,run:RunStart,kills:number,ticks:numbe
    case 'currency':return {...current,[reward.currency]:current[reward.currency]+reward.amount};
   }
  },save.profile);
+ const droppedArtifacts=artifactDrops.map((artifactId,index)=>({id:`drop-${run.runId}-${index+1}`,artifactId,level:0}));
+ if(droppedArtifacts.some(item=>profile.artifacts.some(existing=>existing.id===item.id)))throw new Error('圣遗物副本编号重复');
  const cleared=run.stage&&kills===run.stage.enemies&&!save.clearedStages.includes(run.stage.id);
  return {...save,
-  profile:{...profile,runs:profile.runs+1},
+  profile:{...profile,artifacts:droppedArtifacts.length?[...profile.artifacts,...droppedArtifacts]:profile.artifacts,runs:profile.runs+1},
   clearedStages:cleared&&run.stage?[...save.clearedStages,run.stage.id]:save.clearedStages,
-  results:[...save.results,{runId:run.runId,kills,ticks}]
+  results:[...save.results,{runId:run.runId,kills,ticks,...(artifactDrops.length?{artifactDrops:[...artifactDrops]}:{})}]
  };
 }

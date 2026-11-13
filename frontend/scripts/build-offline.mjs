@@ -8,11 +8,14 @@ const [portraits,references,display,battle,weapons,enemies]=await Promise.all([
  'character-portraits','character-references','character-display-portraits',
  'character-battle-portraits','weapon-appearance','enemy-appearance'
 ].map(readConfig));
+const artifactIcons=(await readdir(new URL('public/artifacts/',frontend),{withFileTypes:true}))
+ .filter(entry=>entry.isFile()&&entry.name.endsWith('.png')).map(entry=>'artifacts/'+entry.name);
 const publicFiles=[...new Set([
  '/backgrounds/sky-gate-pixel-v2.png',
  '/backgrounds/sky-gate-clouds-a.png','/backgrounds/sky-gate-clouds-b.png',
  '/terrain/ground-v2.png','/terrain/objects-v2.png','/terrain/ruins-v2.png','/terrain/waypoint-v2.png',
  '/currency/mora.png','/currency/primogem.png','/currency/fate.png',
+ ...artifactIcons,
  ...Object.values(portraits).flatMap(entry=>[entry.src,entry.thumbnail].filter(Boolean)),
  ...Object.values(references).map(entry=>entry.thumbnail??entry.src),
  ...[...display,...battle,...Object.values(weapons),...Object.values(enemies.sheets)].map(entry=>entry.src)

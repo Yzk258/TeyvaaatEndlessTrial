@@ -3,6 +3,8 @@ import {useBattlePresentation} from './pages/hooks/useBattlePresentation';
 import {useCallback,useRef,useState} from 'react';
 import {WishRevealDialog} from './pages/WishPage/components/WishRevealDialog';
 import {ArchivePage} from './pages/ArchivePage';
+import {BagPage} from './pages/BagPage';
+import {ArtifactsPage} from './pages/ArtifactsPage';
 import {WeaponsPage} from './pages/WeaponsPage';
 import {ConfirmDialog} from './components/ui/ConfirmDialog';
 import {MessageDialog} from './components/ui/MessageDialog';
@@ -69,10 +71,12 @@ export function App(){
     <div key={navigation.current} className="animate-page-enter motion-reduce:animate-none">{
      navigation.current==='overview'?<OverviewPage profile={profile} nickname={nickname} selected={a.selected}/>
    :navigation.current==='archive'?<ArchivePage profile={profile} favoriteCharacters={favoriteCharacters} pending={a.pending} onFavorite={a.onFavorite}/>
+   :navigation.current==='bag'?<BagPage profile={profile}/>
+   :navigation.current==='artifacts'?<ArtifactsPage profile={profile} pending={a.pending} onLevelArtifact={a.onLevelArtifact}/>
    :navigation.current==='stages'?<StagesPage category={stageCategory} onCategoryChange={setStageCategory} onStart={a.onStartStage} pending={a.pending} clearedStages={clearedStages}/>
    :navigation.current==='weapons'?<WeaponsPage profile={profile} onLevelWeapon={a.onLevelWeapon} pending={a.pending}/>
    :navigation.current==='characters'?<CharacterPage profile={profile} selected={a.selected} favoriteCharacters={favoriteCharacters} pending={a.pending}
-    onSelect={a.onSelect} onFavorite={a.onFavorite} onLevel={a.onLevel} onEquipWeapon={a.onEquipWeapon}/>
+    onSelect={a.onSelect} onFavorite={a.onFavorite} onLevel={a.onLevel} onEquipWeapon={a.onEquipWeapon} onEquipArtifact={a.onEquipArtifact}/>
      :navigation.current==='wishes'?<WishPage weaponResult={a.weaponResult} profile={profile} onWish={a.onWish} result={a.result} pending={a.pending}/>
      :navigation.current==='activities'?<ActivitiesPage claimed={a.save.checkIns} pending={a.pending} onClaim={a.onCheckIn} onReset={a.onResetCheckIns}/>
     :<HomePage profile={profile} selected={a.selected} difficulty={adventureDifficulty} onDifficultyChange={setAdventureDifficulty} onStart={a.onStart} pending={a.pending}/>}</div>

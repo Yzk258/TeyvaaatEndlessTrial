@@ -9,7 +9,7 @@ import {BattleScene} from './components/BattleScene';
 import {useReducedBattleMotion} from './hooks/useReducedBattleMotion';
 import {BattleHUD} from './components/BattleHUD';
 
-export function BattlePage({run,onSettle,onAbandon,pending}:{run:RunStart;onSettle:(kills:number,ticks:number,withdrawing?:boolean)=>void;onAbandon:()=>void;pending:boolean}){
+export function BattlePage({run,onSettle,onAbandon,pending}:{run:RunStart;onSettle:(kills:number,ticks:number,withdrawing:boolean,artifactDrops:readonly string[])=>void;onAbandon:()=>void;pending:boolean}){
  const {stage,adventure,character,map}=run;
  const [confirmExit,setConfirmExit]=useState(false);
  const {state:s,dispatch,pause,resume}=useBattle(run);
@@ -34,9 +34,9 @@ export function BattlePage({run,onSettle,onAbandon,pending}:{run:RunStart;onSett
    <p>击败 {s.kills} 名敌人 · 坚持 {Math.floor(s.combatTicks/20)} 秒</p>
    {cleared&&<p className="text-amber-100">{stageRewardText}</p>}
    {adventure&&<AdventureResult state={s}/>}
-   <button disabled={pending} className="rounded-full bg-amber-100 px-8 py-3 text-slate-900 disabled:opacity-40" onClick={()=>onSettle(s.kills,s.combatTicks)}>{pending?'正在结算…':stage&&!cleared?'结束挑战并返回':'领取奖励并返回'}</button>
+   <button disabled={pending} className="rounded-full bg-amber-100 px-8 py-3 text-slate-900 disabled:opacity-40" onClick={()=>onSettle(s.kills,s.combatTicks,false,s.artifactDrops)}>{pending?'正在结算…':stage&&!cleared?'结束挑战并返回':'领取奖励并返回'}</button>
   </div>}
-  {confirmExit&&<ExitBattleDialog state={s} stage={!!stage} pending={pending} onConfirm={()=>stage?onAbandon():onSettle(s.kills,s.combatTicks,true)} onCancel={()=>{setConfirmExit(false);resume();}}/>}
+  {confirmExit&&<ExitBattleDialog state={s} stage={!!stage} pending={pending} onConfirm={()=>stage?onAbandon():onSettle(s.kills,s.combatTicks,true,s.artifactDrops)} onCancel={()=>{setConfirmExit(false);resume();}}/>}
  </div>
  </section>;
 }

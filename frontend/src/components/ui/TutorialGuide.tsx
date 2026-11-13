@@ -10,7 +10,8 @@ const guide:readonly GuideStep[]=[
  {page:'stages',target:'stage-intro',title:'关卡挑战',description:'先选择摩拉或原石关卡，再选择地图。击败本关全部敌人即可领取卡片上显示的奖励。'},
  {page:'characters',target:'character-enhancement',title:'角色培养',description:'从下方选择出战角色。「强化」可对比升级数值，「武器」可为当前角色装备或卸下武器。'},
  {page:'weapons',target:'weapon-intro',title:'武器培养',description:'选择一件已获得的武器，查看天赋并强化主副词条。'},
- {page:'archive',target:'archive-tabs',title:'图鉴',description:'切换角色或武器图鉴，查看基础属性、成长和天赋。未解锁的条目会灰显。'},
+ {page:'artifacts',target:'artifact-training',title:'圣遗物培养',description:'选择圣遗物并消耗摩拉提升主词条。前往角色培养的「圣遗物」栏装备，集齐两件或四件同套圣遗物可激活套装效果。'},
+ {page:'archive',target:'archive-tabs',title:'图鉴',description:'切换角色、武器、怪物或圣遗物图鉴，查看属性和收集进度。'},
  {page:'wishes',target:'wish-pools',title:'祈愿',description:'用纠缠之缘在角色或武器卡池祈愿。两个卡池各自记录四星和五星保底。'},
  {page:'activities',target:'page-title',title:'活动',description:'这里汇总签到和后续活动预告。'},
  {page:'overview',target:'save-tools',title:'本地存档',description:'进度自动保存。可以导出备份，也可以返回标题切换存档或导入备份。'}

@@ -4,9 +4,10 @@ export function formatWeaponStat(stat:WeaponStat,level:number):string {
  const value=weaponStatValue(stat,level);
  return '+'+value+(stat.kind.endsWith('Percent')?'%':'');
 }
-export function applyWeaponStats(base:{readonly attack:number;readonly maxHp:number;readonly attackRange:number;readonly attackIntervalTicks:number},loadout:WeaponLoadout|null){
- const stats=loadout?[loadout.definition.mainStat,loadout.definition.subStat]:[];
- const value=(kind:WeaponStatKind)=>stats.filter(s=>s.kind===kind).reduce((sum,s)=>sum+weaponStatValue(s,loadout!.level),0);
+export function applyWeaponStats(base:{readonly attack:number;readonly maxHp:number;readonly attackRange:number;readonly attackIntervalTicks:number},loadout:WeaponLoadout|null,additionalStats:readonly {readonly stat:WeaponStat;readonly level:number}[]=[]){
+ const weaponStats=loadout?[loadout.definition.mainStat,loadout.definition.subStat].map(stat=>({stat,level:loadout.level})):[];
+ const stats=[...weaponStats,...additionalStats];
+ const value=(kind:WeaponStatKind)=>stats.filter(entry=>entry.stat.kind===kind).reduce((sum,entry)=>sum+weaponStatValue(entry.stat,entry.level),0);
  return {
   attack:Math.round((base.attack+value('attackFlat'))*(1+value('attackPercent')/100)*100)/100,
   maxHp:Math.round((base.maxHp+value('hpFlat'))*(1+value('hpPercent')/100)),

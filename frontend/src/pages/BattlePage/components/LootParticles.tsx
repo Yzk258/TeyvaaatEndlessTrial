@@ -1,6 +1,11 @@
 import type {LootParticle} from '../../../game/objects/LootParticle';
+import {gameAsset} from '../../../system/gameAsset';
 export function LootParticles({particles,x,y,reducedMotion}:{particles:readonly LootParticle[];x:number;y:number;reducedMotion:boolean}){
  return <g aria-hidden="true" pointerEvents="none" shapeRendering="crispEdges">{particles.slice(-256).map(p=>{
+  if(p.kind==='artifact')return <g key={p.id} data-loot="artifact" opacity={p.phase==='absorbed'?1-p.age/6:1}>
+   <rect x={p.x-13} y={p.y-13} width="26" height="26" rx="4" fill="#20352f" stroke="#e7e5e4"/>
+   <image href={gameAsset('/artifacts/'+p.artifactId+'.png')} x={p.x-12} y={p.y-12} width="24" height="24" imageRendering="pixelated"/>
+  </g>;
   const color=p.kind==='experience'?'#8ce7ff':'#ffd36c',radius=p.value>=20?4:3;
   const distance=Math.hypot(p.x-x,p.y-y)||1,tailX=(p.x-x)/distance,tailY=(p.y-y)/distance;
   return p.phase==='absorbed'?<g key={p.id} data-loot="absorbed" opacity={1-p.age/6}>

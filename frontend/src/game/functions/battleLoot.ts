@@ -1,6 +1,15 @@
 import type {Enemy} from '../objects/BattleState';
 import type {LootParticle} from '../objects/LootParticle';
 import {enemyDefinitions} from '../objects/Enemy';
+import {beginnerArtifacts} from '../../objects/Artifact';
+import {mapHash} from './generateMap';
+
+export function createArtifactLoot(enemies:readonly Enemy[],seed:number){
+ return enemies.filter(enemy=>enemy.kind==='elite').map(enemy=>{
+  const definition=beginnerArtifacts[mapHash(seed,enemy.id,0,1747)%beginnerArtifacts.length];
+  return {id:`${enemy.id}:artifact`,kind:'artifact',artifactId:definition.id,x:enemy.x,y:enemy.y,vx:0,vy:-4,phase:'scatter',age:0} as const;
+ });
+}
 export function createEnemyLoot(enemies:readonly Enemy[],killsBefore:number,targetEnemies:number|null,stageMora:number|null,adventureMoraPerKill=10):readonly LootParticle[]{
  return enemies.flatMap((enemy,index)=>{
   const mora=targetEnemies!==null&&stageMora!==null?Math.floor((killsBefore+index+1)*stageMora/targetEnemies)-Math.floor((killsBefore+index)*stageMora/targetEnemies):adventureMoraPerKill;
