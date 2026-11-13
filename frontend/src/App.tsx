@@ -11,7 +11,6 @@ import {MessageDialog} from './components/ui/MessageDialog';
 import {Compass,GraduationCap,Sparkles} from 'lucide-react';
 import {MainNavigation} from './components/ui/MainNavigation';
 import {OverviewPage} from './pages/OverviewPage';
-import {ActivitiesPage} from './pages/ActivitiesPage';
 import {TutorialGuide} from './components/ui/TutorialGuide';
 import {CurrencyIcon} from './components/ui/CurrencyIcon';
 import {useAdventure} from './pages/hooks/useAdventure';
@@ -22,14 +21,15 @@ import {usePageNavigation} from './pages/hooks/usePageNavigation';
 import {CharacterPage} from './pages/CharacterPage';
 import {WishPage} from './pages/WishPage';
 import {OpeningPage} from './pages/OpeningPage';
-import type {AdventureDifficultyId} from './objects/AdventureSettings';
+import {defaultDifficultyId,type AdventureDifficultyId} from './objects/AdventureSettings';
 import {stageCategories,type StageCategoryId} from './objects/Stage';
 export function App(){
  const a=useAdventure();
  const navigation=usePageNavigation();
  const presentation=useBattlePresentation(a.run?.runId??null);
  const [entered,setEntered]=useState(false);
- const [adventureDifficulty,setAdventureDifficulty]=useState<AdventureDifficultyId>('normal');
+ const [adventureDifficulty,setAdventureDifficulty]=useState<AdventureDifficultyId>(defaultDifficultyId);
+ const [stageDifficulty,setStageDifficulty]=useState<AdventureDifficultyId>(defaultDifficultyId);
  const [stageCategory,setStageCategory]=useState<StageCategoryId>(stageCategories[0].id);
  const enter=useCallback(()=>setEntered(true),[]);
  const [tutorialOpen,setTutorialOpen]=useState(false);
@@ -73,12 +73,12 @@ export function App(){
    :navigation.current==='archive'?<ArchivePage profile={profile} favoriteCharacters={favoriteCharacters} pending={a.pending} onFavorite={a.onFavorite}/>
    :navigation.current==='bag'?<BagPage profile={profile}/>
    :navigation.current==='artifacts'?<ArtifactsPage profile={profile} pending={a.pending} onLevelArtifact={a.onLevelArtifact}/>
-   :navigation.current==='stages'?<StagesPage category={stageCategory} onCategoryChange={setStageCategory} onStart={a.onStartStage} pending={a.pending} clearedStages={clearedStages}/>
+   :navigation.current==='stages'?<StagesPage category={stageCategory} onCategoryChange={setStageCategory} difficulty={stageDifficulty}
+    onDifficultyChange={setStageDifficulty} onStart={a.onStartStage} pending={a.pending} clearedStages={clearedStages}/>
    :navigation.current==='weapons'?<WeaponsPage profile={profile} onLevelWeapon={a.onLevelWeapon} pending={a.pending}/>
    :navigation.current==='characters'?<CharacterPage profile={profile} selected={a.selected} favoriteCharacters={favoriteCharacters} pending={a.pending}
     onSelect={a.onSelect} onFavorite={a.onFavorite} onLevel={a.onLevel} onEquipWeapon={a.onEquipWeapon} onEquipArtifact={a.onEquipArtifact}/>
      :navigation.current==='wishes'?<WishPage weaponResult={a.weaponResult} profile={profile} onWish={a.onWish} result={a.result} pending={a.pending}/>
-     :navigation.current==='activities'?<ActivitiesPage claimed={a.save.checkIns} pending={a.pending} onClaim={a.onCheckIn} onReset={a.onResetCheckIns}/>
     :<HomePage profile={profile} selected={a.selected} difficulty={adventureDifficulty} onDifficultyChange={setAdventureDifficulty} onStart={a.onStart} pending={a.pending}/>}</div>
    </main>
   </div>

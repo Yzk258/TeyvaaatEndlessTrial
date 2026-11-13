@@ -14,7 +14,7 @@ export function BattlePage({run,onSettle,onAbandon,pending}:{run:RunStart;onSett
  const [confirmExit,setConfirmExit]=useState(false);
  const {state:s,dispatch,pause,resume}=useBattle(run);
  const reducedMotion=useReducedBattleMotion();
- const title=stage?`${map.title} · ${stage.difficulty}`:`${map.title} · 无尽 · ${adventure.difficulty.label}`;
+ const title=run.stage===null?`${map.title} · 无尽 · ${run.adventure.difficulty.level} 级`:`${map.title} · ${run.stageDifficulty.level} 级`;
  const cleared=stage!==null&&s.kills===stage.enemies;
  const stageRewardText=stage?.rewards.map(reward=>`${rewardCurrencyLabels[reward.currency]} +${reward.amount}`).join(' · ');
  return <section className="fixed inset-0 z-40 h-dvh w-screen overflow-hidden bg-[#263d30] text-stone-200">
@@ -28,7 +28,7 @@ export function BattlePage({run,onSettle,onAbandon,pending}:{run:RunStart;onSett
   {s.phase==='paused'&&!confirmExit&&<div role="dialog" aria-modal="true" aria-label="战斗已暂停" className="absolute inset-0 grid place-content-center gap-5 bg-slate-950/90 text-center">
    <h2 className="font-serif text-4xl text-amber-100">战斗已暂停</h2><p className="text-sm text-stone-400">时间、敌人和技能均已冻结</p><button onClick={resume} className="rounded-full bg-amber-100 px-8 py-3 text-slate-900">继续战斗</button><button onClick={()=>setConfirmExit(true)} className="text-sm text-rose-100">退出试炼</button>
   </div>}
-  {s.phase==='upgrade'&&<UpgradeOptions state={s} onChoose={choice=>dispatch({kind:'upgrade',choice})}/>}
+  {adventure&&s.phase==='upgrade'&&<UpgradeOptions state={s} onChoose={choice=>dispatch({kind:'upgrade',choice})}/>}
   {s.phase==='ended'&&<div className="absolute inset-0 grid place-content-center gap-5 bg-slate-950/90 text-center">
    <h2 className="font-serif text-4xl text-amber-100">{stage?(cleared?'关卡通关':'挑战失败'):'旅途暂歇'}</h2>
    <p>击败 {s.kills} 名敌人 · 坚持 {Math.floor(s.combatTicks/20)} 秒</p>

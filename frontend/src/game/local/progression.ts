@@ -2,7 +2,7 @@ import adventureRules from '../../../../shared/adventure-rules.json';
 import wishRules from '../../../../shared/wish-rules.json';
 import {characters} from '../../objects/Character';
 import {weapons} from '../../objects/Weapon';
-import {adventureDifficulties,type AdventureSettings} from '../../objects/AdventureSettings';
+import {adventureDifficulties,defaultDifficultyId,type AdventureDifficultyId,type AdventureSettings} from '../../objects/AdventureSettings';
 import {arenaMaps,defaultEndlessMapId,endlessMaps} from '../../objects/BattleMap';
 import type {Profile,RunStart,WishResult} from '../../objects/Profile';
 import type {Rarity} from '../../objects/Rarity';
@@ -122,12 +122,15 @@ export function requestWishes(profile:Profile,banner:WishBanner,count:WishCount,
  return {kind:'drawn' as const,...performWishes(funded,banner,count,random)};
 }
 
-type Trial={readonly kind:'stage';readonly stageId:string}|{readonly kind:'adventure';readonly settings:AdventureSettings};
+type Trial={readonly kind:'stage';readonly stageId:string;readonly difficulty?:AdventureDifficultyId}|{readonly kind:'adventure';readonly settings:AdventureSettings};
 
 export function startTrial(save:LocalSave,trial:Trial):RunStart{
  const character=characters.find(entry=>entry.id===save.selected);
  const owned=save.profile.characters.find(entry=>entry.id===save.selected);
  if(!character||!owned)throw new Error('请选择已拥有的角色');
+ const difficultyId=trial.kind==='stage'?trial.difficulty??defaultDifficultyId:trial.settings.difficulty;
+ if(!Object.hasOwn(adventureDifficulties,difficultyId))throw new Error('请选择有效的战斗难度');
+ const difficulty=adventureDifficulties[difficultyId];
  const loadout={
   runId:crypto.randomUUID(),seed:Math.floor(Math.random()*0x7fffffff),level:owned.level,character,
   equippedWeapon:equippedWeaponLoadout(save.profile,character),equippedArtifacts:equippedArtifactLoadout(save.profile,character.id)
@@ -135,13 +138,11 @@ export function startTrial(save:LocalSave,trial:Trial):RunStart{
  if(trial.kind==='stage'){
   const stage=stages.find(entry=>entry.id===trial.stageId);
   if(!stage)throw new Error('关卡不存在');
-  return {...loadout,stage,adventure:null,map:arenaMaps[stage.mapId]};
+  return {...loadout,stage,stageDifficulty:difficulty,adventure:null,map:arenaMaps[stage.mapId]};
  }
- const difficultyId=trial.settings.difficulty;
  const mapId=trial.settings.mapId??defaultEndlessMapId;
- if(!Object.hasOwn(adventureDifficulties,difficultyId))throw new Error('请选择有效的无尽难度');
  if(!Object.hasOwn(endlessMaps,mapId))throw new Error('无尽地图不存在');
- return {...loadout,stage:null,adventure:{difficulty:adventureDifficulties[difficultyId],rules:adventureRules},map:endlessMaps[mapId]};
+ return {...loadout,stage:null,adventure:{difficulty,rules:adventureRules},map:endlessMaps[mapId]};
 }
 
 export function trialRewards(run:RunStart,kills:number,ticks:number):readonly TrialReward[]{

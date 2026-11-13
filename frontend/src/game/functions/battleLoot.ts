@@ -13,7 +13,8 @@ export function createArtifactLoot(enemies:readonly Enemy[],seed:number){
 export function createEnemyLoot(enemies:readonly Enemy[],killsBefore:number,targetEnemies:number|null,stageMora:number|null,adventureMoraPerKill=10):readonly LootParticle[]{
  return enemies.flatMap((enemy,index)=>{
   const mora=targetEnemies!==null&&stageMora!==null?Math.floor((killsBefore+index+1)*stageMora/targetEnemies)-Math.floor((killsBefore+index)*stageMora/targetEnemies):adventureMoraPerKill;
-  return ([{kind:'experience',value:enemyDefinitions[enemy.kind].experience},{kind:'mora',value:mora}] as const).flatMap(({kind,value})=>{
+  const experience=targetEnemies===null?enemyDefinitions[enemy.kind].experience:0;
+  return ([{kind:'experience',value:experience},{kind:'mora',value:mora}] as const).flatMap(({kind,value})=>{
    const count=Math.min(3,value);
    return Array.from({length:count},(_,i)=>{
     const angle=((enemy.id*137+i*113+(kind==='mora'?47:0))%360)*Math.PI/180,speed=3+(i%2)*2;
@@ -35,7 +36,7 @@ export function stepLoot(particles:readonly LootParticle[],x:number,y:number):{r
  const collected=advanced.filter((p,i):p is LootParticle=>p!==null&&p.phase==='absorbed'&&particles[i].phase!=='absorbed');
  return {
   particles:advanced.filter((p):p is LootParticle=>p!==null),
-  experience:collected.filter(p=>p.kind==='experience').reduce((sum,p)=>sum+p.value,0),
-  mora:collected.filter(p=>p.kind==='mora').reduce((sum,p)=>sum+p.value,0)
+  experience:collected.reduce((sum,p)=>p.kind==='experience'?sum+p.value:sum,0),
+  mora:collected.reduce((sum,p)=>p.kind==='mora'?sum+p.value:sum,0)
  };
 }

@@ -14,7 +14,6 @@ export type LocalSave={
  readonly profile:Profile;
  readonly clearedStages:readonly string[];
  readonly results:readonly TrialResult[];
- readonly checkIns:number;
 };
 
 export const starterCharacter:CharacterId='amber';
@@ -29,7 +28,7 @@ export function createSave(nickname:string):LocalSave{
    primogems:1600,mora:5000,intertwinedFates:10,characters:[{id:starterCharacter,level:1,copies:1}],
    weapons:[],equipment:[],runs:0,pity:0,fourStarPity:0,weaponPity:0,weaponFourStarPity:0,artifacts:starterArtifacts(),artifactEquipment:[]
   },
-  clearedStages:[],results:[],checkIns:0
+  clearedStages:[],results:[]
  };
 }
 
@@ -117,13 +116,11 @@ export function readSaveData(value:unknown):LocalSave{
  const migrated=value.version===1?migrateLegacyProfile(value.profile):value.profile;
  const profile=record(migrated)&&!Object.hasOwn(migrated,'artifacts')&&!Object.hasOwn(migrated,'artifactEquipment')
   ?{...migrated,artifacts:starterArtifacts(),artifactEquipment:[]}:migrated;
- const checkIns=value.checkIns??0;
  const favoriteCharacters=value.favoriteCharacters??[];
  if(!id(value.id)||typeof nickname!=='string'||!nickname.trim()||nickname.length>30||
   !count(value.updatedAt)||!id(selected)||!validProfile(profile)||
   !Array.isArray(clearedStages)||!clearedStages.every(id)||
   !Array.isArray(favoriteCharacters)||!favoriteCharacters.every(id)||
-  !count(checkIns)||checkIns>7||
   !Array.isArray(results)||!results.every(result=>record(result)&&id(result.runId)&&count(result.kills)&&count(result.ticks)&&
    (result.artifactDrops===undefined||(Array.isArray(result.artifactDrops)&&result.artifactDrops.length<=result.kills&&result.artifactDrops.every(artifactId=>id(artifactId)))))||
   new Set(results.map(result=>result.runId)).size!==results.length){
@@ -134,5 +131,5 @@ export function readSaveData(value:unknown):LocalSave{
   ??available.find(character=>character.id===starterCharacter)??available[0];
  const ownedIds=new Set(profile.characters.map(entry=>entry.id));
  const favorites=[...new Set(favoriteCharacters.filter(id=>ownedIds.has(id)))];
- return {version:2,id:value.id,nickname,updatedAt:value.updatedAt,selected:active.id,favoriteCharacters:favorites,profile,clearedStages,results,checkIns};
+ return {version:2,id:value.id,nickname,updatedAt:value.updatedAt,selected:active.id,favoriteCharacters:favorites,profile,clearedStages,results};
 }

@@ -46,11 +46,13 @@ await click('新游戏');
 await waitFor(`document.body.textContent.includes('选择无尽难度')`);
 assert.equal(await evaluate(`document.body.textContent.includes('限时冒险')`),false);
 await screenshot('adventure-difficulties');
-for(const [id,label,multiplier] of [['normal','普通','1.00'],['hard','困难','2.00'],['extreme','极限','4.00']]){
+assert.equal(await evaluate(`document.querySelectorAll('input[name="adventure-difficulty"]').length`),5);
+for(const [id,label,health,eliteHealth] of [['level20','20 级','1.00','1.00'],['level60','60 级','9.47','10.41'],['level100','100 级','41.53','65.16']]){
  await evaluate(`document.querySelector('input[name="adventure-difficulty"][value="${id}"]').click()`);
  await click('开始无尽冒险');
  await waitFor(`document.body.textContent.includes(${JSON.stringify('低语森林 · 无尽 · '+label)})`);
- assert.ok(await evaluate(`document.body.textContent.includes(${JSON.stringify('生命 ×'+multiplier+' · 伤害 ×'+multiplier)})`));
+ assert.ok(await evaluate(`document.body.textContent.includes(${JSON.stringify('普通怪生命 ×'+health+' · 首领与精英 ×'+eliteHealth)})`));
+ assert.ok(await evaluate(`!!document.querySelector('[aria-label="作战经验"]')`));
  await click('退出');
  await waitFor(`document.body.textContent.includes('现在撤离并结算？')`);
  await click('撤离并领取奖励');
@@ -64,8 +66,11 @@ assert.ok(await evaluate(`document.body.textContent.includes('摩拉 +300')`));
 await click('原石关卡');
 await waitFor(`document.body.textContent.includes('原石 +40')`);
 await screenshot('stage-primogems');
+assert.equal(await evaluate(`document.querySelectorAll('input[name="stage-difficulty"]').length`),5);
+await evaluate(`document.querySelector('input[name="stage-difficulty"][value="level80"]').click()`);
 await click('开始挑战');
-await waitFor(`document.body.textContent.includes('低语森林 · 简单')`);
+await waitFor(`document.body.textContent.includes('低语森林 · 80 级')`);
+assert.equal(await evaluate(`!!document.querySelector('[aria-label="作战经验"]')`),false);
 assert.ok(await evaluate(`document.body.textContent.includes('击败 0 / 15')`));
 await click('退出');
 await click('确认放弃');

@@ -4,13 +4,15 @@ import type {RunStart} from '../../objects/Profile';
 import { useEffect,useReducer,useState } from 'react';
 import { initialBattle,stepBattle } from '../functions/stepBattle';
 export function useBattle(run:RunStart){
- const [state,dispatch]=useReducer(stepBattle,run,({seed,character,equippedWeapon,equippedArtifacts,level,stage,adventure,map})=>{
+ const [state,dispatch]=useReducer(stepBattle,run,current=>{
+  const {seed,character,equippedWeapon,equippedArtifacts,level,stage,adventure,map}=current;
   const stats=equippedCharacterStats(character,level,equippedWeapon,equippedArtifacts);
   const endless=map.layout==='endless';
   const worldSeed=endless?seed:map.seed;
   const collisionChunkX=endless?1:0;
   const stageMora=stage?.rewards.reduce((sum,reward)=>reward.kind==='currency'&&reward.currency==='mora'?sum+reward.amount:sum,0)??null;
   return {...initialBattle(seed),phase:'countdown' as const,countdownTicks:60,targetEnemies:stage?.enemies??null,stageMora,adventure,worldSeed,
+   stageDifficulty:current.stage===null?null:current.stageDifficulty,
    terrainCollision:true,terrainRuins:map.includeRuins,collisionChunkX,collisionChunkY:0,obstacles:terrainObstacles(worldSeed,endless,collisionChunkX,0,map.includeRuins),
    attackPattern:character.attackPattern,attackRange:stats.attackRange,attackIntervalTicks:stats.attackIntervalTicks,attackStyle:character.attackStyle,
    power:stats.attack,hp:stats.maxHp,maxHp:stats.maxHp,healOnKillPercent:stats.healOnKillPercent,weaponTalent:equippedWeapon?.definition.talent??null};

@@ -16,8 +16,10 @@
   "killBlock": 50,
   "primogemsPerKillBlock": 2,
   "difficulties": {
-    "normal": { "label": "普通", "healthMultiplier": 1, "damageMultiplier": 1 },
-    "hard": { "label": "困难", "healthMultiplier": 2, "damageMultiplier": 2 },
-    "extreme": { "label": "极限", "healthMultiplier": 4, "damageMultiplier": 4 }
+    "level20": { "level": 20, "healthMultiplier": 1, "eliteHealthMultiplier": 1 },
+    "level40": { "level": 40, "healthMultiplier": 3.04, "eliteHealthMultiplier": 3.34 },
+    "level60": { "level": 60, "healthMultiplier": 9.47, "eliteHealthMultiplier": 10.41 },
+    "level80": { "level": 80, "healthMultiplier": 20.97, "eliteHealthMultiplier": 27.77 },
+    "level100": { "level": 100, "healthMultiplier": 41.53, "eliteHealthMultiplier": 65.16 }
   }
 }

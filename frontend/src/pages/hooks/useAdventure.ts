@@ -1,5 +1,5 @@
 import {useCallback,useEffect,useRef,useState} from 'react';
-import type {AdventureSettings} from '../../objects/AdventureSettings';
+import type {AdventureDifficultyId,AdventureSettings} from '../../objects/AdventureSettings';
 import type {RunStart} from '../../objects/Profile';
 import type {ArtifactSlot} from '../../objects/Artifact';
 import {equipArtifact,levelUpArtifact} from '../../game/local/artifactProgression';
@@ -89,8 +89,6 @@ export function useAdventure(){
   current=>({...current,profile:equipWeapon(current.profile,characterId,weaponInstanceId)}),
   weaponInstanceId?'武器已装备，下次开局生效':'武器已卸下'
  );
- const onCheckIn=()=>changeProgress(current=>current.checkIns<7?{...current,checkIns:current.checkIns+1}:current);
- const onResetCheckIns=()=>changeProgress(current=>({...current,checkIns:0}));
 
  function onWish(banner:WishBanner,count:WishCount,approvedCost=0){
   if(wishReveal)return;
@@ -127,7 +125,7 @@ export function useAdventure(){
   });
  }
  const onStart=(settings:AdventureSettings)=>begin({kind:'adventure',settings});
- const onStartStage=(stageId:string)=>begin({kind:'stage',stageId});
+ const onStartStage=(stageId:string,difficulty:AdventureDifficultyId)=>begin({kind:'stage',stageId,difficulty});
  const onAbandon=()=>{
   if(busy.current||!run?.stage)return;
   setRun(null);
@@ -152,7 +150,7 @@ export function useAdventure(){
   save,saves,loading,saveError,reloadSaves,onOpen,onCreate,onImport,onExport,onReturn,
   selected:save?.selected??starterCharacter,onSelect,onFavorite,pending,run,
   openingNotice:notice?.kind==='opening'?notice.text:'',toast:notice?.kind==='opening'?null:notice,
-  result,weaponResult,onLevel,onLevelWeapon,onEquipWeapon,onLevelArtifact,onEquipArtifact,onCheckIn,onResetCheckIns,
+  result,weaponResult,onLevel,onLevelWeapon,onEquipWeapon,onLevelArtifact,onEquipArtifact,
   onWish,wishReveal,closeWishReveal:()=>setWishReveal(null),wishExchange,confirmWishExchange,cancelWishExchange:()=>setWishExchange(null),
   onStart,onStartStage,onSettle,onAbandon,exitMessage,closeExitMessage:()=>setExitMessage(null)
  };

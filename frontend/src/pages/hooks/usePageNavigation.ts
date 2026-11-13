@@ -1,6 +1,6 @@
 import {useCallback,useEffect,useState} from 'react';
 
-export type PageId='overview'|'camp'|'characters'|'wishes'|'stages'|'weapons'|'archive'|'activities'|'bag'|'artifacts';
+export type PageId='overview'|'camp'|'characters'|'wishes'|'stages'|'weapons'|'archive'|'bag'|'artifacts';
 type NavigationPage={readonly id:PageId;readonly href:string;readonly label:string};
 export type NavigationGroup={readonly id:'adventure'|'training';readonly label:string;readonly children:readonly NavigationPage[]};
 const entries:readonly (NavigationPage|NavigationGroup)[]=[
@@ -16,8 +16,7 @@ const entries:readonly (NavigationPage|NavigationGroup)[]=[
   ]},
   {id:'bag',href:'#/bag',label:'背包'},
   {id:'archive',href:'#/archive',label:'图鉴'},
-  {id:'wishes',href:'#/wishes',label:'祈愿'},
-  {id:'activities',href:'#/activities',label:'活动'}
+  {id:'wishes',href:'#/wishes',label:'祈愿'}
 ];
 const pages=entries.flatMap(entry=>'children' in entry?entry.children:[entry]);
 function parsePage(hash:string):PageId {

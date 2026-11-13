@@ -1,10 +1,10 @@
 import {useId,useRef,useState} from 'react';
-import {Backpack,BookOpen,CalendarCheck,ChevronDown,Compass,Flag,Gem,LayoutDashboard,Sparkles,Swords,Tent,TrendingUp,Users} from 'lucide-react';
+import {Backpack,BookOpen,ChevronDown,Compass,Flag,Gem,LayoutDashboard,Sparkles,Swords,Tent,TrendingUp,Users} from 'lucide-react';
 import type {NavigationGroup,PageId,usePageNavigation} from '../../pages/hooks/usePageNavigation';
 
 const icons:Readonly<Record<PageId|NavigationGroup['id'],typeof Compass>>={
  overview:LayoutDashboard,adventure:Compass,camp:Tent,stages:Flag,characters:Users,weapons:Swords,
- training:TrendingUp,bag:Backpack,artifacts:Gem,archive:BookOpen,wishes:Sparkles,activities:CalendarCheck
+ training:TrendingUp,bag:Backpack,artifacts:Gem,archive:BookOpen,wishes:Sparkles
 };
 
 function itemClass(active:boolean,compact:boolean){

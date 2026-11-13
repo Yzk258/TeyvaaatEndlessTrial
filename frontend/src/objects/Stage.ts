@@ -11,16 +11,15 @@ export type Stage={
  readonly id:string;
  readonly category:StageCategoryId;
  readonly mapId:keyof typeof arenaMaps;
- readonly difficulty:string;
  readonly enemies:number;
  readonly rewards:readonly TrialReward[];
 };
 
 export const stages:readonly Stage[]=[
- {id:'forest',category:'mora',mapId:'forest',difficulty:'简单',enemies:15,rewards:[{kind:'currency',currency:'mora',amount:300}]},
- {id:'valley',category:'mora',mapId:'valley',difficulty:'普通',enemies:30,rewards:[{kind:'currency',currency:'mora',amount:600}]},
- {id:'ruins',category:'mora',mapId:'ruins',difficulty:'困难',enemies:50,rewards:[{kind:'currency',currency:'mora',amount:1000}]},
- {id:'forest-primogems',category:'primogems',mapId:'forest',difficulty:'简单',enemies:15,rewards:[{kind:'currency',currency:'primogems',amount:40}]},
- {id:'valley-primogems',category:'primogems',mapId:'valley',difficulty:'普通',enemies:30,rewards:[{kind:'currency',currency:'primogems',amount:80}]},
- {id:'ruins-primogems',category:'primogems',mapId:'ruins',difficulty:'困难',enemies:50,rewards:[{kind:'currency',currency:'primogems',amount:120}]}
+ {id:'forest',category:'mora',mapId:'forest',enemies:15,rewards:[{kind:'currency',currency:'mora',amount:300}]},
+ {id:'valley',category:'mora',mapId:'valley',enemies:30,rewards:[{kind:'currency',currency:'mora',amount:600}]},
+ {id:'ruins',category:'mora',mapId:'ruins',enemies:50,rewards:[{kind:'currency',currency:'mora',amount:1000}]},
+ {id:'forest-primogems',category:'primogems',mapId:'forest',enemies:15,rewards:[{kind:'currency',currency:'primogems',amount:40}]},
+ {id:'valley-primogems',category:'primogems',mapId:'valley',enemies:30,rewards:[{kind:'currency',currency:'primogems',amount:80}]},
+ {id:'ruins-primogems',category:'primogems',mapId:'ruins',enemies:50,rewards:[{kind:'currency',currency:'primogems',amount:120}]}
 ];

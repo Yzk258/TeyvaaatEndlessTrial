@@ -5,15 +5,14 @@ import type {PageId} from '../../pages/hooks/usePageNavigation';
 type GuideStep={readonly page:PageId;readonly target:string;readonly title:string;readonly description:string};
 const guide:readonly GuideStep[]=[
  {page:'overview',target:'active-character',title:'当前出战',description:'这里可以查看下次出战的角色、等级和装备。旁边汇总试炼次数和收集进度。'},
- {page:'camp',target:'adventure-mode',title:'选择无尽难度',description:'难度决定敌人的初始生命和伤害。敌潮会逐波增强，可以随时撤离并按进度结算。'},
+ {page:'camp',target:'adventure-mode',title:'选择无尽难度',description:'从 20 到 100 级选择怪物生命倍率。敌潮会逐波增强，可以随时撤离并按进度结算。'},
  {page:'camp',target:'adventure-start',title:'进入战斗',description:'从这里开始冒险。WASD 或方向键移动，角色会自动攻击。击败敌人获得经验，升级时三选一。按 Esc 可暂停。'},
- {page:'stages',target:'stage-intro',title:'关卡挑战',description:'先选择摩拉或原石关卡，再选择地图。击败本关全部敌人即可领取卡片上显示的奖励。'},
+ {page:'stages',target:'stage-intro',title:'关卡挑战',description:'选择难度、奖励类别和地图。角色在本局使用固定属性，击败全部敌人即可领取奖励。'},
  {page:'characters',target:'character-enhancement',title:'角色培养',description:'从下方选择出战角色。「强化」可对比升级数值，「武器」可为当前角色装备或卸下武器。'},
  {page:'weapons',target:'weapon-intro',title:'武器培养',description:'选择一件已获得的武器，查看天赋并强化主副词条。'},
  {page:'artifacts',target:'artifact-training',title:'圣遗物培养',description:'选择圣遗物并消耗摩拉提升主词条。前往角色培养的「圣遗物」栏装备，集齐两件或四件同套圣遗物可激活套装效果。'},
  {page:'archive',target:'archive-tabs',title:'图鉴',description:'切换角色、武器、怪物或圣遗物图鉴，查看属性和收集进度。'},
  {page:'wishes',target:'wish-pools',title:'祈愿',description:'用纠缠之缘在角色或武器卡池祈愿。两个卡池各自记录四星和五星保底。'},
- {page:'activities',target:'page-title',title:'活动',description:'这里汇总签到和后续活动预告。'},
  {page:'overview',target:'save-tools',title:'本地存档',description:'进度自动保存。可以导出备份，也可以返回标题切换存档或导入备份。'}
 ];
 
