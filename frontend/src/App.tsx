@@ -23,6 +23,7 @@ import {WishPage} from './pages/WishPage';
 import {OpeningPage} from './pages/OpeningPage';
 import {defaultDifficultyId,type AdventureDifficultyId} from './objects/AdventureSettings';
 import {stageCategories,type StageCategoryId} from './objects/Stage';
+import type {Element} from './objects/Element';
 export function App(){
  const a=useAdventure();
  const navigation=usePageNavigation();
@@ -30,6 +31,7 @@ export function App(){
  const [entered,setEntered]=useState(false);
  const [adventureDifficulty,setAdventureDifficulty]=useState<AdventureDifficultyId>(defaultDifficultyId);
  const [stageCategory,setStageCategory]=useState<StageCategoryId>(stageCategories[0].id);
+ const [stageElement,setStageElement]=useState<Element>('pyro');
  const enter=useCallback(()=>setEntered(true),[]);
  const [tutorialOpen,setTutorialOpen]=useState(false);
  const tutorialButton=useRef<HTMLButtonElement>(null);
@@ -72,10 +74,10 @@ export function App(){
    :navigation.current==='archive'?<ArchivePage profile={profile} favoriteCharacters={favoriteCharacters} pending={a.pending} onFavorite={a.onFavorite}/>
    :navigation.current==='bag'?<BagPage profile={profile}/>
    :navigation.current==='artifacts'?<ArtifactsPage profile={profile} pending={a.pending} onLevelArtifact={a.onLevelArtifact}/>
-   :navigation.current==='stages'?<StagesPage category={stageCategory} onCategoryChange={setStageCategory} onStart={a.onStartStage} pending={a.pending} clearedStages={clearedStages}/>
+   :navigation.current==='stages'?<StagesPage category={stageCategory} onCategoryChange={setStageCategory} element={stageElement} onElementChange={setStageElement} onStart={a.onStartStage} pending={a.pending} clearedStages={clearedStages}/>
    :navigation.current==='weapons'?<WeaponsPage profile={profile} onLevelWeapon={a.onLevelWeapon} pending={a.pending}/>
    :navigation.current==='characters'?<CharacterPage profile={profile} selected={a.selected} favoriteCharacters={favoriteCharacters} pending={a.pending}
-    onSelect={a.onSelect} onFavorite={a.onFavorite} onLevel={a.onLevel} onEquipWeapon={a.onEquipWeapon} onEquipArtifact={a.onEquipArtifact}/>
+    onSelect={a.onSelect} onFavorite={a.onFavorite} onLevel={a.onLevel} onAscend={a.onAscend} onEquipWeapon={a.onEquipWeapon} onEquipArtifact={a.onEquipArtifact}/>
      :navigation.current==='wishes'?<WishPage weaponResult={a.weaponResult} profile={profile} onWish={a.onWish} result={a.result} pending={a.pending}/>
     :<HomePage profile={profile} selected={a.selected} difficulty={adventureDifficulty} onDifficultyChange={setAdventureDifficulty} onStart={a.onStart} pending={a.pending}/>}</div>
    </main>

@@ -1,18 +1,23 @@
 import {Check,Swords} from 'lucide-react';
 import {CurrencyIcon} from '../../components/ui/CurrencyIcon';
+import {ElementalCrystalIcon} from '../../components/ui/ElementalCrystalIcon';
 import {adventureDifficulties} from '../../objects/AdventureSettings';
 import {arenaMaps} from '../../objects/BattleMap';
 import {stageCategories,stages,type StageCategoryId} from '../../objects/Stage';
-import {rewardCurrencyLabels,type RewardCurrency} from '../../objects/TrialReward';
+import {formatTrialReward,type RewardCurrency} from '../../objects/TrialReward';
+import {elements,elementLabels,type Element} from '../../objects/Element';
+import {crystalRarities} from '../../objects/ElementalCrystal';
 
 const currencyIcons={mora:'mora',primogems:'primogem'} as const satisfies Record<RewardCurrency,'mora'|'primogem'>;
 
 type StagesPageProps={category:StageCategoryId;onCategoryChange:(id:StageCategoryId)=>void;
+ element:Element;onElementChange:(element:Element)=>void;
  onStart:(id:string)=>void;pending:boolean;clearedStages:readonly string[]};
 
-export function StagesPage({category,onCategoryChange,onStart,pending,clearedStages}:StagesPageProps){
+export function StagesPage({category,onCategoryChange,element,onElementChange,onStart,pending,clearedStages}:StagesPageProps){
  const activeCategory=stageCategories.find(option=>option.id===category)??stageCategories[0];
- const availableStages=stages.filter(stage=>stage.category===category);
+ const availableStages=stages.filter(stage=>stage.category===category&&(category!=='crystals'||
+  stage.rewards.some(reward=>reward.kind==='elementalCrystal'&&reward.crystal.element===element)));
  const clearedCount=availableStages.filter(stage=>clearedStages.includes(stage.id)).length;
 
  return <section className="space-y-5">
@@ -27,6 +32,12 @@ export function StagesPage({category,onCategoryChange,onStart,pending,clearedSta
      {option.label}
     </button>)}
    </div>
+   {category==='crystals'&&<div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="晶石元素">
+    {elements.map(id=><button key={id} type="button" aria-pressed={element===id} onClick={()=>onElementChange(id)}
+     className="rounded-lg border border-white/15 px-3 py-1.5 text-sm text-stone-200 hover:border-emerald-100/40 aria-pressed:border-emerald-100 aria-pressed:bg-emerald-100 aria-pressed:text-slate-900">
+     {elementLabels[id]}
+    </button>)}
+   </div>}
    <div className="my-5 flex flex-wrap items-baseline justify-between gap-2 border-b border-white/10 pb-4">
     <p className="text-sm text-stone-300">{activeCategory.description}</p>
     <p className="text-xs tabular-nums text-emerald-200">已通关 {clearedCount} / {availableStages.length}</p>
@@ -44,7 +55,11 @@ export function StagesPage({category,onCategoryChange,onStart,pending,clearedSta
       <p className="mt-3 flex items-center gap-2 text-sm text-stone-300"><Swords size={16} aria-hidden="true"/>击败 {stage.enemies} 名敌人</p>
       <div className="mb-4 mt-5 flex flex-wrap gap-2 border-t border-white/10 pt-4">
        {stage.rewards.map((reward,index)=><span key={index} className="inline-flex items-center gap-2 rounded-lg bg-slate-950/30 px-3 py-2 text-sm text-amber-100">
-        <CurrencyIcon kind={currencyIcons[reward.currency]} size={18}/>{rewardCurrencyLabels[reward.currency]} +{reward.amount.toLocaleString()}
+        {reward.kind==='currency'?<CurrencyIcon kind={currencyIcons[reward.currency]} size={18}/>:<>
+         <ElementalCrystalIcon crystal={reward.crystal} size={20}/>
+         <span style={{color:crystalRarities[reward.crystal.rarity].color}}>{crystalRarities[reward.crystal.rarity].label}</span>
+        </>}
+        {formatTrialReward(reward)}
        </span>)}
       </div>
       <button type="button" disabled={pending} onClick={()=>onStart(stage.id)} aria-label={'开始挑战 '+difficulty.level+' 级'}

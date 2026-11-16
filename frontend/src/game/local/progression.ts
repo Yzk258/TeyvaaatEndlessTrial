@@ -1,6 +1,8 @@
 import adventureRules from '../../../../shared/adventure-rules.json';
 import wishRules from '../../../../shared/wish-rules.json';
 import {characters} from '../../objects/Character';
+import {characterAscensions,characterLevelLimit} from '../../objects/CharacterAscension';
+import {elementalCrystal} from '../../objects/ElementalCrystal';
 import {weapons} from '../../objects/Weapon';
 import {adventureDifficulties,type AdventureSettings} from '../../objects/AdventureSettings';
 import {arenaMaps,defaultEndlessMapId,endlessMaps} from '../../objects/BattleMap';
@@ -37,10 +39,28 @@ export function levelUp(profile:Profile,kind:'character'|'weapon',id:string):Pro
  const definition=kind==='character'?characters.find(entry=>entry.id===id):weapons.find(entry=>entry.id===weapon?.weaponId);
  if(!definition||!owned)throw new Error(kind==='character'?'尚未拥有该角色':'尚未拥有该武器');
  if(owned.level>=definition.maxLevel)throw new Error('已达到等级上限');
+ if(character&&owned.level>=characterLevelLimit(definition.maxLevel,character.ascension))throw new Error('请先完成角色突破');
  if(profile.mora<definition.levelUpCost)throw new Error('摩拉不足');
  const leveled={...profile,mora:profile.mora-definition.levelUpCost};
  const upgrade=<T extends {readonly id:string;readonly level:number}>(entry:T)=>entry.id===id?{...entry,level:entry.level+1}:entry;
  return kind==='character'?{...leveled,characters:profile.characters.map(upgrade)}:{...leveled,weapons:profile.weapons.map(upgrade)};
+}
+
+export function ascendCharacter(profile:Profile,id:string):Profile{
+ const owned=profile.characters.find(entry=>entry.id===id);
+ const character=characters.find(entry=>entry.id===id);
+ if(!owned||!character)throw new Error('尚未拥有该角色');
+ const requirement=characterAscensions[owned.ascension];
+ if(!requirement||requirement.level>=character.maxLevel)throw new Error('已完成全部突破');
+ if(owned.level!==requirement.level)throw new Error('达到 '+requirement.level+' 级后才可突破');
+ const crystal=elementalCrystal(character.element,requirement.rarity);
+ const amount=profile.crystals[crystal.id]??0;
+ if(amount<requirement.amount)throw new Error(crystal.name+'不足');
+ return {
+  ...profile,
+  crystals:{...profile.crystals,[crystal.id]:amount-requirement.amount},
+  characters:profile.characters.map(entry=>entry.id===id?{...entry,ascension:entry.ascension+1}:entry)
+ };
 }
 
 export function equipWeapon(profile:Profile,characterId:string,weaponInstanceId:string|null):Profile{
@@ -88,7 +108,7 @@ export function performWish(profile:Profile,banner:WishBanner,random:()=>number=
   :profile.weapons.some(entry=>entry.weaponId===reward.id);
  const inventory=reward.kind==='character'?{
   characters:duplicate?profile.characters.map(entry=>entry.id===reward.id?{...entry,copies:entry.copies+1}:entry)
-   :[...profile.characters,{id:reward.id,level:1,copies:1}]
+   :[...profile.characters,{id:reward.id,level:1,copies:1,ascension:0}]
  }:{weapons:[...profile.weapons,{id:nextWeaponInstanceId(profile),weaponId:reward.id,level:1}]};
  return {reward,duplicate,profile:{
   ...profile,...inventory,intertwinedFates:profile.intertwinedFates-1,
@@ -165,6 +185,12 @@ export function settleTrial(save:LocalSave,run:RunStart,kills:number,ticks:numbe
  const profile=trialRewards(run,kills,ticks).reduce<Profile>((current,reward)=>{
   switch(reward.kind){
    case 'currency':return {...current,[reward.currency]:current[reward.currency]+reward.amount};
+   case 'elementalCrystal':{
+    const id=reward.crystal.id;
+    const amount=(current.crystals[id]??0)+reward.amount;
+    if(!Number.isSafeInteger(amount))throw new Error('晶石数量超出上限');
+    return {...current,crystals:{...current.crystals,[id]:amount}};
+   }
   }
  },save.profile);
  const droppedArtifacts=artifactDrops.map((artifactId,index)=>({id:`drop-${run.runId}-${index+1}`,artifactId,level:0}));

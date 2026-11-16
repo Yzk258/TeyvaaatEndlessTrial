@@ -1,5 +1,7 @@
 import {characters,type CharacterId} from '../../objects/Character';
-import type {Profile} from '../../objects/Profile';
+import type {OwnedCharacter,Profile} from '../../objects/Profile';
+import {characterAscensions,characterLevelLimit} from '../../objects/CharacterAscension';
+import {elementalCrystals} from '../../objects/ElementalCrystal';
 import type {OwnedWeapon} from '../../objects/Weapon';
 import {artifacts,artifactRarities,beginnerArtifacts,type ArtifactSlot,type OwnedArtifact} from '../../objects/Artifact';
 
@@ -25,7 +27,7 @@ export function createSave(nickname:string):LocalSave{
  return {
   version:2,id:crypto.randomUUID(),nickname:name,updatedAt:Date.now(),selected:starterCharacter,favoriteCharacters:[],
   profile:{
-   primogems:1600,mora:5000,intertwinedFates:10,characters:[{id:starterCharacter,level:1,copies:1}],
+   primogems:1600,mora:5000,intertwinedFates:10,characters:[{id:starterCharacter,level:1,copies:1,ascension:0}],crystals:{},
    weapons:[],equipment:[],runs:0,pity:0,fourStarPity:0,weaponPity:0,weaponFourStarPity:0,artifacts:starterArtifacts(),artifactEquipment:[]
   },
   clearedStages:[],results:[]
@@ -43,6 +45,14 @@ function id(value:unknown):value is string{
 }
 function countedItem(value:unknown):value is {id:string;level:number;copies:number}{
  return record(value)&&id(value.id)&&count(value.level,1)&&count(value.copies,1);
+}
+function ownedCharacter(value:unknown):value is OwnedCharacter{
+ if(!record(value))return false;
+ const ascension=value.ascension;
+ if(!countedItem(value)||!count(ascension)||ascension>characterAscensions.length)return false;
+ const definition=characters.find(character=>character.id===value.id);
+ const minimumLevel=characterAscensions[ascension-1]?.level??1;
+ return value.level>=minimumLevel&&(!definition||value.level<=characterLevelLimit(definition.maxLevel,ascension));
 }
 function ownedWeapon(value:unknown):value is OwnedWeapon{
  return record(value)&&id(value.id)&&id(value.weaponId)&&count(value.level,1);
@@ -94,7 +104,7 @@ function migrateLegacyProfile(value:unknown):unknown{
 function validProfile(value:unknown):value is Profile{
  if(!record(value))return false;
  const {characters:ownedCharacters,weapons,equipment}=value;
- if(!Array.isArray(ownedCharacters)||!ownedCharacters.every(countedItem)||
+ if(!Array.isArray(ownedCharacters)||!ownedCharacters.every(ownedCharacter)||
   !Array.isArray(weapons)||!weapons.every(ownedWeapon)||!Array.isArray(equipment))return false;
  const characterIds=new Set(ownedCharacters.map(entry=>entry.id));
  const weaponIds=new Set(weapons.map(entry=>entry.id));
@@ -106,6 +116,7 @@ function validProfile(value:unknown):value is Profile{
   new Set(equipment.map(entry=>entry.weaponInstanceId)).size!==equipment.length)return false;
  if(!Array.isArray(value.artifacts)||!value.artifacts.every(ownedArtifact)||
   new Set(value.artifacts.map(item=>item.id)).size!==value.artifacts.length||!validArtifactEquipment(value.artifactEquipment,value.artifacts,characterIds))return false;
+ if(!record(value.crystals)||!Object.entries(value.crystals).every(([id,amount])=>count(amount)&&elementalCrystals.some(crystal=>crystal.id===id)))return false;
  return ['primogems','mora','intertwinedFates','runs','pity','fourStarPity','weaponPity','weaponFourStarPity']
   .every(key=>count(value[key]));
 }
@@ -114,8 +125,13 @@ export function readSaveData(value:unknown):LocalSave{
  if(!record(value)||(value.version!==1&&value.version!==2))throw new Error('不支持此存档版本');
  const {nickname,selected,clearedStages,results}=value;
  const migrated=value.version===1?migrateLegacyProfile(value.profile):value.profile;
- const profile=record(migrated)&&!Object.hasOwn(migrated,'artifacts')&&!Object.hasOwn(migrated,'artifactEquipment')
-  ?{...migrated,artifacts:starterArtifacts(),artifactEquipment:[]}:migrated;
+ const profile=record(migrated)?{
+  ...migrated,
+  ...(!Object.hasOwn(migrated,'artifacts')&&!Object.hasOwn(migrated,'artifactEquipment')?{artifacts:starterArtifacts(),artifactEquipment:[]}:{}),
+  crystals:Object.hasOwn(migrated,'crystals')?migrated.crystals:{},
+  characters:Array.isArray(migrated.characters)?migrated.characters.map((entry:unknown)=>
+   record(entry)&&!Object.hasOwn(entry,'ascension')?{...entry,ascension:0}:entry):migrated.characters
+ }:migrated;
  const favoriteCharacters=value.favoriteCharacters??[];
  if(!id(value.id)||typeof nickname!=='string'||!nickname.trim()||nickname.length>30||
   !count(value.updatedAt)||!id(selected)||!validProfile(profile)||

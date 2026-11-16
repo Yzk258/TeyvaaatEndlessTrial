@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import type {RunStart} from '../../objects/Profile';
-import {rewardCurrencyLabels} from '../../objects/TrialReward';
+import {formatTrialReward} from '../../objects/TrialReward';
 import {useBattle} from '../../game/hooks/useBattle';
 import {AdventureResult} from './components/AdventureResult';
 import {ExitBattleDialog} from './components/ExitBattleDialog';
@@ -16,7 +16,7 @@ export function BattlePage({run,onSettle,onAbandon,pending}:{run:RunStart;onSett
  const reducedMotion=useReducedBattleMotion();
  const title=run.stage===null?`${map.title} · 无尽 · ${run.adventure.difficulty.level} 级`:`${map.title} · ${run.stageDifficulty.level} 级`;
  const cleared=stage!==null&&s.kills===stage.enemies;
- const stageRewardText=stage?.rewards.map(reward=>`${rewardCurrencyLabels[reward.currency]} +${reward.amount}`).join(' · ');
+ const stageRewardText=stage?.rewards.map(formatTrialReward).join(' · ');
  return <section className="fixed inset-0 z-40 h-dvh w-screen overflow-hidden bg-[#263d30] text-stone-200">
  <BattleScene state={s} character={character} bounded={map.layout==='arena'} reducedMotion={reducedMotion}/>
  <BattleHUD state={s} title={title} stageRewardText={stageRewardText} pending={pending} confirmExit={confirmExit} onPause={s.phase==='paused'?resume:pause} onExit={()=>{pause();setConfirmExit(true);}}/>

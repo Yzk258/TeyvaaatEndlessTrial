@@ -12,7 +12,7 @@ async function loadModule(name,directory='game/local'){
 }
 
 const {createSave,readSaveData}=await loadModule('LocalSave');
-const {startTrial,settleTrial,trialRewards,levelUp,equipWeapon,performWish,performWishes,requestWishes,selectCharacter,setCharacterFavorite}=await loadModule('progression');
+const {startTrial,settleTrial,trialRewards,levelUp,ascendCharacter,equipWeapon,performWish,performWishes,requestWishes,selectCharacter,setCharacterFavorite}=await loadModule('progression');
 const {characterListEntries}=await loadModule('CharacterList','objects');
 const {stages}=await loadModule('Stage','objects');
 const {equipArtifact,levelUpArtifact}=await loadModule('artifactProgression');
@@ -27,6 +27,53 @@ assert.throws(()=>readSaveData({...initial,version:3}),/版本/);
 assert.throws(()=>readSaveData({...initial,profile:{...initial.profile,mora:-1}}),/格式/);
 assert.equal(readSaveData({...initial,selected:'unavailable'}).selected,'amber');
 assert.throws(()=>selectCharacter(initial,'unavailable'),/尚未拥有/);
+
+const {crystals:emptyCrystals,...preCrystalProfile}=initial.profile;
+const {ascension:initialAscension,...preAscensionAmber}=preCrystalProfile.characters[0];
+const legacyAmber=readSaveData({...initial,profile:{...preCrystalProfile,characters:[{...preAscensionAmber,level:20}]}});
+assert.deepEqual(legacyAmber.profile.crystals,emptyCrystals);
+assert.equal(legacyAmber.profile.characters[0].level,20);
+assert.equal(legacyAmber.profile.characters[0].ascension,initialAscension);
+assert.throws(()=>readSaveData({...legacyAmber,profile:{...legacyAmber.profile,crystals:{'pyro-1':-1}}}),/格式/);
+assert.throws(()=>readSaveData({...legacyAmber,profile:{...legacyAmber.profile,characters:[{...preAscensionAmber,level:21}]}}),/格式/);
+assert.throws(()=>ascendCharacter(initial.profile,'amber'),/达到 20 级/);
+assert.throws(()=>ascendCharacter(legacyAmber.profile,'amber'),/火元素晶屑不足/);
+assert.throws(()=>ascendCharacter({...legacyAmber.profile,crystals:{'hydro-1':1,'pyro-2':1}},'amber'),/火元素晶屑不足/);
+assert.throws(()=>ascendCharacter(initial.profile,'kaeya'),/尚未拥有/);
+
+const crystalStages=stages.filter(stage=>stage.category==='crystals');
+assert.equal(crystalStages.length,35);
+assert.equal(new Set(crystalStages.map(stage=>stage.rewards[0].crystal.id)).size,35);
+let ascended={...legacyAmber,profile:{...legacyAmber.profile,mora:100000}};
+for(const [index,[level,rarity,amount,nextLimit]] of [[20,1,1,40],[40,2,1,50],[50,3,1,60],[60,4,1,70],[70,5,1,80],[80,5,3,90]].entries()){
+ assert.equal(ascended.profile.characters[0].level,level);
+ assert.throws(()=>levelUp(ascended.profile,'character','amber'),/角色突破/);
+ const crystalId='pyro-'+rarity;
+ const stageId=crystalStages.find(stage=>stage.rewards[0].crystal.id===crystalId).id;
+ for(let count=0;count<amount;count++){
+  const run=startTrial(ascended,{kind:'stage',stageId});
+  assert.equal(settleTrial(ascended,run,run.stage.enemies-1,60).profile.crystals[crystalId],ascended.profile.crystals[crystalId]);
+  ascended=settleTrial(ascended,run,run.stage.enemies,60);
+  assert.equal(settleTrial(ascended,run,run.stage.enemies,60),ascended);
+  if(count+1<amount)assert.throws(()=>ascendCharacter(ascended.profile,'amber'),/晶核不足/);
+ }
+ const before=ascended.profile;
+ const after=ascendCharacter(before,'amber');
+ assert.equal(before.crystals[crystalId],amount);
+ assert.equal(after.crystals[crystalId],0);
+ assert.equal(after.mora,before.mora);
+ assert.equal(after.characters[0].level,level);
+ assert.equal(after.characters[0].ascension,index+1);
+ ascended={...ascended,profile:after};
+ assert.deepEqual(readSaveData(JSON.parse(JSON.stringify(ascended))),ascended);
+ for(let current=level;current<nextLimit;current++){
+  ascended={...ascended,profile:levelUp(ascended.profile,'character','amber')};
+ }
+}
+assert.equal(ascended.profile.characters[0].level,90);
+assert.throws(()=>levelUp(ascended.profile,'character','amber'),/等级上限/);
+assert.throws(()=>ascendCharacter(ascended.profile,'amber'),/全部突破/);
+console.log('PASS: 旧存档迁移、七元素晶石关卡、结算防重、六次突破及 90 级封顶');
 
 const {artifacts:starterArtifacts,artifactEquipment,...preArtifactProfile}=initial.profile;
 assert.equal(starterArtifacts.length,5);
