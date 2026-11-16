@@ -21,7 +21,6 @@ export function BattlePage({run,onSettle,onAbandon,pending}:{run:RunStart;onSett
  <BattleScene state={s} character={character} bounded={map.layout==='arena'} reducedMotion={reducedMotion}/>
  <BattleHUD state={s} title={title} stageRewardText={stageRewardText} pending={pending} confirmExit={confirmExit} onPause={s.phase==='paused'?resume:pause} onExit={()=>{pause();setConfirmExit(true);}}/>
  <div className="absolute inset-0 z-20 pointer-events-none [&>div]:pointer-events-auto">
-  {s.phase==='collecting'&&<div role="status" className="absolute inset-x-0 bottom-12 text-center text-sm text-amber-100">正在吸收掉落…</div>}
   {s.phase==='countdown'&&!confirmExit&&<div role="status" aria-live="polite" className="absolute inset-0 grid place-content-center gap-5 bg-slate-950/75 text-center">
    <p className="text-sm tracking-[.3em] text-amber-100/70">准备迎战</p><p className="font-serif text-8xl text-amber-100">{Math.ceil(s.countdownTicks/20)}</p><p className="text-sm text-stone-400">WASD / 方向键移动 · 战斗即将开始</p>
   </div>}
