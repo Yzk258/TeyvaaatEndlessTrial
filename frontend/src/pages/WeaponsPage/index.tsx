@@ -7,7 +7,7 @@ import {characters} from '../../objects/Character';
 import {WeaponInventory} from './components/WeaponInventory';
 import {WeaponDetails} from './components/WeaponDetails';
 import {SelectedWeapon} from './components/SelectedWeapon';
-export function WeaponsPage(p:{profile:Profile;onLevelWeapon:(weaponInstanceId:string)=>void;pending:boolean}){
+export function WeaponsPage(p:{profile:Profile;onLevelWeapon:(weaponInstanceId:string)=>void;onDismantleWeapon:(weaponInstanceId:string)=>void;pending:boolean}){
  const [selectedWeapon,setSelectedWeapon]=useState<string|null>(null);
  const groups=groupOwnedWeapons(p.profile.weapons);
  const firstOwned=p.profile.weapons.find(item=>weapons.some(definition=>definition.id===item.weaponId));
@@ -15,7 +15,8 @@ export function WeaponsPage(p:{profile:Profile;onLevelWeapon:(weaponInstanceId:s
  const definition=weapons.find(weapon=>weapon.id===owned?.weaponId)??weapons[0];
  const instances=groups.get(definition.id)??[];
  const owners=new Map(p.profile.equipment.map(entry=>[entry.weaponInstanceId,characters.find(character=>character.id===entry.characterId)]));
- const enhancement=owned?<WeaponDetails {...p} owned={owned} definition={definition}/>:<div className="flex flex-1 flex-col items-start justify-center gap-5">
+ const enhancement=owned?<WeaponDetails {...p} owned={owned} definition={definition}
+  equipped={p.profile.equipment.some(entry=>entry.weaponInstanceId===owned.id)}/>:<div className="flex flex-1 flex-col items-start justify-center gap-5">
   <h2 className="font-serif text-3xl text-amber-50">武器强化</h2>
   <p className="text-sm leading-7 text-stone-400">尚未拥有武器，获取后即可在这里强化。</p>
   <a href="#/wishes" className="rounded-full bg-amber-100 px-6 py-3 text-sm text-slate-900">前往武器祈愿 →</a>

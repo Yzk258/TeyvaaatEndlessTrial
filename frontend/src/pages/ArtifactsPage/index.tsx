@@ -1,12 +1,15 @@
 import {useState} from 'react';
 import {ArtifactGrid,ArtifactIcon} from '../../components/ui/ArtifactGrid';
+import {DismantleButton} from '../../components/ui/DismantleButton';
 import {formatWeaponStat} from '../../game/functions/weaponStats';
 import {artifacts,artifactRarities,artifactSets,artifactSlots} from '../../objects/Artifact';
 import {characters} from '../../objects/Character';
 import type {Profile} from '../../objects/Profile';
 import {statLabels} from '../../objects/Weapon';
 
-export function ArtifactsPage({profile,pending,onLevelArtifact}:{profile:Profile;pending:boolean;onLevelArtifact:(id:string)=>void}){
+export function ArtifactsPage({profile,pending,onLevelArtifact,onDismantleArtifact}:{
+ profile:Profile;pending:boolean;onLevelArtifact:(id:string)=>void;onDismantleArtifact:(id:string)=>void
+}){
  const [selected,setSelected]=useState<string>();
  const item=profile.artifacts.find(entry=>entry.id===selected)??profile.artifacts[0];
  const definition=artifacts.find(entry=>entry.id===item?.artifactId);
@@ -33,8 +36,11 @@ export function ArtifactsPage({profile,pending,onLevelArtifact}:{profile:Profile
    </ul>
    <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4">
     <span className="text-sm text-amber-100">{item.level>=rarity.maxLevel?'已达到等级上限':`${definition.levelUpCost} 摩拉 / 级`}</span>
-    <button type="button" disabled={pending||item.level>=rarity.maxLevel||profile.mora<definition.levelUpCost} onClick={()=>onLevelArtifact(item.id)}
-     className="rounded-full bg-amber-100 px-6 py-2.5 text-sm text-slate-900 disabled:opacity-40">强化圣遗物</button>
+    <div className="flex flex-wrap items-center gap-2">
+     <DismantleButton label="圣遗物" equipped={!!equipment} pending={pending} onClick={()=>onDismantleArtifact(item.id)}/>
+     <button type="button" disabled={pending||item.level>=rarity.maxLevel||profile.mora<definition.levelUpCost} onClick={()=>onLevelArtifact(item.id)}
+      className="rounded-full bg-amber-100 px-6 py-2.5 text-sm text-slate-900 disabled:opacity-40">强化圣遗物</button>
+    </div>
    </div>
   </article>:<p className="text-sm text-stone-300">尚未拥有圣遗物。</p>}
  </section>;

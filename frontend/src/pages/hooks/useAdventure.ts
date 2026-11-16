@@ -3,6 +3,8 @@ import type {AdventureSettings} from '../../objects/AdventureSettings';
 import type {RunStart} from '../../objects/Profile';
 import type {ArtifactSlot} from '../../objects/Artifact';
 import {equipArtifact,levelUpArtifact} from '../../game/local/artifactProgression';
+import {dismantleEquipment,dismantleQuote,type DismantleQuote} from '../../game/local/dismantleEquipment';
+import {hasNewOverflow,type EquipmentKind} from '../../game/functions/equipmentInventory';
 import {formatTrialReward} from '../../objects/TrialReward';
 import type {WishBanner,WishCount,WishPulls} from '../../objects/WishReward';
 import type {WishReveal} from '../WishPage/objects/WishReveal';
@@ -26,6 +28,8 @@ export function useAdventure(){
  const [wishReveal,setWishReveal]=useState<WishReveal|null>(null);
  const [wishExchange,setWishExchange]=useState<WishExchange|null>(null);
  const [exitMessage,setExitMessage]=useState<string|null>(null);
+ const [dismantling,setDismantling]=useState<DismantleQuote|null>(null);
+ const [inventoryAlert,setInventoryAlert]=useState(false);
  const busy=useRef(false);
 
  useEffect(()=>{
@@ -53,9 +57,14 @@ export function useAdventure(){
   finally{busy.current=false;setPending(false);}
  }
 
- const onOpen=(id:string)=>perform(async()=>setSave(await loadSave(id)),'opening');
- const onCreate=(nickname:string)=>perform(async()=>setSave(await addSave(createSave(nickname))),'opening');
- const onImport=(file:File)=>perform(async()=>setSave(await importSave(file)),'opening');
+ function showSave(next:LocalSave){
+  if(hasNewOverflow(next.profile,save?.id===next.id?save.profile:undefined))setInventoryAlert(true);
+  setSave(next);
+ }
+
+ const onOpen=(id:string)=>perform(async()=>showSave(await loadSave(id)),'opening');
+ const onCreate=(nickname:string)=>perform(async()=>showSave(await addSave(createSave(nickname))),'opening');
+ const onImport=(file:File)=>perform(async()=>showSave(await importSave(file)),'opening');
  const onExport=()=>perform(async()=>{if(save)downloadSave(await loadSave(save.id));});
  const onReturn=()=>{
   if(busy.current||run)return false;
@@ -65,6 +74,8 @@ export function useAdventure(){
   setWishReveal(null);
   setWishExchange(null);
   setExitMessage(null);
+  setDismantling(null);
+  setInventoryAlert(false);
   setNotice(null);
   void reloadSaves();
   return true;
@@ -73,7 +84,7 @@ export function useAdventure(){
  function changeProgress(change:(current:LocalSave)=>LocalSave,success?:string){
   return perform(async()=>{
    if(!save)return;
-   setSave(await updateSave(save.id,change));
+   showSave(await updateSave(save.id,change));
    if(success)setNotice({text:success,kind:'status'});
   });
  }
@@ -84,6 +95,17 @@ export function useAdventure(){
  const onAscend=(characterId:string)=>changeProgress(current=>({...current,profile:ascendCharacter(current.profile,characterId)}),'角色突破成功，等级上限已提升');
  const onLevelWeapon=(weaponInstanceId:string)=>changeProgress(current=>({...current,profile:levelUp(current.profile,'weapon',weaponInstanceId)}),'武器已升级，词条已提升');
  const onLevelArtifact=(id:string)=>changeProgress(current=>({...current,profile:levelUpArtifact(current.profile,id)}),'圣遗物已强化');
+ const onDismantle=(kind:EquipmentKind,id:string)=>{
+  if(!save||busy.current)return;
+  try{setDismantling(dismantleQuote(save.profile,kind,id));}
+  catch(error){setNotice({text:error instanceof Error?error.message:'无法分解该装备',kind:'error'});}
+ };
+ const confirmDismantle=()=>{
+  if(!dismantling||busy.current)return;
+  setDismantling(null);
+  return changeProgress(current=>({...current,profile:dismantleEquipment(current.profile,dismantling)}),
+   '已分解'+dismantling.label+'，获得 '+dismantling.mora.toLocaleString()+' 摩拉');
+ };
  const onEquipArtifact=(characterId:string,slot:ArtifactSlot,id:string|null)=>changeProgress(
   current=>({...current,profile:equipArtifact(current.profile,characterId,slot,id)}),id?'圣遗物已装备':'圣遗物已卸下');
  const onEquipWeapon=(characterId:string,weaponInstanceId:string|null)=>changeProgress(
@@ -101,7 +123,7 @@ export function useAdventure(){
     outcome=requestWishes(current.profile,banner,count,approvedCost);
     return outcome.kind==='drawn'?{...current,profile:outcome.profile}:current;
    });
-   setSave(next);
+   showSave(next);
    if(outcome.kind==='exchange'){
     setWishExchange({banner,count,missingFates:outcome.missingFates,primogemCost:outcome.primogemCost});
     return;
@@ -121,7 +143,7 @@ export function useAdventure(){
    if(!save||run)return;
    const current=await loadSave(save.id);
    const next=startTrial({...current,selected:save.selected},trial);
-   setSave(current);
+   showSave(current);
    setRun(next);
   });
  }
@@ -140,7 +162,7 @@ export function useAdventure(){
   const message=run.stage
    ?kills===run.stage.enemies?'关卡通关！'+gains:'挑战失败，本次未获得通关奖励'
    :'本次冒险已结算：'+gains+(artifactDrops.length?`，圣遗物 +${artifactDrops.length}`:'');
-  setSave(next);
+  showSave(next);
   setRun(null);
   window.location.hash=run.stage?'#/stages':'#/camp';
   if(withdrawing)setExitMessage(message);
@@ -152,6 +174,8 @@ export function useAdventure(){
   selected:save?.selected??starterCharacter,onSelect,onFavorite,pending,run,
   openingNotice:notice?.kind==='opening'?notice.text:'',toast:notice?.kind==='opening'?null:notice,
   result,weaponResult,onLevel,onAscend,onLevelWeapon,onEquipWeapon,onLevelArtifact,onEquipArtifact,
+  onDismantle,dismantling,confirmDismantle,cancelDismantle:()=>setDismantling(null),
+  inventoryAlert,dismissInventoryAlert:()=>setInventoryAlert(false),
   onWish,wishReveal,closeWishReveal:()=>setWishReveal(null),wishExchange,confirmWishExchange,cancelWishExchange:()=>setWishExchange(null),
   onStart,onStartStage,onSettle,onAbandon,exitMessage,closeExitMessage:()=>setExitMessage(null)
  };

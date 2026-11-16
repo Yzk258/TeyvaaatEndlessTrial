@@ -16,6 +16,8 @@ const {startTrial,settleTrial,trialRewards,levelUp,ascendCharacter,equipWeapon,p
 const {characterListEntries}=await loadModule('CharacterList','objects');
 const {stages}=await loadModule('Stage','objects');
 const {equipArtifact,levelUpArtifact}=await loadModule('artifactProgression');
+const {dismantleQuote,dismantleEquipment}=await loadModule('dismantleEquipment');
+const {equipmentUsage,hasNewOverflow}=await loadModule('equipmentInventory','game/functions');
 const {equippedCharacterStats}=await loadModule('artifactStats','game/functions');
 const initial=createSave('旅行者');
 const another=createSave('另一份存档');
@@ -278,3 +280,50 @@ assert.equal(yelanRun.equippedWeapon.level,2);
 assert.deepEqual(equipWeapon(leveled,'amber',null).equipment,[{characterId:'yelan',weaponInstanceId:second.id}]);
 assert.throws(()=>readSaveData({...migrated,profile:{...leveled,equipment:[...leveled.equipment,{characterId:'kaeya',weaponInstanceId:first.id}]}}),/格式/);
 console.log('PASS: 存档迁移、武器副本、独立强化与装备、兑换、两池保底、撤离奖励及结算防重');
+
+const recycleProfile={...initial.profile,weapons:[{id:'weapon-12',weaponId:'raven-bow',level:3}]};
+const recycleWeapon=dismantleQuote(recycleProfile,'weapon','weapon-12');
+assert.equal(recycleWeapon.mora,360);
+assert.throws(()=>dismantleEquipment(equipWeapon(recycleProfile,'amber','weapon-12'),recycleWeapon),/先卸下/);
+assert.throws(()=>dismantleEquipment(levelUp(recycleProfile,'weapon','weapon-12'),recycleWeapon),/状态已变化/);
+const recycledWeapon=dismantleEquipment(recycleProfile,recycleWeapon);
+assert.equal(recycledWeapon.mora,recycleProfile.mora+360);
+assert.equal(recycledWeapon.weapons.length,0);
+assert.deepEqual(recycledWeapon.dismantledEquipment.weapon,['raven-bow']);
+assert.throws(()=>dismantleEquipment(recycledWeapon,recycleWeapon),/尚未拥有/);
+assert.equal(performWish(recycledWeapon,'weapon',()=>0.99).profile.weapons[0].id,'weapon-13');
+
+const raisedArtifact=levelUpArtifact(recycledWeapon,flower.id);
+const recycleArtifact=dismantleQuote(raisedArtifact,'artifact',flower.id);
+assert.equal(recycleArtifact.mora,120);
+assert.throws(()=>dismantleEquipment(equipArtifact(raisedArtifact,'amber','flower',flower.id),recycleArtifact),/先卸下/);
+const recycled=dismantleEquipment(raisedArtifact,recycleArtifact);
+assert.equal(recycled.mora,raisedArtifact.mora+120);
+assert(!recycled.artifacts.some(item=>item.id===flower.id));
+assert.deepEqual(recycled.dismantledEquipment.artifact,[flower.artifactId]);
+assert.deepEqual(readSaveData(JSON.parse(JSON.stringify({...initial,profile:recycled}))).profile,recycled);
+
+const full={
+ ...initial.profile,
+ weapons:Array.from({length:500},(_,index)=>({id:'weapon-'+(index+1),weaponId:'raven-bow',level:1})),
+ artifacts:Array.from({length:1000},(_,index)=>({...flower,id:'old-artifact-'+(index+1)}))
+};
+assert.deepEqual(equipmentUsage(full).map(({count,capacity})=>[count,capacity]),[[500,500],[1000,1000]]);
+assert.equal(hasNewOverflow(full,undefined),false);
+const wishOverflow=performWishes(full,'weapon',10,()=>0.99).profile;
+assert.equal(wishOverflow.weapons.length,510);
+assert.equal(wishOverflow.intertwinedFates,0);
+assert.equal(hasNewOverflow(wishOverflow,full),true);
+assert.equal(hasNewOverflow(wishOverflow,wishOverflow),false);
+assert.equal(hasNewOverflow(wishOverflow,undefined),true);
+const beforeDrop={...initial,profile:wishOverflow};
+const overflowRun=startTrial(beforeDrop,{kind:'adventure',settings:{difficulty:'level20'}});
+const dropOverflow=settleTrial(beforeDrop,overflowRun,1,600,[flower.artifactId]);
+assert.equal(dropOverflow.profile.artifacts.length,1001);
+assert.ok(dropOverflow.profile.mora>beforeDrop.profile.mora);
+assert.equal(hasNewOverflow(dropOverflow.profile,wishOverflow),true);
+assert.deepEqual(readSaveData(JSON.parse(JSON.stringify(dropOverflow))),dropOverflow);
+const reduced=dismantleEquipment(dropOverflow.profile,dismantleQuote(dropOverflow.profile,'weapon','weapon-510'));
+assert.equal(reduced.weapons.length,509);
+assert.equal(hasNewOverflow(reduced,dropOverflow.profile),false);
+console.log('PASS: 分解返还、装备与重复分解保护、图鉴记录、500 / 1000 件溢出和奖励保留');

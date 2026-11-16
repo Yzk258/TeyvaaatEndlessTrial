@@ -1,32 +1,47 @@
 import {useState} from 'react';
 import {ArtifactGrid} from '../../components/ui/ArtifactGrid';
+import {DismantleButton} from '../../components/ui/DismantleButton';
 import {ElementalCrystalIcon} from '../../components/ui/ElementalCrystalIcon';
 import {formatWeaponStat} from '../../game/functions/weaponStats';
+import {equipmentUsage} from '../../game/functions/equipmentInventory';
 import {artifacts,artifactSlots} from '../../objects/Artifact';
 import type {Profile} from '../../objects/Profile';
 import {crystalRarities,elementalCrystals} from '../../objects/ElementalCrystal';
 import {statLabels} from '../../objects/Weapon';
 
-const slotCount=40;
+const minimumVisibleSlots=40;
 
-export function BagPage({profile}:{profile:Profile}){
+export function BagPage({profile,pending,onDismantleArtifact}:{profile:Profile;pending:boolean;onDismantleArtifact:(id:string)=>void}){
  const [selected,setSelected]=useState<string>();
  const item=profile.artifacts.find(entry=>entry.id===selected);
  const definition=artifacts.find(entry=>entry.id===item?.artifactId);
+ const equipped=profile.artifactEquipment.some(entry=>entry.artifactInstanceId===item?.id);
  const crystals=elementalCrystals.filter(crystal=>(profile.crystals[crystal.id]??0)>0);
  return <section className="max-w-4xl space-y-5">
   <header>
    <h1 className="font-serif text-4xl text-amber-50">背包</h1>
-   <p className="mt-3 text-sm leading-7 text-stone-300">用于存放圣遗物和道具。</p>
   </header>
+  <div className="grid gap-3 sm:grid-cols-2" role="group" aria-label="背包容量">
+   {equipmentUsage(profile).map(({kind,label,count,capacity})=><div key={kind} className="rounded-xl border border-amber-100/15 bg-[#142a31]/90 px-4 py-3">
+    <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+     <span className="text-amber-50">{label}</span>
+     <span className={'tabular-nums '+(count>capacity?'text-rose-200':'text-stone-300')}>{count} / {capacity}</span>
+    </div>
+    <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+     {kind==='weapon'?<a href="#/weapons" className="text-amber-100 underline underline-offset-4">管理武器</a>:
+      <a href="#/artifacts" className="text-amber-100 underline underline-offset-4">管理圣遗物</a>}
+     {count>=capacity&&<span className="text-rose-200">{count===capacity?'容量已满':`超出 ${count-capacity} 件`}</span>}
+    </div>
+   </div>)}
+  </div>
   <div className="rounded-2xl border border-amber-100/15 bg-[#142a31]/90 p-4 sm:p-6">
-   <p className="mb-4 text-sm text-stone-300">圣遗物 {profile.artifacts.length} 件</p>
-   <ArtifactGrid items={profile.artifacts} selected={selected} onSelect={setSelected} minSlots={slotCount}/>
+   <h2 className="mb-4 text-sm font-medium text-amber-50">圣遗物</h2>
+   <ArtifactGrid items={profile.artifacts} selected={selected} onSelect={setSelected} minSlots={minimumVisibleSlots}/>
    {item&&definition&&<div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-4">
     <div><h2 className="text-amber-50">{definition.name} +{item.level}</h2><p className="mt-1 text-sm text-stone-300">
      {artifactSlots[definition.slot]} · {statLabels[definition.mainStat.kind]} {formatWeaponStat(definition.mainStat,item.level+1)}
     </p></div>
-    <a href="#/artifacts" className="text-sm text-amber-100 underline underline-offset-4">前往圣遗物培养</a>
+    <DismantleButton label="圣遗物" equipped={equipped} pending={pending} onClick={()=>onDismantleArtifact(item.id)}/>
    </div>}
   </div>
   <section className="rounded-2xl border border-amber-100/15 bg-[#142a31]/90 p-4 sm:p-6">

@@ -12,7 +12,7 @@ import {stages} from '../../objects/Stage';
 import type {TrialReward} from '../../objects/TrialReward';
 import type {WishBanner,WishCount,WishPull,WishPulls,WishReward} from '../../objects/WishReward';
 import {adventureReward} from '../functions/adventureProgress';
-import {equippedWeaponLoadout} from '../functions/weaponInventory';
+import {equippedWeaponLoadout,nextWeaponSerial} from '../functions/weaponInventory';
 import {equippedArtifactLoadout} from '../functions/artifactStats';
 import {beginnerArtifacts} from '../../objects/Artifact';
 import type {LocalSave} from './LocalSave';
@@ -76,13 +76,6 @@ export function equipWeapon(profile:Profile,characterId:string,weaponInstanceId:
  return {...profile,equipment:[...equipment,{characterId,weaponInstanceId}]};
 }
 
-function nextWeaponInstanceId(profile:Profile):string{
- const ids=new Set(profile.weapons.map(entry=>entry.id));
- let serial=profile.weapons.length+1;
- while(ids.has('weapon-'+serial))serial++;
- return 'weapon-'+serial;
-}
-
 function tierProbability(base:number,count:number,softStart:number,softStep:number,hardPity:number){
  return count+1>=hardPity?1:Math.min(1,base+Math.max(0,count+2-softStart)*softStep);
 }
@@ -109,12 +102,17 @@ export function performWish(profile:Profile,banner:WishBanner,random:()=>number=
  const inventory=reward.kind==='character'?{
   characters:duplicate?profile.characters.map(entry=>entry.id===reward.id?{...entry,copies:entry.copies+1}:entry)
    :[...profile.characters,{id:reward.id,level:1,copies:1,ascension:0}]
- }:{weapons:[...profile.weapons,{id:nextWeaponInstanceId(profile),weaponId:reward.id,level:1}]};
+ }:grantWeapon(profile,reward.id);
  return {reward,duplicate,profile:{
   ...profile,...inventory,intertwinedFates:profile.intertwinedFates-1,
   [fiveKey]:rarity===5?0:profile[fiveKey]+1,
   [fourKey]:rarity===4?0:Math.min(rules.fourHardPity-1,profile[fourKey]+1)
  }};
+}
+
+function grantWeapon(profile:Profile,weaponId:string){
+ const serial=nextWeaponSerial(profile);
+ return {weapons:[...profile.weapons,{id:'weapon-'+serial,weaponId,level:1}],nextWeaponSerial:serial+1};
 }
 
 export function performWishes(profile:Profile,banner:WishBanner,count:WishCount,random:()=>number=Math.random):{profile:Profile;pulls:WishPulls}{

@@ -1,5 +1,5 @@
 import {useEffect,useId,useRef} from 'react';
-export function ConfirmDialog({title,message,confirmLabel,pending,onConfirm,onCancel}:{title:string;message:string;confirmLabel:string;pending:boolean;onConfirm:()=>void;onCancel:()=>void}){
+export function ConfirmDialog({title,message,confirmLabel,cancelLabel='取消',pending,onConfirm,onCancel}:{title:string;message:string;confirmLabel:string;cancelLabel?:string;pending:boolean;onConfirm:()=>void;onCancel:()=>void}){
  const dialog=useRef<HTMLDialogElement>(null);
  const titleId=useId(),descriptionId=useId();
  useEffect(()=>{const element=dialog.current;element?.showModal();return ()=>element?.close();},[]);
@@ -7,7 +7,7 @@ export function ConfirmDialog({title,message,confirmLabel,pending,onConfirm,onCa
   <h2 id={titleId} className="font-serif text-2xl text-amber-50">{title}</h2>
   <p id={descriptionId} className="my-6 text-sm leading-7 text-stone-400">{message}</p>
   <div className="flex justify-center gap-4">
-   <button type="button" autoFocus disabled={pending} onClick={onCancel} className="rounded-full border border-white/15 px-6 py-2">取消</button>
+   <button type="button" autoFocus disabled={pending} onClick={onCancel} className="rounded-full border border-white/15 px-6 py-2">{cancelLabel}</button>
    <button type="button" disabled={pending} onClick={onConfirm} className="rounded-full bg-amber-100 px-6 py-2 text-slate-900 enabled:hover:bg-amber-50 disabled:opacity-40">{pending?'处理中…':confirmLabel}</button>
   </div>
  </dialog>;

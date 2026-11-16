@@ -24,6 +24,7 @@ import {OpeningPage} from './pages/OpeningPage';
 import {defaultDifficultyId,type AdventureDifficultyId} from './objects/AdventureSettings';
 import {stageCategories,type StageCategoryId} from './objects/Stage';
 import type {Element} from './objects/Element';
+import {equipmentUsage} from './game/functions/equipmentInventory';
 export function App(){
  const a=useAdventure();
  const navigation=usePageNavigation();
@@ -47,6 +48,9 @@ export function App(){
  const {profile,nickname,clearedStages,favoriteCharacters}=a.save;
  const exchange=a.wishExchange;
  const exchangeMessage=exchange?`还缺 ${exchange.missingFates} 个纠缠之缘，兑换需要 ${exchange.primogemCost} 原石。`:'';
+ const overflow=equipmentUsage(profile).filter(({count,capacity})=>count>capacity);
+ const overflowVisible=a.inventoryAlert&&overflow.length>0&&!a.pending&&!a.run&&!tutorialVisible&&
+  !exchange&&!a.wishReveal&&!a.exitMessage&&!a.dismantling;
  return <div className="relative isolate animate-opening-main motion-reduce:animate-none min-h-screen font-sans text-stone-200 selection:bg-amber-100/30">
   <MenuMapBackground/>
   <div inert={presentation.transitioning||tutorialVisible} className={'transition-opacity duration-[350ms] motion-reduce:transition-none '+(presentation.transitioning?'pointer-events-none opacity-0':'opacity-100')}>
@@ -72,10 +76,12 @@ export function App(){
     <div key={navigation.current} className="animate-page-enter motion-reduce:animate-none">{
      navigation.current==='overview'?<OverviewPage profile={profile} nickname={nickname} selected={a.selected}/>
    :navigation.current==='archive'?<ArchivePage profile={profile} favoriteCharacters={favoriteCharacters} pending={a.pending} onFavorite={a.onFavorite}/>
-   :navigation.current==='bag'?<BagPage profile={profile}/>
-   :navigation.current==='artifacts'?<ArtifactsPage profile={profile} pending={a.pending} onLevelArtifact={a.onLevelArtifact}/>
+   :navigation.current==='bag'?<BagPage profile={profile} pending={a.pending} onDismantleArtifact={id=>a.onDismantle('artifact',id)}/>
+   :navigation.current==='artifacts'?<ArtifactsPage profile={profile} pending={a.pending} onLevelArtifact={a.onLevelArtifact}
+    onDismantleArtifact={id=>a.onDismantle('artifact',id)}/>
    :navigation.current==='stages'?<StagesPage category={stageCategory} onCategoryChange={setStageCategory} element={stageElement} onElementChange={setStageElement} onStart={a.onStartStage} pending={a.pending} clearedStages={clearedStages}/>
-   :navigation.current==='weapons'?<WeaponsPage profile={profile} onLevelWeapon={a.onLevelWeapon} pending={a.pending}/>
+   :navigation.current==='weapons'?<WeaponsPage profile={profile} onLevelWeapon={a.onLevelWeapon} pending={a.pending}
+    onDismantleWeapon={id=>a.onDismantle('weapon',id)}/>
    :navigation.current==='characters'?<CharacterPage profile={profile} selected={a.selected} favoriteCharacters={favoriteCharacters} pending={a.pending}
     onSelect={a.onSelect} onFavorite={a.onFavorite} onLevel={a.onLevel} onAscend={a.onAscend} onEquipWeapon={a.onEquipWeapon} onEquipArtifact={a.onEquipArtifact}/>
      :navigation.current==='wishes'?<WishPage weaponResult={a.weaponResult} profile={profile} onWish={a.onWish} result={a.result} pending={a.pending}/>
@@ -89,5 +95,11 @@ export function App(){
    <MessageDialog title="原石不足" message={exchangeMessage+`当前拥有 ${profile.primogems} 原石。`} onClose={a.cancelWishExchange}/>)}
   {a.wishReveal&&<WishRevealDialog key={a.wishReveal.sequence} result={a.wishReveal} onClose={a.closeWishReveal}/>}
   {a.exitMessage&&<MessageDialog title="已退出试炼" message={a.exitMessage} onClose={a.closeExitMessage}/>}
+  {a.dismantling&&<ConfirmDialog title={'分解'+a.dismantling.label} confirmLabel="确认分解" pending={a.pending}
+   message={`分解「${a.dismantling.name}」${a.dismantling.kind==='weapon'?' Lv.':' +'}${a.dismantling.level}，获得 ${a.dismantling.mora.toLocaleString()} 摩拉。分解后无法恢复。`}
+   onConfirm={a.confirmDismantle} onCancel={a.cancelDismantle}/>}
+  {overflowVisible&&<ConfirmDialog title="背包容量已超出" confirmLabel="打开背包" cancelLabel="稍后整理" pending={false}
+   message={overflow.map(({label,count,capacity})=>`${label} ${count} / ${capacity}，超出 ${count-capacity} 件`).join('。')+'。本次获得的物品已入库，可分解闲置装备整理背包。'}
+   onConfirm={()=>{a.dismissInventoryAlert();navigation.replacePage('bag');}} onCancel={a.dismissInventoryAlert}/>}
  </div>;
 }

@@ -117,6 +117,10 @@ function validProfile(value:unknown):value is Profile{
  if(!Array.isArray(value.artifacts)||!value.artifacts.every(ownedArtifact)||
   new Set(value.artifacts.map(item=>item.id)).size!==value.artifacts.length||!validArtifactEquipment(value.artifactEquipment,value.artifacts,characterIds))return false;
  if(!record(value.crystals)||!Object.entries(value.crystals).every(([id,amount])=>count(amount)&&elementalCrystals.some(crystal=>crystal.id===id)))return false;
+ if(value.nextWeaponSerial!==undefined&&!count(value.nextWeaponSerial,1))return false;
+ const history=value.dismantledEquipment;
+ if(history!==undefined&&(!record(history)||!Array.isArray(history.weapon)||!history.weapon.every(id)||
+  !Array.isArray(history.artifact)||!history.artifact.every(id)))return false;
  return ['primogems','mora','intertwinedFates','runs','pity','fourStarPity','weaponPity','weaponFourStarPity']
   .every(key=>count(value[key]));
 }

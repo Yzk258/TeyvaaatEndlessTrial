@@ -2,6 +2,17 @@ import type {Character} from '../../objects/Character';
 import type {Profile} from '../../objects/Profile';
 import {weapons,type OwnedWeapon,type Weapon,type WeaponLoadout} from '../../objects/Weapon';
 
+export function nextWeaponSerial(profile:Profile):number{
+ let serial=profile.nextWeaponSerial??1;
+ for(const item of profile.weapons){
+  const match=/^weapon-([1-9]\d*)$/.exec(item.id);
+  const assigned=Number(match?.[1]);
+  if(Number.isSafeInteger(assigned))serial=Math.max(serial,assigned+1);
+ }
+ if(!Number.isSafeInteger(serial+1))throw new Error('武器编号已达上限');
+ return serial;
+}
+
 export function groupOwnedWeapons(items:readonly OwnedWeapon[]):ReadonlyMap<string,readonly OwnedWeapon[]>{
  const groups=new Map<string,OwnedWeapon[]>();
  for(const item of items){
