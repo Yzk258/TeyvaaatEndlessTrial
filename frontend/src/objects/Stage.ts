@@ -2,23 +2,24 @@ import type {arenaMaps} from './BattleMap';
 import type {AdventureDifficultyId} from './AdventureSettings';
 import type {TrialReward} from './TrialReward';
 import {elementalCrystal,type CrystalRarity} from './ElementalCrystal';
-import {elements} from './Element';
+import {elements,type Element} from './Element';
 
-export const stageCategories=[
- {id:'mora',label:'摩拉关卡',description:'用于角色与武器培养的摩拉。'},
- {id:'primogems',label:'原石关卡',description:'可在祈愿时兑换纠缠之缘的原石。'},
- {id:'crystals',label:'元素晶石关卡',description:'选择要获取的元素。通关难度越高，奖励的晶石稀有度越高。'}
+export const leyLineCategories=[
+ {id:'mora',label:'摩拉地脉',description:'用于角色与武器培养的摩拉。'},
+ {id:'primogems',label:'原石地脉',description:'可在祈愿时兑换纠缠之缘的原石。'}
 ] as const;
 
-export type StageCategoryId=(typeof stageCategories)[number]['id'];
+export type LeyLineCategoryId=(typeof leyLineCategories)[number]['id'];
+export type StageCategoryId=LeyLineCategoryId|'crystals';
 export type Stage={
  readonly id:string;
- readonly category:StageCategoryId;
  readonly mapId:keyof typeof arenaMaps;
  readonly difficulty:AdventureDifficultyId;
- readonly enemies:number;
  readonly rewards:readonly TrialReward[];
-};
+}&(
+ | {readonly category:LeyLineCategoryId;readonly enemies:number}
+ | {readonly category:'crystals';readonly enemies:1;readonly boss:Element}
+);
 
 const currencyStages:readonly Stage[]=[
  {id:'forest',category:'mora',mapId:'forest',difficulty:'level20',enemies:15,rewards:[{kind:'currency',currency:'mora',amount:300}]},
@@ -40,6 +41,8 @@ const crystalStages=elements.flatMap(element=>currencyStages.filter(stage=>stage
  ...stage,
  id:'crystal-'+element+'-'+stage.difficulty,
  category:'crystals',
+ boss:element,
+ enemies:1,
  rewards:[{kind:'elementalCrystal',crystal:elementalCrystal(element,crystalRaritiesByDifficulty[stage.difficulty]),amount:1}]
 })));
 export const stages:readonly Stage[]=[...currencyStages,...crystalStages];

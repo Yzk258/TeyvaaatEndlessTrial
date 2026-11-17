@@ -5,6 +5,7 @@ import {weapons} from '../../objects/Weapon';
 import {weaponLabels} from '../../objects/WeaponType';
 import {elementLabels} from '../../objects/Element';
 import type {Profile} from '../../objects/Profile';
+import {bossHuntHref,leyLineHref} from '../StagesPage/paths';
 
 function Progress({label,value,total}:{label:string;value:number;total:number}){
  const percent=total>0?Math.round(value/total*100):0;
@@ -40,7 +41,8 @@ export function OverviewPage({profile,nickname,selected}:{profile:Profile;nickna
   </section>
   <section className="flex flex-wrap gap-3">
    <a href="#/camp" className="rounded-full bg-amber-100 px-6 py-3 text-sm text-slate-900">开始冒险 →</a>
-   <a href="#/stages" className="rounded-full border border-amber-100/30 px-6 py-3 text-sm text-amber-100">关卡挑战</a>
+   <a href={leyLineHref} className="rounded-full border border-amber-100/30 px-6 py-3 text-sm text-amber-100">地脉之花</a>
+   <a href={bossHuntHref} className="rounded-full border border-amber-100/30 px-6 py-3 text-sm text-amber-100">首领征讨</a>
    <a href="#/wishes" className="rounded-full border border-amber-100/30 px-6 py-3 text-sm text-amber-100">前往祈愿</a>
    <a href="#/characters" className="rounded-full border border-white/15 px-6 py-3 text-sm text-stone-400">培养角色</a>
   </section>

@@ -59,6 +59,51 @@ lower-right 炽热骗骗花 (pyro-whopperflower), reference 4: Bright russet-ora
 
 武器图片：已根据用户提供的15张参考图，通过内置 imagegen 生成透明底像素 PNG，位于 frontend/public/weapons/pixel/，索引位于 shared/weapon-appearance.json。全部15件已接入培养、图鉴和祈愿结果。原图与像素图对照、完整提示词见 [WEAPON-PIXELS.md](WEAPON-PIXELS.md)。
 
+## 无相元素首领
+
+用内置 imagegen 分别参考 `photos/怪物立绘/` 中七张无相元素原图，保留悬浮方块、元素刻纹和内部核心。导出结果为 96 × 96 透明 PNG，用于首领征讨、战斗和怪物图鉴。素材位于 [frontend/public/enemies/hypostasis/](../frontend/public/enemies/hypostasis/)。
+
+| `{element}` | `{palette}` |
+| --- | --- |
+| 冰 | pale arctic cyan ice blocks, frost-blue right faces, simple geometric snowflake engraving, icy-white diamond core |
+| 风 | dark teal mineral cubes with bright turquoise edges, stylized pale wind curls etched on faces, turquoise-white core |
+| 火 | molten vermilion-orange cubes, gold-lit edges and a white-hot amber diamond core, blocky flame etchings |
+| 雷 | deep amethyst purple cubes with silver-violet geometric etchings, lavender highlights and violet-white diamond core |
+| 水 | saturated deep sapphire blue cubes with clean aqua circular ripple inlays, deep navy side faces and blue-white core |
+| 草 | forest and leaf-green blocks with angular lime vine etchings, sparkling lime-white diamond core |
+| 岩 | dark basalt and warm brown stone cubes, gold geometric etched lines and bright amber-white diamond core |
+
+每次附上对应元素原图并启用透明背景，使用以下提示词。
+
+```text
+Use case: stylized-concept. Asset type: transparent battle sprite for the elemental boss 无相之{element}, based on the provided reference.
+Create ONE centered full-body sprite of the exact elemental Hypostasis silhouette: eight separate floating cubical armor blocks arranged around a visible luminous small diamond core. Isometric 3/4 view, a compact larger cube broken apart with clearly visible straight gaps between the individual floating cubes. Match the attached image's element, colors, and engravings. Element treatment: {palette}. Front, top and right face visibly shaded in distinct flat value groups, bold dark staircase outlines, readable block clusters and broken-up stepped glyph patterns instead of fine linework. 16-bit game pixel art on a virtual 64px square grid, upscale with crisp blocky pixels. Single sprite, equal safe transparent padding on all sides, entire silhouette inside a square. No body, limbs, facial features, ground, shadow, captions, logo, decorative frame, UI, or bloom outside the sprite. True transparent alpha, gaps remain transparent except where the bright diamond core is visible.
+```
+
+## 元素晶石
+
+以用户提供的雷晶石图为参考，用内置 imagegen 生成七张五帧横向图集，再裁切为 35 张 64 × 64 的透明 PNG。素材在 [frontend/public/crystals/](../frontend/public/crystals/) 下，文件名与晶石 ID 一致。首领征讨、角色突破和背包共用这些图标。
+
+每个元素代入下表生成一张图集。生成时启用透明背景，并附上雷晶石参考图。
+
+| 元素 | `{element}` | `{palette}` |
+| --- | --- | --- |
+| 冰 | Ice (Cryo) | cold ice cyan, silver-white top-left reflections, clear bright blue midtones and deep cobalt-teal shadow; icy striations with broad clean facets |
+| 风 | Wind (Anemo) | bright seafoam and light turquoise, pale mint highlights, flowing teal interior planes and deep emerald-teal shadows |
+| 火 | Fire (Pyro) | vermilion and ruby red, bright orange upper-left reflections and deep burgundy shade, ember-colored veins inside the largest gem |
+| 雷 | Lightning (Electro) | electric violet, amethyst and plum shadows, lavender-white top-left reflections, matching the purple material of the reference closely |
+| 水 | Water (Hydro) | rich sapphire and ultramarine blue, cerulean highlights, white-blue reflections and navy blue shade; blue clearly distinct from icy cyan and mint wind |
+| 草 | Grass (Dendro) | leaf-green, bright chartreuse reflections, mid-tone spring green and deep forest green shading; broad subtly leaf-shaped interior facets |
+| 岩 | Stone (Geo) | golden amber, honey-yellow top-left reflections, orange-brown shadows and luminous ochre interior planes |
+
+```text
+Use case: stylized-concept
+Asset type: a five-frame horizontal spritesheet for the {element} elemental crystal inventory set of a 2D pixel game.
+Input image: the four purple crystal icons are a style and silhouette reference. Take inspiration from the shapes and their faceting, remove all illustrated rarity-card backgrounds from the reference, redraw as true pixel art.
+Exactly five standalone gem objects aligned in ONE horizontal row, exactly five equal-width cells, centered at 10%, 30%, 50%, 70%, 90% of the output width and vertically centered. Make a very wide composition. Leave large clean transparent gutters between the objects, and margin outside the row. Pixels of one object never reach another cell. An isolated five-frame strip, no grids, no borders, no checkerboard, no text, no numbers, no emblems. Use genuinely transparent alpha.
+Strict left-to-right silhouettes: (1) tiny rough crystal CHIPS, three obvious blocky pieces as a single inventory icon, (2) one angular crystal FRAGMENT with a tall diagonal tip like the image's second item, (3) one chunky irregular solid cut CRYSTAL CHUNK, broader and heavier than the shard, (4) a jagged intergrown two-point CRYSTAL CLUSTER similar to the third reference item, (5) one smooth oval multifaceted CRYSTAL CORE similar to the rightmost reference item, oval shape in stepped pixels. Keep the silhouette differences very obvious at 32px. All five frames are {element} with exclusively {palette}. Use a restrained 6–10 tone game palette, deliberate square pixel clusters, strong faceted shading, a two-tone dark rim with readable separation, subtle inner gleam. Graphic 32x32 or 48x48 native-resolution sprite look, blown up with crisp square pixels. Upper-left key light, no glow spilling out, no cast shadows outside the crystals, no busy decorative particles. Five stand-alone inventory icons only.
+```
+
 | 标记 | 所需素材 | 当前替代 |
 | --- | --- | --- |
 | TODO(asset-character) | 安柏、芭芭拉、丽莎头像及移动/攻击序列帧 | 元素色圆形和符号 |

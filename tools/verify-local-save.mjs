@@ -46,6 +46,7 @@ assert.throws(()=>ascendCharacter(initial.profile,'kaeya'),/尚未拥有/);
 const crystalStages=stages.filter(stage=>stage.category==='crystals');
 assert.equal(crystalStages.length,35);
 assert.equal(new Set(crystalStages.map(stage=>stage.rewards[0].crystal.id)).size,35);
+assert.ok(crystalStages.every(stage=>stage.enemies===1&&stage.boss===stage.rewards[0].crystal.element));
 let ascended={...legacyAmber,profile:{...legacyAmber.profile,mora:100000}};
 for(const [index,[level,rarity,amount,nextLimit]] of [[20,1,1,40],[40,2,1,50],[50,3,1,60],[60,4,1,70],[70,5,1,80],[80,5,3,90]].entries()){
  assert.equal(ascended.profile.characters[0].level,level);

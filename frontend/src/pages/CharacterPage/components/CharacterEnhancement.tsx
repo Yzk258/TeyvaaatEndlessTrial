@@ -7,6 +7,7 @@ import {attackStyleLabels} from '../../../objects/AttackStyle';
 import {characterAscensions,characterLevelLimit} from '../../../objects/CharacterAscension';
 import {crystalRarities,elementalCrystal} from '../../../objects/ElementalCrystal';
 import {ElementalCrystalIcon} from '../../../components/ui/ElementalCrystalIcon';
+import {bossHuntHref} from '../../StagesPage/paths';
 
 export function CharacterEnhancement({profile,character,onLevel,onAscend,pending}:{profile:Profile;character:Character;onLevel:()=>void;onAscend:()=>void;pending:boolean}){
  const owned=profile.characters.find(c=>c.id===character.id),level=owned?.level??1;
@@ -39,7 +40,7 @@ export function CharacterEnhancement({profile,character,onLevel,onAscend,pending
      <span style={{color:crystalRarities[crystal.rarity].color}}>{crystal.name}</span>
      <span className={'tabular-nums '+(crystalCount<requirement.amount?'text-rose-200':'text-stone-200')} aria-label="已拥有晶石 / 所需晶石">{crystalCount} / {requirement.amount}</span>
     </div>
-    <span className="text-xs text-stone-300"><a href="#/stages" className="text-amber-100 underline underline-offset-4">关卡挑战</a> · 元素晶石关卡</span>
+    <a href={bossHuntHref} className="text-xs text-amber-100 underline underline-offset-4">前往首领征讨</a>
    </div>
   </div>}
   <div className="mt-auto pt-7">

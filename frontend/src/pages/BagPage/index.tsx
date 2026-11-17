@@ -8,6 +8,7 @@ import {artifacts,artifactSlots} from '../../objects/Artifact';
 import type {Profile} from '../../objects/Profile';
 import {crystalRarities,elementalCrystals} from '../../objects/ElementalCrystal';
 import {statLabels} from '../../objects/Weapon';
+import {bossHuntHref} from '../StagesPage/paths';
 
 const minimumVisibleSlots=40;
 
@@ -46,7 +47,7 @@ export function BagPage({profile,pending,onDismantleArtifact}:{profile:Profile;p
   </div>
   <section className="rounded-2xl border border-amber-100/15 bg-[#142a31]/90 p-4 sm:p-6">
    <h2 className="text-sm font-medium text-amber-50">元素晶石</h2>
-   {crystals.length===0?<p className="mt-3 text-sm text-stone-400">暂无晶石，可通过关卡挑战获取。</p>:
+   {crystals.length===0?<p className="mt-3 text-sm text-stone-400">暂无晶石，可通过<a href={bossHuntHref} className="text-amber-100 underline underline-offset-4">首领征讨</a>获取。</p>:
     <ul className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(5.5rem,1fr))] gap-2">
      {crystals.map(crystal=><li key={crystal.id} className="flex aspect-square flex-col items-center justify-center gap-1 rounded-lg border border-white/10 bg-black/20 p-1.5 text-center">
       <ElementalCrystalIcon crystal={crystal} size={34}/>

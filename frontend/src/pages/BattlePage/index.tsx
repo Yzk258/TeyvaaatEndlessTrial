@@ -8,17 +8,22 @@ import {UpgradeOptions} from './components/UpgradeOptions';
 import {BattleScene} from './components/BattleScene';
 import {useReducedBattleMotion} from './hooks/useReducedBattleMotion';
 import {BattleHUD} from './components/BattleHUD';
+import {HypostasisHealth} from './components/HypostasisVisuals';
+import {hypostases} from '../../objects/Hypostasis';
 
 export function BattlePage({run,onSettle,onAbandon,pending}:{run:RunStart;onSettle:(kills:number,ticks:number,withdrawing:boolean,artifactDrops:readonly string[])=>void;onAbandon:()=>void;pending:boolean}){
  const {stage,adventure,character,map}=run;
  const [confirmExit,setConfirmExit]=useState(false);
  const {state:s,dispatch,pause,resume}=useBattle(run);
  const reducedMotion=useReducedBattleMotion();
- const title=run.stage===null?`${map.title} · 无尽 · ${run.adventure.difficulty.level} 级`:`${map.title} · ${run.stageDifficulty.level} 级`;
+ const boss=stage?.category==='crystals'?hypostases[stage.boss]:null;
+ const title=run.stage===null?`${map.title} · 无尽 · ${run.adventure.difficulty.level} 级`:`${boss?.name??map.title} · ${run.stageDifficulty.level} 级`;
+ const bossEnemy=s.bossElement?s.enemies.find(enemy=>enemy.hypostasis):undefined;
  const cleared=stage!==null&&s.kills===stage.enemies;
  const stageRewardText=stage?.rewards.map(formatTrialReward).join(' · ');
  return <section className="fixed inset-0 z-40 h-dvh w-screen overflow-hidden bg-[#263d30] text-stone-200">
  <BattleScene state={s} character={character} bounded={map.layout==='arena'} reducedMotion={reducedMotion}/>
+ {bossEnemy&&s.bossElement&&<HypostasisHealth enemy={bossEnemy} element={s.bossElement} tick={s.tick}/>}
  <BattleHUD state={s} title={title} stageRewardText={stageRewardText} pending={pending} confirmExit={confirmExit} onPause={s.phase==='paused'?resume:pause} onExit={()=>{pause();setConfirmExit(true);}}/>
  <div className="absolute inset-0 z-20 pointer-events-none [&>div]:pointer-events-auto">
   {s.phase==='countdown'&&!confirmExit&&<div role="status" aria-live="polite" className="absolute inset-0 grid place-content-center gap-5 bg-slate-950/75 text-center">
@@ -30,7 +35,7 @@ export function BattlePage({run,onSettle,onAbandon,pending}:{run:RunStart;onSett
   {adventure&&s.phase==='upgrade'&&<UpgradeOptions state={s} onChoose={choice=>dispatch({kind:'upgrade',choice})}/>}
   {s.phase==='ended'&&<div className="absolute inset-0 grid place-content-center gap-5 bg-slate-950/90 text-center">
    <h2 className="font-serif text-4xl text-amber-100">{stage?(cleared?'关卡通关':'挑战失败'):'旅途暂歇'}</h2>
-   <p>击败 {s.kills} 名敌人 · 坚持 {Math.floor(s.combatTicks/20)} 秒</p>
+   <p>击败 {s.kills} 名敌人{(!stage||cleared)&&<> · 坚持 {Math.floor(s.combatTicks/20)} 秒</>}</p>
    {cleared&&<p className="text-amber-100">{stageRewardText}</p>}
    {adventure&&<AdventureResult state={s}/>}
    <button disabled={pending} className="rounded-full bg-amber-100 px-8 py-3 text-slate-900 disabled:opacity-40" onClick={()=>onSettle(s.kills,s.combatTicks,false,s.artifactDrops)}>{pending?'正在结算…':stage&&!cleared?'结束挑战并返回':'领取奖励并返回'}</button>

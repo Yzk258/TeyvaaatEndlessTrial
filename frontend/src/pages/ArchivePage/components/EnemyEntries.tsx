@@ -4,8 +4,9 @@ import {enemyDefinitions} from '../../../game/objects/Enemy';
 export function EnemyEntries({query}:{query:string}){
  const entries=enemySprites.map(sprite=>{
   const definition=enemyDefinitions[sprite.kind];
-  const attackLabel=definition.attack.kind==='ranged'?'远程':'近战';
-  const rank=sprite.kind==='elite'?'精英':sprite.kind==='boss'?'首领':'普通';
+  const attack=definition.attack;
+  const attackLabel=attack.kind==='hypostasis'?'随机招式':attack.kind==='ranged'?'远程':'近战';
+  const rank=sprite.kind==='elite'?'精英':sprite.kind==='boss'||attack.kind==='hypostasis'?'首领':'普通';
   return {sprite,definition,attackLabel,rank};
  }).filter(({sprite,attackLabel,rank})=>`${sprite.name} ${attackLabel} ${rank}`.includes(query.trim()));
 

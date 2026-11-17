@@ -2,14 +2,14 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import ts from '../frontend/node_modules/typescript/lib/typescript.js';
 const weaponSource=fs.readFileSync(new URL('../frontend/src/game/functions/weaponStats.ts',import.meta.url),'utf8');
-const functionSources=['generateMap','terrainObstacles','obstacleIndex','collisionGeometry','battleLoot','battleUpgrades','resolveAttacks','adventureProgress','spawnBattleEnemies','enemyAttacks','stepBattle'].map(name=>fs.readFileSync(new URL('../frontend/src/game/functions/'+name+'.ts',import.meta.url),'utf8').replace(/^import .* from .*;$/gm,'').replace(/^export \{.*\} from .*;$/gm,''));
+const functionSources=['generateMap','terrainObstacles','obstacleIndex','collisionGeometry','battleLoot','battleUpgrades','resolveAttacks','adventureProgress','spawnBattleEnemies','enemyAttacks','hypostasisAttacks','stepBattle'].map(name=>fs.readFileSync(new URL('../frontend/src/game/functions/'+name+'.ts',import.meta.url),'utf8').replace(/^import .* from .*;$/gm,'').replace(/^export \{.*\} from .*;$/gm,''));
 const upgradeSource=fs.readFileSync(new URL('../frontend/src/game/objects/UpgradeChoice.ts',import.meta.url),'utf8');
 const enemySource=fs.readFileSync(new URL('../frontend/src/game/objects/Enemy.ts',import.meta.url),'utf8');
 const hitSource=fs.readFileSync(new URL('../frontend/src/game/objects/HitEffect.ts',import.meta.url),'utf8');
 const artifactSource=fs.readFileSync(new URL('../frontend/src/objects/Artifact.ts',import.meta.url),'utf8');
 const source=[weaponSource,upgradeSource,enemySource,hitSource,artifactSource,...functionSources].join('\n');
 const js=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
-const {initialBattle,stepBattle,gainExperience,experienceRequired,resolveAttacks,isInArc,segmentHitTime,canStand,canMove,moveWithCollision,findSpawnPoint,moveEnemyAroundObstacle,terrainObstacles,createEnemyLoot,stepLoot,applyUpgradeStats,rollUpgradeChoices,adventureDifficulty,adventureReward,enemyDefinitions,resolveEnemyAttacks,moveBattleEnemy}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
+const {initialBattle,stepBattle,gainExperience,experienceRequired,resolveAttacks,isInArc,segmentHitTime,canStand,canMove,moveWithCollision,findSpawnPoint,moveEnemyAroundObstacle,terrainObstacles,createEnemyLoot,stepLoot,applyUpgradeStats,rollUpgradeChoices,adventureDifficulty,adventureReward,enemyDefinitions,resolveEnemyAttacks,moveBattleEnemy,hypostasisSkills}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
 const initial=initialBattle(42);
 const drainDrops=state=>Array.from({length:50}).reduce((s)=>stepBattle(s,{kind:'tick',keys:[]}),{...state,phase:'collecting'});
 const sequence=Array.from({length:100},()=>({kind:'tick',keys:['d']}));
@@ -505,3 +505,67 @@ const pausedImpact=stepBattle(combinedHit,{kind:'pause'});
 assert.equal(advance(pausedImpact),pausedImpact);
 assert.equal(advance({...combinedHit,enemies:[],tick:21}).playerHits.length,0);
 console.log('PASS: 敌人蓄势与出手、闪避与遮挡、同帧实际掉血合并、暂停冻结和受击过期');
+
+const skillPatterns={
+ 'outer-ring':['ring'],'parallel-sweep':['line','line'],'chain-blast':['circle','circle','circle'],'cross-strike':['line','line'],
+ 'fan-blades':['line','line','line'],'scattered-blasts':['circle','circle','circle','circle'],'double-wave':['circle','ring'],
+ 'cube-pulse':['circle'],'cube-drop':['circle']
+};
+const sharedCues=new Map();
+for(const [index,element] of ['cryo','anemo','pyro','electro','hydro','dendro','geo'].entries()){
+ const encounter=advance({...initial,bossElement:element,targetEnemies:1,stageMora:0,
+  stageDifficulty:{healthMultiplier:3.04,eliteHealthMultiplier:3.34},power:0});
+ const boss=encounter.enemies[0];
+ assert.equal(boss.kind,'hypostasis-'+element);
+ assert.equal(encounter.enemies.length,1);
+ assert.equal(boss.hp,Math.ceil(enemyDefinitions[boss.kind].hp*3.34));
+ for(const skill of hypostasisSkills){
+  const rolled=resolveEnemyAttacks([boss],[],boss.x+88,boss.y,boss.nextAttackTick,[],hypostasisSkills.indexOf(skill)).enemies[0].hypostasis.cue;
+  assert.deepEqual(rolled.zones.map(zone=>zone.kind),skillPatterns[skill]);
+  if(index===0)sharedCues.set(skill,rolled);
+  else assert.deepEqual(rolled,sharedCues.get(skill));
+ }
+ const windup=resolveEnemyAttacks([boss],[],boss.x+88,boss.y,boss.nextAttackTick,[],index);
+ const charging=windup.enemies[0],cue=charging.hypostasis.cue;
+ assert.deepEqual(cue.zones.map(zone=>zone.kind),skillPatterns[hypostasisSkills[index]]);
+ assert.equal(windup.damage,0);
+ assert.equal(resolveEnemyAttacks([charging],[],boss.x+88,boss.y,cue.strikeTick-1,[]).damage,0);
+ assert.equal(resolveEnemyAttacks([charging],[],boss.x+88,boss.y,cue.strikeTick,[]).damage,boss.damage);
+ assert.equal(resolveEnemyAttacks([charging],[],boss.x+255,boss.y+225,cue.strikeTick,[]).damage,0);
+ for(const zone of cue.zones.filter(zone=>zone.delay>0)){
+  const x=zone.kind==='ring'?zone.x+(zone.radius+zone.innerRadius)/2:zone.x;
+  assert.equal(resolveEnemyAttacks([charging],[],x,zone.y,cue.strikeTick+zone.delay,[]).damage,boss.damage);
+ }
+ const target={...encounter,x:boss.x,y:boss.y+32,attackIntervalTicks:1,power:20};
+ const damageAt=(enemy,tick)=>enemy.hp-resolveAttacks(target,[enemy],target.x,target.y,0,tick,[]).enemies[0].hp;
+ assert.equal(cue.exposesCore,false);
+ assert.equal(damageAt(charging,cue.endTick),5);
+ const halfHp={...charging,hp:Math.floor(boss.hp/2)};
+ const next=resolveEnemyAttacks([halfHp],[],target.x,target.y,charging.nextAttackTick,[],hypostasisSkills.indexOf('cube-pulse')).enemies[0];
+ assert.equal(next.hypostasis.cue.name,'方块震击');
+ assert.ok(next.hypostasis.cue.strikeTick-next.hypostasis.cue.startTick<cue.strikeTick-cue.startTick);
+ assert.equal(next.hypostasis.cue.exposesCore,false);
+ assert.equal(damageAt(next,next.hypostasis.cue.endTick),5);
+ const pausedBoss=stepBattle({...encounter,enemies:[charging]},{kind:'pause'});
+ assert.equal(advance(pausedBoss),pausedBoss);
+ const third=resolveEnemyAttacks([next],[],target.x,target.y,next.nextAttackTick,[]).enemies[0];
+ const exposure=third.hypostasis.cue;
+ assert.equal(third.hypostasis.attacks,3);
+ assert.equal(exposure.exposesCore,true);
+ assert.equal(damageAt(third,exposure.endTick-1),5);
+ assert.equal(damageAt(third,exposure.endTick),20);
+ assert.equal(damageAt(third,third.nextAttackTick-1),20);
+ assert.equal(damageAt(third,third.nextAttackTick),5);
+ let repeating=third;
+ for(const round of [4,5,6]){
+  repeating=resolveEnemyAttacks([repeating],[],target.x,target.y,repeating.nextAttackTick,[]).enemies[0];
+  assert.equal(repeating.hypostasis.attacks,round);
+  assert.equal(damageAt(repeating,repeating.hypostasis.cue.endTick),round===6?20:5);
+ }
+ const killed=advance({...target,enemies:[third],tick:exposure.endTick-1,power:third.hp+1});
+ assert.equal(killed.kills,1);
+ assert.equal(killed.enemies.length,0);
+ assert.equal(killed.phase,'ended');
+ assert.equal(killed.pendingUpgrades,0);
+}
+console.log('PASS: 七种无相首领共享随机招式、预警与闪避、多段判定、半血加速、每三轮露核及击败结算');

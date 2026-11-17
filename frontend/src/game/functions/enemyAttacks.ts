@@ -2,11 +2,13 @@ import {enemyDefinitions,type Enemy,type EnemyProjectile} from '../objects/Enemy
 import type {WorldBounds} from '../objects/WorldObstacle';
 import {moveEnemyAroundObstacle,moveWithCollision,obstacleHitTime,segmentHitTime} from './collisionGeometry';
 import type {CollisionTerrain} from './obstacleIndex';
+import {stepHypostasis} from './hypostasisAttacks';
 
 export const enemyWindupTicks=3;
 
 export function moveBattleEnemy(enemy:Enemy,x:number,y:number,terrain:CollisionTerrain,bounds:WorldBounds|null,speedFactor=1):Enemy{
  const {radius,attack}=enemyDefinitions[enemy.kind];
+ if(attack.kind==='hypostasis')return enemy;
  if(attack.kind==='ranged'){
   const dx=enemy.x-x,dy=enemy.y-y,distance=Math.hypot(dx,dy);
   if(distance<attack.standOff*.72){
@@ -19,7 +21,7 @@ export function moveBattleEnemy(enemy:Enemy,x:number,y:number,terrain:CollisionT
  return {...enemy,...moveEnemyAroundObstacle(enemy.id,enemy.x,enemy.y,x,y,radius,terrain,bounds,speedFactor)};
 }
 
-export function resolveEnemyAttacks(enemies:readonly Enemy[],inFlight:readonly EnemyProjectile[],x:number,y:number,tick:number,terrain:CollisionTerrain){
+export function resolveEnemyAttacks(enemies:readonly Enemy[],inFlight:readonly EnemyProjectile[],x:number,y:number,tick:number,terrain:CollisionTerrain,seed=tick){
  const projectiles:EnemyProjectile[]=[];
  let damage=0,hitAngle=0,strongestHit=0;
  const recordHit=(amount:number,angle:number)=>{
@@ -37,6 +39,11 @@ export function resolveEnemyAttacks(enemies:readonly Enemy[],inFlight:readonly E
  const updated=enemies.map(enemy=>{
   const {attack}=enemyDefinitions[enemy.kind];
   const dx=x-enemy.x,dy=y-enemy.y,distance=Math.hypot(dx,dy);
+  if(attack.kind==='hypostasis'){
+   const boss=stepHypostasis(enemy,{x,y},tick,seed);
+   if(boss.damage>0)recordHit(boss.damage,Math.atan2(dy,dx));
+   return boss.enemy;
+  }
   const attackTick=attack.kind==='contact'?Math.ceil(tick/10)*10:Math.max(tick,enemy.nextAttackTick??tick);
   const inRange=attack.kind==='contact'?distance<attack.reach:distance>0&&distance<=attack.range;
   if(attackTick-tick>enemyWindupTicks||!inRange||

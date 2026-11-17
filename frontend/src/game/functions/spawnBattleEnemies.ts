@@ -14,6 +14,17 @@ export function spawnBattleEnemies(s:BattleState,nearby:readonly Enemy[],x:numbe
  };
  const spawnClock=s.adventure?combatTicks:tick;
  const bounds=adventure?null:{minX:24,minY:24,maxX:876,maxY:516};
+ const lastEliteWave=s.lastEliteWave??0;
+ if(s.bossElement){
+  if(nearby.length>0||s.kills>0)return {enemies:nearby,lastEliteWave};
+  const kind=`hypostasis-${s.bossElement}` as const;
+  const definition=enemyDefinitions[kind];
+  const point=findSpawnPoint(450,155,definition.radius,terrain,bounds);
+  if(!point)return {enemies:nearby,lastEliteWave};
+  const maxHp=Math.ceil(definition.hp*difficulty.eliteHealth);
+  return {enemies:[{id:tick,...point,kind,hp:maxHp,damage:definition.damage,nextAttackTick:tick+20,
+   hypostasis:{maxHp,attacks:0}}],lastEliteWave};
+ }
  const spawn=(kind:EnemyKind,id:number,startX:number,startY:number):Enemy|undefined=>{
   const definition=enemyDefinitions[kind];
   const point=findSpawnPoint(startX,startY,definition.radius,terrain,bounds);
@@ -22,7 +33,6 @@ export function spawnBattleEnemies(s:BattleState,nearby:readonly Enemy[],x:numbe
   return {id,...point,kind,hp:Math.ceil(definition.hp*healthMultiplier),damage:Math.ceil(definition.damage*difficulty.damage),
    ...(definition.attack.kind==='ranged'?{nextAttackTick:tick+8+id%11}:{})};
  };
- const lastEliteWave=s.lastEliteWave??0;
  const eliteWave=lastEliteWave+eliteWaveInterval;
  const eliteDue=adventure&&s.adventure!==null&&difficulty.wave>=eliteWave;
  // Reserve a place for the elite even when the ordinary enemy cap has already been reached.

@@ -6,6 +6,7 @@ import type {BattleState,Enemy} from '../objects/BattleState';
 import type {AttackResolution} from '../objects/AttackResolution';
 import type {Projectile} from '../objects/Projectile';
 import {weaponDamage} from './weaponStats';
+import {hypostasisDamageFactor} from './hypostasisAttacks';
 export function nearestTarget(enemies:readonly Enemy[],x:number,y:number,range:number):Enemy|undefined {
  return enemies.filter(e=>e.hp>0&&Math.hypot(e.x-x,e.y-y)<=range).reduce<Enemy|undefined>((best,e)=>!best||Math.hypot(e.x-x,e.y-y)<Math.hypot(best.x-x,best.y-y)?e:best,undefined);
 }
@@ -30,11 +31,11 @@ export function resolveAttacks(s:BattleState,enemies:readonly Enemy[],x:number,y
   if(!fire||pattern.kind==='projectile')return {enemies,effects};
   switch(pattern.kind){
    case 'meleeArc':return {
-    enemies:enemies.map(e=>isInArc(e.x,e.y,x,y,attackAngle,s.attackRange,pattern.angleDegrees)&&canMove(x,y,e.x,e.y,0,terrain)?{...e,hp:e.hp-weaponDamage(s.power,s.weaponTalent,Math.hypot(e.x-x,e.y-y),false)*shots}:e),
+    enemies:enemies.map(e=>isInArc(e.x,e.y,x,y,attackAngle,s.attackRange,pattern.angleDegrees)&&canMove(x,y,e.x,e.y,0,terrain)?{...e,hp:e.hp-weaponDamage(s.power,s.weaponTalent,Math.hypot(e.x-x,e.y-y),false)*shots*hypostasisDamageFactor(e,tick)}:e),
     effects:[...effects,{kind:'meleeArc' as const,id:tick,x,y,angle:attackAngle,angleDegrees:pattern.angleDegrees,radius:s.attackRange,life:6}]
    };
    case 'area':return {
-    enemies:enemies.map(e=>Math.hypot(e.x-target!.x,e.y-target!.y)<=pattern.splashRadius?{...e,hp:e.hp-weaponDamage(s.power,s.weaponTalent,Math.hypot(e.x-x,e.y-y),false)*shots}:e),
+    enemies:enemies.map(e=>Math.hypot(e.x-target!.x,e.y-target!.y)<=pattern.splashRadius?{...e,hp:e.hp-weaponDamage(s.power,s.weaponTalent,Math.hypot(e.x-x,e.y-y),false)*shots*hypostasisDamageFactor(e,tick)}:e),
     effects:[...effects,{kind:'area' as const,id:tick,x:target!.x,y:target!.y,radius:pattern.splashRadius,life:6}]
    };
   }
@@ -51,7 +52,7 @@ export function resolveAttacks(s:BattleState,enemies:readonly Enemy[],x:number,y
    return t===null||t>=wallTime?[]:[{id:e.id,t}];
   }).toSorted((a,b)=>a.t-b.t||a.id-b.id).slice(0,p.remainingHits);
   const hits=intersections.map(h=>h.id);
-  const updated=result.enemies.map(e=>{const hit=intersections.find(h=>h.id===e.id);return hit?{...e,hp:e.hp-weaponDamage(p.damage,p.talent,Math.hypot(p.x+(endX-p.x)*hit.t-p.originX,p.y+(endY-p.y)*hit.t-p.originY),false)}:e;});
+  const updated=result.enemies.map(e=>{const hit=intersections.find(h=>h.id===e.id);return hit?{...e,hp:e.hp-weaponDamage(p.damage,p.talent,Math.hypot(p.x+(endX-p.x)*hit.t-p.originX,p.y+(endY-p.y)*hit.t-p.originY),false)*hypostasisDamageFactor(e,tick)}:e;});
   const remainingRange=p.remainingRange-distance,remainingHits=p.remainingHits-hits.length;
   return {...result,enemies:updated,projectiles:wallTime===Infinity&&remainingRange>0&&remainingHits>0?[...result.projectiles,{...p,x:endX,y:endY,remainingRange,remainingHits,hitIds:[...p.hitIds,...hits]}]:result.projectiles};
  },{queuedAttackTicks,enemies:instant.enemies,projectiles:[],effects:instant.effects,hits:[],attackCue:fire?{tick,x,y,angle:attackAngle}:s.attackCue});

@@ -12,6 +12,7 @@ export function useBattle(run:RunStart){
   const collisionChunkX=endless?1:0;
   const stageMora=stage?.rewards.reduce((sum,reward)=>reward.kind==='currency'&&reward.currency==='mora'?sum+reward.amount:sum,0)??null;
   return {...initialBattle(seed),phase:'countdown' as const,countdownTicks:60,targetEnemies:stage?.enemies??null,stageMora,adventure,worldSeed,
+   bossElement:stage?.category==='crystals'?stage.boss:null,
    stageDifficulty:current.stage===null?null:current.stageDifficulty,
    terrainCollision:true,terrainRuins:map.includeRuins,collisionChunkX,collisionChunkY:0,obstacles:terrainObstacles(worldSeed,endless,collisionChunkX,0,map.includeRuins),
    attackPattern:character.attackPattern,attackRange:stats.attackRange,attackIntervalTicks:stats.attackIntervalTicks,attackStyle:character.attackStyle,

@@ -8,22 +8,22 @@ const [references,display,battle,weapons,enemies]=await Promise.all([
  'character-references','character-display-portraits',
  'character-battle-portraits','weapon-appearance','enemy-appearance'
 ].map(readConfig));
-const artifactIcons=(await readdir(new URL('public/artifacts/',frontend),{withFileTypes:true}))
- .filter(entry=>entry.isFile()&&entry.name.endsWith('.png')).map(entry=>'artifacts/'+entry.name);
+const imageFiles=(await Promise.all(['artifacts','crystals','enemies/hypostasis'].map(async directory=>{
+ const entries=await readdir(new URL('public/'+directory+'/',frontend),{withFileTypes:true});
+ return entries.filter(entry=>entry.isFile()&&entry.name.endsWith('.png')).map(entry=>directory+'/'+entry.name);
+}))).flat();
 const publicFiles=[...new Set([
  '/backgrounds/sky-gate-pixel-v2.png',
  '/backgrounds/sky-gate-clouds-a.png','/backgrounds/sky-gate-clouds-b.png',
  '/terrain/ground-v2.png','/terrain/objects-v2.png','/terrain/ruins-v2.png','/terrain/waypoint-v2.png',
  '/currency/mora.png','/currency/primogem.png','/currency/fate.png',
- ...artifactIcons,
+ ...imageFiles,
  ...Object.values(references).map(entry=>entry.thumbnail??entry.src),
  ...[...display,...battle,...Object.values(weapons),...Object.values(enemies.sheets)].map(entry=>entry.src)
 ].map(path=>path.replace(/^\//,'')))];
-await Promise.all(publicFiles.map(async path=>{
- const output=new URL(path,dist);
- await mkdir(new URL('.',output),{recursive:true});
- await copyFile(new URL('public/'+path,frontend),output);
-}));
+const directories=new Set(publicFiles.map(path=>new URL('.',new URL(path,dist)).href));
+for(const directory of directories)await mkdir(new URL(directory),{recursive:true});
+await Promise.all(publicFiles.map(path=>copyFile(new URL('public/'+path,frontend),new URL(path,dist))));
 
 const assets=(await readdir(new URL('assets/',dist),{withFileTypes:true}))
  .filter(entry=>entry.isFile())

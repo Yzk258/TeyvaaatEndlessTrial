@@ -15,14 +15,14 @@ import {TutorialGuide} from './components/ui/TutorialGuide';
 import {CurrencyIcon} from './components/ui/CurrencyIcon';
 import {useAdventure} from './pages/hooks/useAdventure';
 import {HomePage} from './pages/HomePage';
-import {StagesPage} from './pages/StagesPage';
+import {BossHuntPage,LeyLinePage} from './pages/StagesPage';
 import {BattlePage} from './pages/BattlePage';
 import {usePageNavigation} from './pages/hooks/usePageNavigation';
 import {CharacterPage} from './pages/CharacterPage';
 import {WishPage} from './pages/WishPage';
 import {OpeningPage} from './pages/OpeningPage';
 import {defaultDifficultyId,type AdventureDifficultyId} from './objects/AdventureSettings';
-import {stageCategories,type StageCategoryId} from './objects/Stage';
+import {leyLineCategories,type LeyLineCategoryId} from './objects/Stage';
 import type {Element} from './objects/Element';
 import {equipmentUsage} from './game/functions/equipmentInventory';
 export function App(){
@@ -31,7 +31,7 @@ export function App(){
  const presentation=useBattlePresentation(a.run?.runId??null);
  const [entered,setEntered]=useState(false);
  const [adventureDifficulty,setAdventureDifficulty]=useState<AdventureDifficultyId>(defaultDifficultyId);
- const [stageCategory,setStageCategory]=useState<StageCategoryId>(stageCategories[0].id);
+ const [leyLineCategory,setLeyLineCategory]=useState<LeyLineCategoryId>(leyLineCategories[0].id);
  const [stageElement,setStageElement]=useState<Element>('pyro');
  const enter=useCallback(()=>setEntered(true),[]);
  const [tutorialOpen,setTutorialOpen]=useState(false);
@@ -79,7 +79,10 @@ export function App(){
    :navigation.current==='bag'?<BagPage profile={profile} pending={a.pending} onDismantleArtifact={id=>a.onDismantle('artifact',id)}/>
    :navigation.current==='artifacts'?<ArtifactsPage profile={profile} pending={a.pending} onLevelArtifact={a.onLevelArtifact}
     onDismantleArtifact={id=>a.onDismantle('artifact',id)}/>
-   :navigation.current==='stages'?<StagesPage category={stageCategory} onCategoryChange={setStageCategory} element={stageElement} onElementChange={setStageElement} onStart={a.onStartStage} pending={a.pending} clearedStages={clearedStages}/>
+   :navigation.current==='ley-lines'?<LeyLinePage category={leyLineCategory} onCategoryChange={setLeyLineCategory}
+    onStart={a.onStartStage} pending={a.pending} clearedStages={clearedStages}/>
+   :navigation.current==='boss-hunt'?<BossHuntPage element={stageElement} onElementChange={setStageElement}
+    onStart={a.onStartStage} pending={a.pending} clearedStages={clearedStages}/>
    :navigation.current==='weapons'?<WeaponsPage profile={profile} onLevelWeapon={a.onLevelWeapon} pending={a.pending}
     onDismantleWeapon={id=>a.onDismantle('weapon',id)}/>
    :navigation.current==='characters'?<CharacterPage profile={profile} selected={a.selected} favoriteCharacters={favoriteCharacters} pending={a.pending}

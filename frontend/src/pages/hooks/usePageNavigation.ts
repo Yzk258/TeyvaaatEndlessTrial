@@ -1,13 +1,15 @@
 import {useCallback,useEffect,useState} from 'react';
+import {bossHuntHref,leyLineHref} from '../StagesPage/paths';
 
-export type PageId='overview'|'camp'|'characters'|'wishes'|'stages'|'weapons'|'archive'|'bag'|'artifacts';
+export type PageId='overview'|'camp'|'characters'|'wishes'|'ley-lines'|'boss-hunt'|'weapons'|'archive'|'bag'|'artifacts';
 type NavigationPage={readonly id:PageId;readonly href:string;readonly label:string};
 export type NavigationGroup={readonly id:'adventure'|'training';readonly label:string;readonly children:readonly NavigationPage[]};
 const entries:readonly (NavigationPage|NavigationGroup)[]=[
   {id:'overview',href:'#/overview',label:'综合'},
   {id:'adventure',label:'冒险',children:[
     {id:'camp',href:'#/camp',label:'冒险营地'},
-    {id:'stages',href:'#/stages',label:'关卡挑战'}
+    {id:'ley-lines',href:leyLineHref,label:'地脉之花'},
+    {id:'boss-hunt',href:bossHuntHref,label:'首领征讨'}
   ]},
   {id:'training',label:'培养',children:[
     {id:'characters',href:'#/characters',label:'角色培养'},
@@ -20,6 +22,7 @@ const entries:readonly (NavigationPage|NavigationGroup)[]=[
 ];
 const pages=entries.flatMap(entry=>'children' in entry?entry.children:[entry]);
 function parsePage(hash:string):PageId {
+  if(hash==='#/stages')return 'ley-lines';
   return pages.find(page=>page.href===hash)?.id??'overview';
 }
 export function usePageNavigation(){

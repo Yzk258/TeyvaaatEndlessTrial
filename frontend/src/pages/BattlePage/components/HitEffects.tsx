@@ -21,7 +21,7 @@ export function PlayerHitEffects({hits,tick,reducedMotion}:{hits:readonly Player
 export function HitEffects({hits,color,reducedMotion}:{hits:readonly HitEffect[];color:string;reducedMotion:boolean}){
  return <g aria-hidden="true" pointerEvents="none">{hits.map(hit=>{
   const progress=1-hit.life/10,opacity=Math.min(1,hit.life/4);
-  const height=hit.enemyKind==='elite'?65:hit.enemyKind==='boss'?58:hit.enemyKind==='slime'?23:34;
+  const height=hit.enemyKind==='elite'||hit.enemyKind.startsWith('hypostasis-')?65:hit.enemyKind==='boss'?58:hit.enemyKind==='slime'?23:34;
   return <g key={hit.id} data-hit-effect={hit.defeated?'defeated':'hit'} opacity={opacity}>
    {hit.life>=5&&<g transform={'translate('+hit.x+' '+(hit.y-7)+')'} shapeRendering="crispEdges">
     <path d="M -8 -2 H -2 V -8 H 2 V -2 H 8 V 2 H 2 V 8 H -2 V 2 H -8 Z" fill="#fff5d8" opacity={hit.life/10}/>

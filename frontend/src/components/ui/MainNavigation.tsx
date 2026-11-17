@@ -1,9 +1,9 @@
 import {useId,useRef,useState} from 'react';
-import {Backpack,BookOpen,ChevronDown,Compass,Flag,Gem,LayoutDashboard,Sparkles,Swords,Tent,TrendingUp,Users} from 'lucide-react';
+import {Backpack,BookOpen,ChevronDown,Compass,Flag,Flower2,Gem,LayoutDashboard,Sparkles,Swords,Tent,TrendingUp,Users} from 'lucide-react';
 import type {NavigationGroup,PageId,usePageNavigation} from '../../pages/hooks/usePageNavigation';
 
 const icons:Readonly<Record<PageId|NavigationGroup['id'],typeof Compass>>={
- overview:LayoutDashboard,adventure:Compass,camp:Tent,stages:Flag,characters:Users,weapons:Swords,
+ overview:LayoutDashboard,adventure:Compass,camp:Tent,'ley-lines':Flower2,'boss-hunt':Flag,characters:Users,weapons:Swords,
  training:TrendingUp,bag:Backpack,artifacts:Gem,archive:BookOpen,wishes:Sparkles
 };
 

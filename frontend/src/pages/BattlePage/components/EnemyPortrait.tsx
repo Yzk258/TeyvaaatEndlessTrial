@@ -3,9 +3,12 @@ import type {Enemy} from '../../../game/objects/BattleState';
 import type {HitEffect} from '../../../game/objects/HitEffect';
 import {enemyDefinitions} from '../../../game/objects/Enemy';
 import {enemyWindupTicks} from '../../../game/functions/enemyAttacks';
+import {HypostasisPortrait} from './HypostasisVisuals';
 export function EnemyPortrait({enemy,tick,hit,spritePrefix,reducedMotion=false}:{enemy:Enemy;tick:number;hit?:HitEffect;spritePrefix:string;reducedMotion?:boolean}){
- const {name,size}=appearance.sprites[enemy.kind];
  const {attack}=enemyDefinitions[enemy.kind];
+ if(attack.kind==='hypostasis')return <HypostasisPortrait enemy={enemy} element={attack.element} tick={tick}
+  spritePrefix={spritePrefix} reducedMotion={reducedMotion} flashing={!!hit&&hit.life>=8}/>;
+ const {name,size}=appearance.sprites[enemy.kind as keyof typeof appearance.sprites];
  const age=enemy.attackCue?tick-enemy.attackCue.tick:Infinity;
  const winding=age<0&&age>=-enemyWindupTicks;
  const striking=age>=0&&age<6;

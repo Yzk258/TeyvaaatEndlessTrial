@@ -10,7 +10,7 @@ import {applyUpgradeStats,rollUpgradeChoices} from './battleUpgrades';
 import {playerHitTicks,type PlayerHitEffect} from '../objects/HitEffect';
 import type {BattleAction,BattleState} from '../objects/BattleState';
 export const initialBattle=(seed:number):BattleState=>({
- adventure:null,stageDifficulty:null,combatTicks:0,loot:[],artifactDrops:[],collectedMora:0,stageMora:null,moveSpeed:6,extraAttacks:0,queuedAttackTicks:[],upgradeSeed:(seed^0x9e3779b9)>>>0,upgradeChoices:[],
+ adventure:null,stageDifficulty:null,bossElement:null,combatTicks:0,loot:[],artifactDrops:[],collectedMora:0,stageMora:null,moveSpeed:6,extraAttacks:0,queuedAttackTicks:[],upgradeSeed:(seed^0x9e3779b9)>>>0,upgradeChoices:[],
  motion:{moving:false,distance:0},attackCue:null,hits:[],playerHits:[],obstacles:[],collisionChunkX:1,collisionChunkY:0,terrainCollision:false,
  attackPattern:{kind:'area',splashRadius:105},projectiles:[],enemyProjectiles:[],lastEliteWave:0,effects:[],facing:0,countdownTicks:0,weaponTalent:null,attackRange:105,attackIntervalTicks:12,attackStyle:'melee',
  phase:'fighting',targetEnemies:null,tick:0,x:450,y:270,hp:100,maxHp:100,healOnKillPercent:0,experience:0,pendingUpgrades:0,kills:0,level:1,power:2,enemies:[],worldSeed:seed,seed
@@ -66,7 +66,7 @@ export function stepBattle(s:BattleState,a:BattleAction):BattleState {
  const moraPerKill=s.adventure?s.adventure.rules.moraPerKill*s.adventure.difficulty.rewardMultiplier:10;
  const loot=stepLoot([...s.loot,...createEnemyLoot(defeated,s.kills,s.targetEnemies,s.stageMora,moraPerKill),...artifactLoot],x,y);
  const progress=gainExperience(s.level,s.experience,adventure?loot.experience:0);
- const enemyAttacks=resolveEnemyAttacks(resolved.enemies.filter(e=>e.hp>0),s.enemyProjectiles??[],x,y,tick,terrain);
+ const enemyAttacks=resolveEnemyAttacks(resolved.enemies.filter(e=>e.hp>0),s.enemyProjectiles??[],x,y,tick,terrain,seed);
  const kills=s.kills+defeated.length;
  const healedHp=Math.min(s.maxHp,s.hp+Math.round(s.maxHp*s.healOnKillPercent/100)*defeated.length);
  const hp=Math.max(0,healedHp-enemyAttacks.damage);

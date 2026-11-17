@@ -11,6 +11,7 @@ import type {WishReveal} from '../WishPage/objects/WishReveal';
 import {createSave,starterCharacter,type LocalSave} from '../../game/local/LocalSave';
 import {addSave,downloadSave,importSave,listSaves,loadSave,updateSave} from '../../game/local/saveStore';
 import {ascendCharacter,equipWeapon,levelUp,requestWishes,selectCharacter,setCharacterFavorite,settleTrial,startTrial,trialRewards} from '../../game/local/progression';
+import {stageReturnHref} from '../StagesPage/paths';
 
 type WishExchange={banner:WishBanner;count:WishCount;missingFates:number;primogemCost:number};
 type Notice={readonly text:string;readonly kind:'status'|'error'|'opening'};
@@ -152,7 +153,7 @@ export function useAdventure(){
  const onAbandon=()=>{
   if(busy.current||!run?.stage)return;
   setRun(null);
-  window.location.hash='#/stages';
+  window.location.hash=stageReturnHref(run.stage);
   setExitMessage('已放弃本次试炼，未发放奖励');
  };
  const onSettle=(kills:number,ticks:number,withdrawing=false,artifactDrops:readonly string[]=[])=>perform(async()=>{
@@ -164,7 +165,7 @@ export function useAdventure(){
    :'本次冒险已结算：'+gains+(artifactDrops.length?`，圣遗物 +${artifactDrops.length}`:'');
   showSave(next);
   setRun(null);
-  window.location.hash=run.stage?'#/stages':'#/camp';
+  window.location.hash=stageReturnHref(run.stage);
   if(withdrawing)setExitMessage(message);
   else setNotice({text:message,kind:'status'});
  });

@@ -45,7 +45,8 @@ export function BattleHUD({state:s,title,stageRewardText,pending,confirmExit,onP
       </dl>
       <div className="mt-2 space-y-1 border-t border-white/10 pt-2">
        {stageRewardText&&<p className="text-amber-100">通关奖励 {stageRewardText}</p>}
-       {s.stageDifficulty&&<p>普通怪生命 ×{s.stageDifficulty.healthMultiplier.toFixed(2)} · 首领与精英 ×{s.stageDifficulty.eliteHealthMultiplier.toFixed(2)}</p>}
+       {s.stageDifficulty&&<p>{s.bossElement?'首领生命 ×'+s.stageDifficulty.eliteHealthMultiplier.toFixed(2):
+        '普通怪生命 ×'+s.stageDifficulty.healthMultiplier.toFixed(2)+' · 首领与精英 ×'+s.stageDifficulty.eliteHealthMultiplier.toFixed(2)}</p>}
        {difficulty&&<><p>普通怪生命 ×{difficulty.health.toFixed(2)} · 首领与精英 ×{difficulty.eliteHealth.toFixed(2)} · 伤害 ×{difficulty.damage.toFixed(2)}</p>
         <p>场上 {s.enemies.length} / {difficulty.limit} · 每 {(difficulty.interval/20).toFixed(2)} 秒刷 {difficulty.count} 只</p></>}
        {reward&&<p className="text-amber-100">预计结算 摩拉 {reward.mora} · 原石 {reward.primogems}</p>}

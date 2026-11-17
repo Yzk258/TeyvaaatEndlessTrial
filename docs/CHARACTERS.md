@@ -42,7 +42,7 @@
 | 70 | 1 金 | 80 |
 | 80 | 3 金 | 90 |
 
-突破门槛与消耗定义在 [CharacterAscension.ts](../frontend/src/objects/CharacterAscension.ts)，七种元素的晶石定义在 [ElementalCrystal.ts](../frontend/src/objects/ElementalCrystal.ts)。晶石通过[关卡挑战](ADVENTURE.md#关卡挑战)获得，数量可在背包查看。
+突破门槛与消耗定义在 [CharacterAscension.ts](../frontend/src/objects/CharacterAscension.ts)，七种元素的晶石定义在 [ElementalCrystal.ts](../frontend/src/objects/ElementalCrystal.ts)。晶石通过[首领征讨](ADVENTURE.md#首领征讨)获得，数量可在背包查看。
 
 ## 如何新增角色
 
