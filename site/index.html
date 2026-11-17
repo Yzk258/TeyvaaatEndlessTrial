@@ -97,27 +97,54 @@
             <h2 id="gallery-title">游戏画面</h2>
           </div>
           <div class="gallery-tabs" aria-label="预览分类" hidden>
-            <button type="button" id="tab-boss" aria-controls="view-boss">无相首领</button>
+            <button type="button" id="tab-boss" aria-controls="view-boss">首领实战</button>
+            <button type="button" id="tab-battle" aria-controls="view-battle">关卡实战</button>
+            <button type="button" id="tab-wish" aria-controls="view-wish">祈愿揭晓</button>
             <button type="button" id="tab-map" aria-controls="view-map">地图探索</button>
             <button type="button" id="tab-crystals" aria-controls="view-crystals">突破晶石</button>
           </div>
           <div class="gallery-panel" id="view-boss" aria-labelledby="tab-boss">
             <figure>
-              <ul class="sprite-grid boss-grid">
-                <li style="--accent: #9deaff"><img src="./game/enemies/hypostasis/cryo.png" width="96" height="96" alt="" loading="lazy"><span>无相之冰</span></li>
-                <li style="--accent: #66f2cf"><img src="./game/enemies/hypostasis/anemo.png" width="96" height="96" alt="" loading="lazy"><span>无相之风</span></li>
-                <li style="--accent: #ff8d63"><img src="./game/enemies/hypostasis/pyro.png" width="96" height="96" alt="" loading="lazy"><span>无相之火</span></li>
-                <li style="--accent: #d09bff"><img src="./game/enemies/hypostasis/electro.png" width="96" height="96" alt="" loading="lazy"><span>无相之雷</span></li>
-                <li style="--accent: #66b8ff"><img src="./game/enemies/hypostasis/hydro.png" width="96" height="96" alt="" loading="lazy"><span>无相之水</span></li>
-                <li style="--accent: #b6f475"><img src="./game/enemies/hypostasis/dendro.png" width="96" height="96" alt="" loading="lazy"><span>无相之草</span></li>
-                <li style="--accent: #ffd483"><img src="./game/enemies/hypostasis/geo.png" width="96" height="96" alt="" loading="lazy"><span>无相之岩</span></li>
-              </ul>
+              <a class="preview-shot" href="./previews/boss-strike.webp" target="_blank" rel="noopener" aria-label="查看无相之雷出招大图">
+                <img src="./previews/boss-strike.webp" width="1500" height="900" alt="无相之雷在遗迹中释放紫色十字冲击，凯亚走到攻击区域外" loading="lazy">
+                <span class="gallery-zoom" aria-hidden="true">查看大图 ↗</span>
+              </a>
               <figcaption class="gallery-copy">
                 <div>
-                  <h3>七种无相首领</h3>
-                  <p>选定元素挑战，击败首领后取得对应晶石。</p>
+                  <h3>无相之雷 · 十字冲击</h3>
+                  <p>紫色电弧沿两条交叉攻击带闪过，凯亚走向斜角避开冲击。</p>
                 </div>
                 <a class="text-link" href="./game/#/boss-hunt">进入首领征讨 <span aria-hidden="true">↗</span></a>
+              </figcaption>
+            </figure>
+          </div>
+          <div class="gallery-panel" id="view-battle" aria-labelledby="tab-battle">
+            <figure>
+              <a class="preview-shot" href="./previews/trial.webp" target="_blank" rel="noopener" aria-label="查看风起山谷实战大图">
+                <img src="./previews/trial.webp" width="1500" height="900" alt="胡桃在风起山谷偏转枪锋，迎战从湖边围拢的史莱姆与丘丘人" loading="lazy">
+                <span class="gallery-zoom" aria-hidden="true">查看大图 ↗</span>
+              </a>
+              <figcaption class="gallery-copy">
+                <div>
+                  <h3>风起山谷 · 清剿</h3>
+                  <p>胡桃在湖边走位，等敌怪进入攻击范围后挥出一道枪弧。</p>
+                </div>
+                <a class="text-link" href="./game/#/ley-lines">进入地脉之花 <span aria-hidden="true">↗</span></a>
+              </figcaption>
+            </figure>
+          </div>
+          <div class="gallery-panel" id="view-wish" aria-labelledby="tab-wish">
+            <figure>
+              <a class="preview-shot" href="./previews/wish.webp" target="_blank" rel="noopener" aria-label="查看祈愿揭晓大图">
+                <img src="./previews/wish.webp" width="1500" height="900" alt="早期祈愿演示中的芙宁娜五星揭晓画面" loading="lazy">
+                <span class="gallery-zoom" aria-hidden="true">查看大图 ↗</span>
+              </a>
+              <figcaption class="gallery-copy">
+                <div>
+                  <h3>芙宁娜 · 祈愿演示</h3>
+                  <p>早期版本的五星揭晓画面。当前卡池名单可在游戏内查看。</p>
+                </div>
+                <a class="text-link" href="./game/#/wishes">进入祈愿 <span aria-hidden="true">↗</span></a>
               </figcaption>
             </figure>
           </div>
