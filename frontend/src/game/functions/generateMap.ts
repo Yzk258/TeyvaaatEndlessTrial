@@ -3,6 +3,24 @@ import type {MapTile,MapTileKind,RuinTileKind} from '../objects/MapTile';
 export const CHUNK_SIZE=384;
 export const TILE_SIZE=32;
 const CELLS=CHUNK_SIZE/TILE_SIZE;
+const chunkCache=new Map<string,MapChunk>();
+type Landmark={readonly x:number;readonly y:number;readonly priority:number};
+const waypointCache=new Map<string,Landmark|undefined>();
+const ruinCache=new Map<string,Landmark|undefined>();
+
+function cachedMapValue<T>(cache:Map<string,T>,key:string,create:()=>T):T {
+ if(cache.has(key)){
+  const value=cache.get(key)!;
+  cache.delete(key);
+  cache.set(key,value);
+  return value;
+ }
+ const value=create();
+ cache.set(key,value);
+ // Bound each cache so endless exploration releases distant chunks and regions.
+ if(cache.size>256)cache.delete(cache.keys().next().value!);
+ return value;
+}
 export function mapHash(seed:number,x:number,y:number,salt:number):number {
  const mixed=Math.imul(x|0,374761393)^Math.imul(y|0,668265263)^Math.imul(salt,1274126177)^seed;
  const n=Math.imul(mixed^(mixed>>>13),1274126177);
@@ -45,19 +63,21 @@ export function terrainCellKind(seed:number,x:number,y:number):MapTileKind {
 }
 function findWaypointCell(seed:number,chunkX:number,chunkY:number){
  const regionX=Math.floor(chunkX/2),regionY=Math.floor(chunkY/2),regionSize=CELLS*2;
- const startRegion=regionX===0&&regionY===0;
- const spacing=4,columns=Math.floor(regionSize/spacing);
- const candidates=Array.from({length:columns*columns},(_,index)=>{
-  const x=regionX*regionSize+spacing/2+index%columns*spacing;
-  const y=regionY*regionSize+spacing/2+Math.floor(index/columns)*spacing;
-  const priority=startRegion?Math.hypot((x+.5)*TILE_SIZE-450,(y+.5)*TILE_SIZE-270):mapHash(seed,x,y,933);
-  return {x,y,priority};
- }).toSorted((a,b)=>a.priority-b.priority);
- const isOpen=(x:number,y:number)=>{
-  const kind=terrainCellKind(seed,x,y);
-  return kind==='meadow'||kind==='tallGrass';
- };
- return candidates.find(({x,y})=>!clearCell(x,y)&&isOpen(x,y)&&neighbors.every(([dx,dy])=>isOpen(x+dx,y+dy)));
+ return cachedMapValue(waypointCache,seed+':'+regionX+':'+regionY,()=>{
+  const startRegion=regionX===0&&regionY===0;
+  const spacing=4,columns=Math.floor(regionSize/spacing);
+  const candidates=Array.from({length:columns*columns},(_,index)=>{
+   const x=regionX*regionSize+spacing/2+index%columns*spacing;
+   const y=regionY*regionSize+spacing/2+Math.floor(index/columns)*spacing;
+   const priority=startRegion?Math.hypot((x+.5)*TILE_SIZE-450,(y+.5)*TILE_SIZE-270):mapHash(seed,x,y,933);
+   return {x,y,priority};
+  }).toSorted((a,b)=>a.priority-b.priority);
+  const isOpen=(x:number,y:number)=>{
+   const kind=terrainCellKind(seed,x,y);
+   return kind==='meadow'||kind==='tallGrass';
+  };
+  return candidates.find(({x,y})=>!clearCell(x,y)&&isOpen(x,y)&&neighbors.every(([dx,dy])=>isOpen(x+dx,y+dy)));
+ });
 }
 const ruinFeatures=[
  {x:0,y:-2,kind:'ruinArch'},
@@ -73,42 +93,47 @@ const ruinSolidCells=ruinFeatures.flatMap(({x,y,kind})=>
 
 function findRuinCenter(seed:number,chunkX:number,chunkY:number){
  const regionX=Math.floor(chunkX/4),regionY=Math.floor(chunkY/4),regionSize=CELLS*4;
- const startRegion=regionX===0&&regionY===0;
- const waypoints=Array.from({length:4},(_,index)=>findWaypointCell(seed,regionX*4+index%2*2,regionY*4+Math.floor(index/2)*2));
- const spacing=4,padding=5,columns=Math.floor((regionSize-2*padding)/spacing)+1;
- const candidates=Array.from({length:columns*columns},(_,index)=>{
-  const x=regionX*regionSize+padding+index%columns*spacing;
-  const y=regionY*regionSize+padding+Math.floor(index/columns)*spacing;
-  const priority=startRegion?Math.hypot((x+.5)*TILE_SIZE-450,(y+.5)*TILE_SIZE-270):mapHash(seed,x,y,941);
-  return {x,y,priority};
- }).toSorted((a,b)=>a.priority-b.priority);
- return candidates.find(({x,y})=>
-  ruinSolidCells.every(cell=>!clearCell(x+cell.x,y+cell.y))&&
-  waypoints.every(point=>!point||Math.abs(point.x-x)>4||Math.abs(point.y-y)>4)&&
-  [...ruinFootprint,...ruinApproaches].every(cell=>!isWaterCell(seed,x+cell.x,y+cell.y)));
+ return cachedMapValue(ruinCache,seed+':'+regionX+':'+regionY,()=>{
+  const startRegion=regionX===0&&regionY===0;
+  const waypoints=Array.from({length:4},(_,index)=>findWaypointCell(seed,regionX*4+index%2*2,regionY*4+Math.floor(index/2)*2));
+  const spacing=4,padding=5,columns=Math.floor((regionSize-2*padding)/spacing)+1;
+  const candidates=Array.from({length:columns*columns},(_,index)=>{
+   const x=regionX*regionSize+padding+index%columns*spacing;
+   const y=regionY*regionSize+padding+Math.floor(index/columns)*spacing;
+   const priority=startRegion?Math.hypot((x+.5)*TILE_SIZE-450,(y+.5)*TILE_SIZE-270):mapHash(seed,x,y,941);
+   return {x,y,priority};
+  }).toSorted((a,b)=>a.priority-b.priority);
+  return candidates.find(({x,y})=>
+   ruinSolidCells.every(cell=>!clearCell(x+cell.x,y+cell.y))&&
+   waypoints.every(point=>!point||Math.abs(point.x-x)>4||Math.abs(point.y-y)>4)&&
+   [...ruinFootprint,...ruinApproaches].every(cell=>!isWaterCell(seed,x+cell.x,y+cell.y)));
+ });
 }
 export function generateChunk(seed:number,chunkX:number,chunkY:number,includeRuins=true):MapChunk {
- const waypoint=findWaypointCell(seed,chunkX,chunkY);
- const ruins=includeRuins?findRuinCenter(seed,chunkX,chunkY):undefined;
- const tiles:readonly MapTile[]=Array.from({length:CELLS*CELLS},(_,i)=>{
-  const gx=chunkX*CELLS+i%CELLS,gy=chunkY*CELLS+Math.floor(i/CELLS);
-  const relative=ruins?{x:gx-ruins.x,y:gy-ruins.y}:undefined;
-  const inCourtyard=relative&&Math.abs(relative.x)<=3&&relative.y>=-2&&relative.y<=2;
-  const inApproach=relative&&ruinApproaches.some(cell=>cell.x===relative.x&&cell.y===relative.y);
-  const ruinKind:RuinTileKind|undefined=inCourtyard
-   ?ruinFeatures.find(feature=>feature.x===relative.x&&feature.y===relative.y)?.kind??'ruinFloor'
-   :inApproach?'ruinFloor':undefined;
-  const kind=ruinKind??(waypoint?.x===gx&&waypoint.y===gy?'waypoint':terrainCellKind(seed,gx,gy));
-  return {x:i%CELLS*TILE_SIZE,y:Math.floor(i/CELLS)*TILE_SIZE,kind,variant:mapHash(seed,gx,gy,15)%3,
-   shade:Math.floor(terrainNoise(seed,gx,gy,6,701)*4),
-   shore:kind==='water'?neighbors.reduce((mask,[dx,dy],n)=>mask|(!isWaterCell(seed,gx+dx,gy+dy)?1<<n:0),0):0};
+ const key=seed+':'+chunkX+':'+chunkY+':'+includeRuins;
+ return cachedMapValue(chunkCache,key,()=>{
+  const waypoint=findWaypointCell(seed,chunkX,chunkY);
+  const ruins=includeRuins?findRuinCenter(seed,chunkX,chunkY):undefined;
+  const tiles:readonly MapTile[]=Array.from({length:CELLS*CELLS},(_,i)=>{
+   const gx=chunkX*CELLS+i%CELLS,gy=chunkY*CELLS+Math.floor(i/CELLS);
+   const relative=ruins?{x:gx-ruins.x,y:gy-ruins.y}:undefined;
+   const inCourtyard=relative&&Math.abs(relative.x)<=3&&relative.y>=-2&&relative.y<=2;
+   const inApproach=relative&&ruinApproaches.some(cell=>cell.x===relative.x&&cell.y===relative.y);
+   const ruinKind:RuinTileKind|undefined=inCourtyard
+    ?ruinFeatures.find(feature=>feature.x===relative.x&&feature.y===relative.y)?.kind??'ruinFloor'
+    :inApproach?'ruinFloor':undefined;
+   const kind=ruinKind??(waypoint?.x===gx&&waypoint.y===gy?'waypoint':terrainCellKind(seed,gx,gy));
+   return {x:i%CELLS*TILE_SIZE,y:Math.floor(i/CELLS)*TILE_SIZE,kind,variant:mapHash(seed,gx,gy,15)%3,
+    shade:Math.floor(terrainNoise(seed,gx,gy,6,701)*4),
+    shore:kind==='water'?neighbors.reduce((mask,[dx,dy],n)=>mask|(!isWaterCell(seed,gx+dx,gy+dy)?1<<n:0),0):0};
+  });
+  const decorations:readonly MapDecoration[]=tiles.flatMap(t=>{
+   const kind=t.kind==='rockCluster'?'crag':t.kind==='tallGrass'?'grass':
+    t.kind==='meadow'||t.kind==='sand'||t.kind==='ruinFloor'?null:t.kind;
+   return kind?[{x:t.x+TILE_SIZE/2,y:t.y+TILE_SIZE/2,kind,variant:t.variant}]:[];
+  });
+  return {x:chunkX*CHUNK_SIZE,y:chunkY*CHUNK_SIZE,tint:0,tiles,decorations};
  });
- const decorations:readonly MapDecoration[]=tiles.flatMap(t=>{
-  const kind=t.kind==='rockCluster'?'crag':t.kind==='tallGrass'?'grass':
-   t.kind==='meadow'||t.kind==='sand'||t.kind==='ruinFloor'?null:t.kind;
-  return kind?[{x:t.x+TILE_SIZE/2,y:t.y+TILE_SIZE/2,kind,variant:t.variant}]:[];
- });
- return {x:chunkX*CHUNK_SIZE,y:chunkY*CHUNK_SIZE,tint:0,tiles,decorations};
 }
 export function nearbyChunks(seed:number,chunkX:number,chunkY:number,includeRuins=true):readonly MapChunk[] {
  return Array.from({length:25},(_,i)=>generateChunk(seed,chunkX+i%5-2,chunkY+Math.floor(i/5)-2,includeRuins));

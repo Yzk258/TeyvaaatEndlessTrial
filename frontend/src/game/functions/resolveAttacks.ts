@@ -7,8 +7,19 @@ import type {AttackResolution} from '../objects/AttackResolution';
 import type {Projectile} from '../objects/Projectile';
 import {weaponDamage} from './weaponStats';
 import {hypostasisDamageFactor} from './hypostasisAttacks';
+import {enemiesAlong,indexEnemies} from './enemyIndex';
 export function nearestTarget(enemies:readonly Enemy[],x:number,y:number,range:number):Enemy|undefined {
- return enemies.filter(e=>e.hp>0&&Math.hypot(e.x-x,e.y-y)<=range).reduce<Enemy|undefined>((best,e)=>!best||Math.hypot(e.x-x,e.y-y)<Math.hypot(best.x-x,best.y-y)?e:best,undefined);
+ let best:Enemy|undefined;
+ let bestDistance=range;
+ for(const enemy of enemies){
+  if(enemy.hp<=0)continue;
+  const distance=Math.hypot(enemy.x-x,enemy.y-y);
+  if(distance<=range&&(!best||distance<bestDistance)){
+   best=enemy;
+   bestDistance=distance;
+  }
+ }
+ return best;
 }
 export function isInArc(x:number,y:number,originX:number,originY:number,angle:number,range:number,angleDegrees:number):boolean {
  const dx=x-originX,dy=y-originY;
@@ -44,22 +55,39 @@ export function resolveAttacks(s:BattleState,enemies:readonly Enemy[],x:number,y
   id:tick*16+i,x,y,originX:x,originY:y,dx:Math.cos(attackAngle)*pattern.speed,dy:Math.sin(attackAngle)*pattern.speed,
   remainingRange:s.attackRange,radius:pattern.radius,remainingHits:1+pattern.pierce,hitIds:[],damage:s.power,talent:s.weaponTalent
  })):[];
- const resolved=[...s.projectiles,...launched].reduce<AttackResolution>((result,p)=>{
+ const inFlight=[...s.projectiles,...launched];
+ const enemyIndex=inFlight.length>0?indexEnemies(instant.enemies):undefined;
+ const projectiles:Projectile[]=[];
+ let damagedEnemies:Enemy[]|undefined;
+ for(const p of inFlight){
+  const currentEnemies=damagedEnemies??instant.enemies;
   const speed=Math.hypot(p.dx,p.dy),distance=Math.min(speed,p.remainingRange),scale=distance/speed,endX=p.x+p.dx*scale,endY=p.y+p.dy*scale;
   const wallTime=obstacleHitTime(p.x,p.y,endX,endY,p.radius,terrain);
-  const intersections=result.enemies.filter(e=>e.hp>0&&!p.hitIds.includes(e.id)).flatMap(e=>{
+  const intersections=enemiesAlong(enemyIndex!,p.x,p.y,endX,endY,p.radius).flatMap(index=>{
+   const e=currentEnemies[index];
+   if(e.hp<=0||p.hitIds.includes(e.id))return [];
    const t=segmentHitTime(p.x,p.y,endX,endY,e.x,e.y,p.radius+enemyDefinitions[e.kind].radius);
-   return t===null||t>=wallTime?[]:[{id:e.id,t}];
+   return t===null||t>=wallTime?[]:[{id:e.id,index,t}];
   }).toSorted((a,b)=>a.t-b.t||a.id-b.id).slice(0,p.remainingHits);
   const hits=intersections.map(h=>h.id);
-  const updated=result.enemies.map(e=>{const hit=intersections.find(h=>h.id===e.id);return hit?{...e,hp:e.hp-weaponDamage(p.damage,p.talent,Math.hypot(p.x+(endX-p.x)*hit.t-p.originX,p.y+(endY-p.y)*hit.t-p.originY),false)*hypostasisDamageFactor(e,tick)}:e;});
+  for(const hit of intersections){
+   const enemy=currentEnemies[hit.index];
+   damagedEnemies??=[...instant.enemies];
+   damagedEnemies[hit.index]={...enemy,hp:enemy.hp-weaponDamage(p.damage,p.talent,
+    Math.hypot(p.x+(endX-p.x)*hit.t-p.originX,p.y+(endY-p.y)*hit.t-p.originY),false)*hypostasisDamageFactor(enemy,tick)};
+  }
   const remainingRange=p.remainingRange-distance,remainingHits=p.remainingHits-hits.length;
-  return {...result,enemies:updated,projectiles:wallTime===Infinity&&remainingRange>0&&remainingHits>0?[...result.projectiles,{...p,x:endX,y:endY,remainingRange,remainingHits,hitIds:[...p.hitIds,...hits]}]:result.projectiles};
- },{queuedAttackTicks,enemies:instant.enemies,projectiles:[],effects:instant.effects,hits:[],attackCue:fire?{tick,x,y,angle:attackAngle}:s.attackCue});
+  if(wallTime===Infinity&&remainingRange>0&&remainingHits>0){
+   projectiles.push({...p,x:endX,y:endY,remainingRange,remainingHits,hitIds:[...p.hitIds,...hits]});
+  }
+ }
+ const resolvedEnemies=damagedEnemies??instant.enemies;
  const previous=Object.fromEntries(enemies.map(e=>[e.id,e]));
- const hits=resolved.enemies.flatMap(e=>{
+ const hits=resolvedEnemies.flatMap(e=>{
   const damage=(previous[e.id]?.hp??e.hp)-e.hp;
   return damage>0?[{id:tick+':'+e.id,enemyId:e.id,enemyKind:e.kind,x:e.x,y:e.y,angle:Math.atan2(e.y-y,e.x-x),damage,defeated:e.hp<=0,life:10}]:[];
  });
- return {...resolved,hits:[...s.hits.filter(h=>h.life>1).map(h=>({...h,life:h.life-1})),...hits].slice(-128)};
+ return {queuedAttackTicks,enemies:resolvedEnemies,projectiles,effects:instant.effects,
+  hits:[...s.hits.filter(h=>h.life>1).map(h=>({...h,life:h.life-1})),...hits].slice(-128),
+  attackCue:fire?{tick,x,y,angle:attackAngle}:s.attackCue};
 }

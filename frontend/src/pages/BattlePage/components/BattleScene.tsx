@@ -16,7 +16,10 @@ export function BattleScene({state:s,character,bounded,reducedMotion}:{state:Bat
  const spritePrefix=useId();
  const motionClass=reducedMotion?undefined:'transition-transform duration-[50ms] ease-linear';
  const margin=96;
- const isVisible=({x,y}:{x:number;y:number})=>x>=cameraX-margin&&x<=cameraX+900+margin&&y>=cameraY-margin&&y<=cameraY+540+margin;
+ const isVisible=({x,y,radius=0}:{x:number;y:number;radius?:number})=>{
+  const padding=Math.max(margin,radius+16);
+  return x>=cameraX-padding&&x<=cameraX+900+padding&&y>=cameraY-padding&&y<=cameraY+540+padding;
+ };
  const visibleEnemies=s.enemies.filter(isVisible);
  const boss=s.bossElement?s.enemies.find(enemy=>enemy.hypostasis):undefined;
  const bossCue=boss?.hypostasis?.cue;
@@ -28,12 +31,12 @@ export function BattleScene({state:s,character,bounded,reducedMotion}:{state:Bat
    {bossCue&&s.bossElement&&<HypostasisTelegraphs cue={bossCue} element={s.bossElement} tick={s.tick} reducedMotion={reducedMotion}/>}
    {!reducedMotion&&bossCue&&s.bossElement&&<HypostasisImpactParticles cue={bossCue} element={s.bossElement} tick={s.tick}/>}
    <g aria-hidden="true" pointerEvents="none" transform={'translate('+s.x+' '+s.y+')'} className={motionClass}><circle r={s.attackRange} fill="none" stroke={character.color} strokeOpacity=".5" strokeWidth="1.5" strokeDasharray="8 7"/></g>
-   <AttackVisuals visual={character.attackVisual} projectiles={s.projectiles} effects={s.effects} cue={s.attackCue} tick={s.tick} reducedMotion={reducedMotion}/>
+   <AttackVisuals visual={character.attackVisual} projectiles={s.projectiles.filter(isVisible)} effects={s.effects.filter(isVisible)} cue={s.attackCue} tick={s.tick} reducedMotion={reducedMotion}/>
    {visibleEnemies.map(enemy=><EnemyPortrait key={enemy.id} enemy={enemy} tick={s.tick} hit={hitsByEnemy[enemy.id]} spritePrefix={spritePrefix} reducedMotion={reducedMotion}/>)}
    <EnemyAttackVisuals projectiles={(s.enemyProjectiles??[]).filter(isVisible)}/>
    <BattleCharacter state={s} character={character} reducedMotion={reducedMotion}/>
-   <LootParticles particles={s.loot} x={s.x} y={s.y} reducedMotion={reducedMotion}/>
-   <HitEffects hits={s.hits} color={character.attackVisual.color} reducedMotion={reducedMotion}/>
+   <LootParticles particles={s.loot.filter(isVisible)} x={s.x} y={s.y} reducedMotion={reducedMotion}/>
+   <HitEffects hits={s.hits.filter(isVisible)} color={character.attackVisual.color} reducedMotion={reducedMotion}/>
    <PlayerHitEffects hits={s.playerHits??[]} tick={s.tick} reducedMotion={reducedMotion}/>
   </g>
  </svg>;
