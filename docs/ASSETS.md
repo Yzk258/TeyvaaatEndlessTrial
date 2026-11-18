@@ -1,5 +1,17 @@
 # 素材待办
 
+## 项目图标
+
+以用户提供的原神图标为构图参考，通过内置 imagegen 的参考图模式生成，导出为 256 × 256 的圆角透明 PNG。游戏和宣传页的页签及导航共用 [teyvat-icon.png](../frontend/public/branding/teyvat-icon.png)。
+
+```text
+Use case: stylized-concept. Create one standalone 1:1 rounded-square game app icon for a small fan-made pixel adventure game. The attached image is the composition and expression reference.
+
+Draw Paimon as a lively character close-up, with warm cream-white hair sweeping across the forehead, one big blue-violet eye open on the viewer's left, a clear happy wink on the other side, a small playful smile, and a neat two-finger salute near the temple on the viewer's right. Include a strong dark navy four-point star over her hair on the upper right and a dark indigo scarf framing her chin. Keep the face large and centered, deliberately crop the shoulders close to the lower edge, and give the bottom edge actual hair and dark indigo fabric from the illustration. Reserve a few muted gold pixels for star accents and let the small corner areas have a pale warm dusk tint. Follow the friendly close-cropped shape language of the reference while redrawing the artwork entirely as clear, polished 16-bit pixel art: crisp stepped contours, deliberate pixel clusters, readable contrast and limited colors, no soft gradients. The eye, wink, star and overall silhouette must still read well on a 24px browser favicon. One icon only, no device mockup, no duplicated characters, no lettering, no text of any kind, no company mark, no MiHoYo, no watermark, no footer or branding strip. The icon artwork should run to all four flat edges of the square, with a modest rounded-corner mask and true alpha transparency outside the four rounded corners only. Keep the rounded tile centered and maximize fill.
+```
+
+## 开场背景
+
 开场背景已使用内置图像生成工具，按用户参考截图制作像素版中央蓝门与云海场景，保存至frontend/public/backgrounds/sky-gate-pixel-v2.png，界面按钮由代码独立叠加。提示词及使用位置见LOGIN-BACKGROUND.md。
 
 ## 敌怪像素形象

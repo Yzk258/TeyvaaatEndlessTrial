@@ -6,7 +6,7 @@ const files = {
   'index.html': 'index.html',
   'style.css': 'style.css',
   'gallery.js': 'gallery.js',
-  'mark.svg': 'mark.svg',
+  'assets/teyvat-icon.png': '../frontend/public/branding/teyvat-icon.png',
   'assets/sky-gate.png': '../frontend/public/backgrounds/sky-gate-pixel-v2.png',
   'assets/hu-tao.png': '../frontend/public/characters/pixel/hu-tao-battle-chibi.png',
 };

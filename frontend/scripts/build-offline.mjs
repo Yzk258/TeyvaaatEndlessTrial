@@ -13,6 +13,7 @@ const imageFiles=(await Promise.all(['artifacts','crystals','enemies/hypostasis'
  return entries.filter(entry=>entry.isFile()&&entry.name.endsWith('.png')).map(entry=>directory+'/'+entry.name);
 }))).flat();
 const publicFiles=[...new Set([
+ '/branding/teyvat-icon.png',
  '/backgrounds/sky-gate-pixel-v2.png',
  '/backgrounds/sky-gate-clouds-a.png','/backgrounds/sky-gate-clouds-b.png',
  '/terrain/ground-v2.png','/terrain/objects-v2.png','/terrain/ruins-v2.png','/terrain/waypoint-v2.png',

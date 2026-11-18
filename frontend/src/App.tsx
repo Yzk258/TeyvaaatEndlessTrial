@@ -8,7 +8,7 @@ import {ArtifactsPage} from './pages/ArtifactsPage';
 import {WeaponsPage} from './pages/WeaponsPage';
 import {ConfirmDialog} from './components/ui/ConfirmDialog';
 import {MessageDialog} from './components/ui/MessageDialog';
-import {Compass,GraduationCap,Sparkles} from 'lucide-react';
+import {GraduationCap,Sparkles} from 'lucide-react';
 import {MainNavigation} from './components/ui/MainNavigation';
 import {OverviewPage} from './pages/OverviewPage';
 import {TutorialGuide} from './components/ui/TutorialGuide';
@@ -25,6 +25,7 @@ import {defaultDifficultyId,type AdventureDifficultyId} from './objects/Adventur
 import {leyLineCategories,type LeyLineCategoryId} from './objects/Stage';
 import type {Element} from './objects/Element';
 import {equipmentUsage} from './game/functions/equipmentInventory';
+import {gameAsset} from './system/gameAsset';
 export function App(){
  const a=useAdventure();
  const navigation=usePageNavigation();
@@ -55,7 +56,7 @@ export function App(){
   <MenuMapBackground/>
   <div inert={presentation.transitioning||tutorialVisible} className={'transition-opacity duration-[350ms] motion-reduce:transition-none '+(presentation.transitioning?'pointer-events-none opacity-0':'opacity-100')}>
   <aside className="fixed inset-y-0 left-0 hidden w-60 flex-col overflow-y-auto border-r border-white/8 bg-[#142129]/85 backdrop-blur-sm p-7 lg:flex">
-   <div className="flex items-center gap-3 text-amber-100"><Compass size={30}/><div><p className="font-serif text-xl tracking-[.2em]">提瓦特</p><p className="mt-1 text-[9px] tracking-[.3em] text-stone-500">ENDLESS TRIAL</p></div></div>
+   <div className="flex items-center gap-3 text-amber-100"><img src={gameAsset('/branding/teyvat-icon.png')} width={32} height={32} alt="" className="shrink-0"/><div><p className="font-serif text-xl tracking-[.2em]">提瓦特</p><p className="mt-1 text-[9px] tracking-[.3em] text-stone-500">ENDLESS TRIAL</p></div></div>
    <p className="mb-4 mt-12 text-[10px] tracking-[.3em] text-stone-500">冒险手册 / JOURNAL</p>
    <MainNavigation navigation={navigation}/>
    <div className="mt-auto pt-8 text-xs leading-6 text-stone-500"><Sparkles size={20} className="mb-3 text-amber-100/40"/>愿风指引你的道路。<br/>v0.1</div>
